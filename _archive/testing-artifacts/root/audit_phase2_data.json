@@ -1,0 +1,1565 @@
+{
+  "summary": {
+    "frontendCalls": 50,
+    "backendRoutes": 53,
+    "matched": 50,
+    "noMatch": 0,
+    "generatedAt": "2026-05-05T08:50:28.432Z"
+  },
+  "frontendCalls": [
+    {
+      "file": "frontend\\src\\api\\announcements.api.ts",
+      "line": 22,
+      "method": "GET",
+      "path": "/announcements",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\announcements.api.ts",
+      "line": 27,
+      "method": "GET",
+      "path": "/announcements/active",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\announcements.api.ts",
+      "line": 36,
+      "method": "POST",
+      "path": "/announcements",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\announcements.api.ts",
+      "line": 44,
+      "method": "PATCH",
+      "path": "/announcements/${id}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\announcements.api.ts",
+      "line": 49,
+      "method": "DELETE",
+      "path": "/announcements/${id}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\approval.api.ts",
+      "line": 51,
+      "method": "GET",
+      "path": "/approval",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\approval.api.ts",
+      "line": 52,
+      "method": "POST",
+      "path": "/approval/${id}/reject",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\approval.api.ts",
+      "line": 55,
+      "method": "POST",
+      "path": "/approval/${id}/review",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\approval.api.ts",
+      "line": 56,
+      "method": "GET",
+      "path": "/approval/${id}/detail",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\approval.api.ts",
+      "line": 58,
+      "method": "POST",
+      "path": "/approval/${id}/finalize",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\auth.api.ts",
+      "line": 8,
+      "method": "POST",
+      "path": "/auth/login",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\auth.api.ts",
+      "line": 23,
+      "method": "POST",
+      "path": "/auth/logout",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\auth.api.ts",
+      "line": 33,
+      "method": "GET",
+      "path": "/auth/me",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\barangKosong.api.ts",
+      "line": 10,
+      "method": "GET",
+      "path": "/barang-kosong",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\barangMasuk.api.ts",
+      "line": 23,
+      "method": "GET",
+      "path": "/barang-masuk",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\history.api.ts",
+      "line": 52,
+      "method": "GET",
+      "path": "/history/masuk${buildQuery(filter)}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\history.api.ts",
+      "line": 55,
+      "method": "GET",
+      "path": "/history/keluar${buildQuery(filter)}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\history.api.ts",
+      "line": 58,
+      "method": "GET",
+      "path": "/history/user${buildQuery(filter)}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\items.api.ts",
+      "line": 77,
+      "method": "GET",
+      "path": "/atk-items${buildQuery(query)}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\items.api.ts",
+      "line": 85,
+      "method": "GET",
+      "path": "/atk-items",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\items.api.ts",
+      "line": 91,
+      "method": "GET",
+      "path": "/atk-items/${id}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\items.api.ts",
+      "line": 94,
+      "method": "PUT",
+      "path": "/atk-items/${id}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\items.api.ts",
+      "line": 97,
+      "method": "DELETE",
+      "path": "/atk-items/${id}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\newItemRequests.api.ts",
+      "line": 51,
+      "method": "GET",
+      "path": "/new-item-requests",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\newItemRequests.api.ts",
+      "line": 54,
+      "method": "POST",
+      "path": "/new-item-requests",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\newItemRequests.api.ts",
+      "line": 57,
+      "method": "POST",
+      "path": "/new-item-requests/${id}/approve",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\newItemRequests.api.ts",
+      "line": 60,
+      "method": "POST",
+      "path": "/new-item-requests/${id}/reject",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\notifications.api.ts",
+      "line": 14,
+      "method": "GET",
+      "path": "/notifications/inbox?limit=${encodeURIComponent(String(limit))}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\notifications.api.ts",
+      "line": 21,
+      "method": "PATCH",
+      "path": "/notifications/read-all",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\notifications.api.ts",
+      "line": 25,
+      "method": "PATCH",
+      "path": "/notifications/inbox/${encodeURIComponent(String(notificationId))}/read",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\notifications.api.ts",
+      "line": 29,
+      "method": "DELETE",
+      "path": "/notifications/inbox",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\requests.api.ts",
+      "line": 45,
+      "method": "GET",
+      "path": "/requests${buildQuery(query)}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\requests.api.ts",
+      "line": 48,
+      "method": "GET",
+      "path": "/requests",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\requests.api.ts",
+      "line": 52,
+      "method": "POST",
+      "path": "/requests",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\units.api.ts",
+      "line": 15,
+      "method": "GET",
+      "path": "/units",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\units.api.ts",
+      "line": 16,
+      "method": "GET",
+      "path": "/units/names",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\units.api.ts",
+      "line": 17,
+      "method": "POST",
+      "path": "/units",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\units.api.ts",
+      "line": 18,
+      "method": "DELETE",
+      "path": "/units/${id}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\users.api.ts",
+      "line": 9,
+      "method": "PUT",
+      "path": "/users/profile",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\users.api.ts",
+      "line": 14,
+      "method": "PUT",
+      "path": "/users/password",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\api\\users.api.ts",
+      "line": 19,
+      "method": "DELETE",
+      "path": "/users/account",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\hooks\\useDashboard.ts",
+      "line": 44,
+      "method": "GET",
+      "path": "/dashboard/metrics",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\hooks\\useDashboard.ts",
+      "line": 66,
+      "method": "SSE",
+      "path": "/notifications/stream?token=${encodeURIComponent(token)}",
+      "source": "event-source"
+    },
+    {
+      "file": "frontend\\src\\hooks\\useOpname.ts",
+      "line": 35,
+      "method": "GET",
+      "path": "/opname",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\hooks\\useOpname.ts",
+      "line": 50,
+      "method": "GET",
+      "path": "/opname/${id}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\hooks\\useOpname.ts",
+      "line": 54,
+      "method": "POST",
+      "path": "/opname",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\hooks\\useOpname.ts",
+      "line": 60,
+      "method": "PUT",
+      "path": "/opname/${sessionId}/items/${itemId}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\hooks\\useOpname.ts",
+      "line": 64,
+      "method": "POST",
+      "path": "/opname/${id}/finalize",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\hooks\\useOpname.ts",
+      "line": 69,
+      "method": "DELETE",
+      "path": "/opname/${id}",
+      "source": "http"
+    },
+    {
+      "file": "frontend\\src\\pages\\AtkItems.tsx",
+      "line": 100,
+      "method": "POST",
+      "path": "/atk-items/bulk-stream",
+      "source": "manual-fetch"
+    }
+  ],
+  "backendRoutes": [
+    {
+      "file": "backend\\src\\routes\\announcements.js",
+      "line": 9,
+      "method": "GET",
+      "path": "/api/announcements/active",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\announcements.js",
+      "line": 25,
+      "method": "GET",
+      "path": "/api/announcements",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\announcements.js",
+      "line": 40,
+      "method": "POST",
+      "path": "/api/announcements",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\announcements.js",
+      "line": 72,
+      "method": "PATCH",
+      "path": "/api/announcements/:id",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\announcements.js",
+      "line": 128,
+      "method": "DELETE",
+      "path": "/api/announcements/:id",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\approval.js",
+      "line": 11,
+      "method": "GET",
+      "path": "/api/approval",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\approval.js",
+      "line": 39,
+      "method": "GET",
+      "path": "/api/approval/:id/detail",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\approval.js",
+      "line": 86,
+      "method": "POST",
+      "path": "/api/approval/:id/review",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\approval.js",
+      "line": 132,
+      "method": "POST",
+      "path": "/api/approval/:id/finalize",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\approval.js",
+      "line": 264,
+      "method": "POST",
+      "path": "/api/approval/:id/reject",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\audit.js",
+      "line": 16,
+      "method": "GET",
+      "path": "/api/audit",
+      "auth": true,
+      "roles": "superadmin,admin"
+    },
+    {
+      "file": "backend\\src\\routes\\auth.js",
+      "line": 19,
+      "method": "POST",
+      "path": "/api/auth/login",
+      "auth": false,
+      "roles": "public"
+    },
+    {
+      "file": "backend\\src\\routes\\auth.js",
+      "line": 75,
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\auth.js",
+      "line": 82,
+      "method": "GET",
+      "path": "/api/auth/me",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\barangKosong.js",
+      "line": 8,
+      "method": "GET",
+      "path": "/api/barang-kosong",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\barangMasuk.js",
+      "line": 10,
+      "method": "GET",
+      "path": "/api/barang-masuk",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\barangMasuk.js",
+      "line": 52,
+      "method": "POST",
+      "path": "/api/barang-masuk",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\dashboard.js",
+      "line": 8,
+      "method": "GET",
+      "path": "/api/dashboard/metrics",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\history.js",
+      "line": 43,
+      "method": "GET",
+      "path": "/api/history/masuk",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\history.js",
+      "line": 68,
+      "method": "GET",
+      "path": "/api/history/keluar",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\history.js",
+      "line": 94,
+      "method": "GET",
+      "path": "/api/history/user",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\items.js",
+      "line": 14,
+      "method": "GET",
+      "path": "/api/atk-items",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\items.js",
+      "line": 17,
+      "method": "GET",
+      "path": "/api/atk-items/:id",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\items.js",
+      "line": 20,
+      "method": "PUT",
+      "path": "/api/atk-items/:id",
+      "auth": true,
+      "roles": "superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\items.js",
+      "line": 23,
+      "method": "POST",
+      "path": "/api/atk-items",
+      "auth": true,
+      "roles": "superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\items.js",
+      "line": 26,
+      "method": "POST",
+      "path": "/api/atk-items/bulk",
+      "auth": true,
+      "roles": "superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\items.js",
+      "line": 70,
+      "method": "POST",
+      "path": "/api/atk-items/bulk-stream",
+      "auth": true,
+      "roles": "superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\items.js",
+      "line": 111,
+      "method": "DELETE",
+      "path": "/api/atk-items/:id",
+      "auth": true,
+      "roles": "superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\newItemRequests.js",
+      "line": 17,
+      "method": "GET",
+      "path": "/api/new-item-requests",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\newItemRequests.js",
+      "line": 55,
+      "method": "POST",
+      "path": "/api/new-item-requests",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\newItemRequests.js",
+      "line": 131,
+      "method": "POST",
+      "path": "/api/new-item-requests/:id/approve",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\newItemRequests.js",
+      "line": 274,
+      "method": "POST",
+      "path": "/api/new-item-requests/:id/reject",
+      "auth": true,
+      "roles": "admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\notifications.js",
+      "line": 22,
+      "method": "GET",
+      "path": "/api/notifications/stream",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\notifications.js",
+      "line": 36,
+      "method": "GET",
+      "path": "/api/notifications/inbox",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\notifications.js",
+      "line": 47,
+      "method": "PATCH",
+      "path": "/api/notifications/read-all",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\notifications.js",
+      "line": 57,
+      "method": "PATCH",
+      "path": "/api/notifications/inbox/:notificationId/read",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\notifications.js",
+      "line": 68,
+      "method": "DELETE",
+      "path": "/api/notifications/inbox",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\opname.js",
+      "line": 10,
+      "method": "GET",
+      "path": "/api/opname",
+      "auth": true,
+      "roles": "superadmin,admin"
+    },
+    {
+      "file": "backend\\src\\routes\\opname.js",
+      "line": 26,
+      "method": "GET",
+      "path": "/api/opname/:id",
+      "auth": true,
+      "roles": "superadmin,admin"
+    },
+    {
+      "file": "backend\\src\\routes\\opname.js",
+      "line": 46,
+      "method": "POST",
+      "path": "/api/opname",
+      "auth": true,
+      "roles": "superadmin,admin"
+    },
+    {
+      "file": "backend\\src\\routes\\opname.js",
+      "line": 97,
+      "method": "PUT",
+      "path": "/api/opname/:id/items/:itemId",
+      "auth": true,
+      "roles": "superadmin,admin"
+    },
+    {
+      "file": "backend\\src\\routes\\opname.js",
+      "line": 131,
+      "method": "POST",
+      "path": "/api/opname/:id/finalize",
+      "auth": true,
+      "roles": "superadmin,admin"
+    },
+    {
+      "file": "backend\\src\\routes\\opname.js",
+      "line": 201,
+      "method": "DELETE",
+      "path": "/api/opname/:id",
+      "auth": true,
+      "roles": "superadmin,admin"
+    },
+    {
+      "file": "backend\\src\\routes\\requests.js",
+      "line": 11,
+      "method": "GET",
+      "path": "/api/requests",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\requests.js",
+      "line": 66,
+      "method": "POST",
+      "path": "/api/requests",
+      "auth": true,
+      "roles": "user,admin,superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\requests.js",
+      "line": 137,
+      "method": "GET",
+      "path": "/api/requests/:id",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\units.js",
+      "line": 10,
+      "method": "GET",
+      "path": "/api/units/names",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\units.js",
+      "line": 23,
+      "method": "GET",
+      "path": "/api/units",
+      "auth": true,
+      "roles": "superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\units.js",
+      "line": 40,
+      "method": "POST",
+      "path": "/api/units",
+      "auth": true,
+      "roles": "superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\units.js",
+      "line": 86,
+      "method": "DELETE",
+      "path": "/api/units/:id",
+      "auth": true,
+      "roles": "superadmin"
+    },
+    {
+      "file": "backend\\src\\routes\\users.js",
+      "line": 10,
+      "method": "PUT",
+      "path": "/api/users/profile",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\users.js",
+      "line": 77,
+      "method": "PUT",
+      "path": "/api/users/password",
+      "auth": true,
+      "roles": "any-auth"
+    },
+    {
+      "file": "backend\\src\\routes\\users.js",
+      "line": 118,
+      "method": "DELETE",
+      "path": "/api/users/account",
+      "auth": true,
+      "roles": "any-auth"
+    }
+  ],
+  "matrix": [
+    {
+      "file": "frontend\\src\\api\\announcements.api.ts",
+      "line": 22,
+      "method": "GET",
+      "path": "/announcements",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/announcements",
+      "backend": "GET /api/announcements",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\announcements.js:25",
+      "candidates": [
+        "GET /api/announcements",
+        "POST /api/announcements"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\announcements.api.ts",
+      "line": 27,
+      "method": "GET",
+      "path": "/announcements/active",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/announcements/active",
+      "backend": "GET /api/announcements/active",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\announcements.js:9",
+      "candidates": [
+        "GET /api/announcements/active"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\announcements.api.ts",
+      "line": 36,
+      "method": "POST",
+      "path": "/announcements",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/announcements",
+      "backend": "POST /api/announcements",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\announcements.js:40",
+      "candidates": [
+        "GET /api/announcements",
+        "POST /api/announcements"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\announcements.api.ts",
+      "line": 44,
+      "method": "PATCH",
+      "path": "/announcements/${id}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/announcements/:param",
+      "backend": "PATCH /api/announcements/:id",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\announcements.js:72",
+      "candidates": [
+        "PATCH /api/announcements/:id",
+        "DELETE /api/announcements/:id"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\announcements.api.ts",
+      "line": 49,
+      "method": "DELETE",
+      "path": "/announcements/${id}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/announcements/:param",
+      "backend": "DELETE /api/announcements/:id",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\announcements.js:128",
+      "candidates": [
+        "PATCH /api/announcements/:id",
+        "DELETE /api/announcements/:id"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\approval.api.ts",
+      "line": 51,
+      "method": "GET",
+      "path": "/approval",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/approval",
+      "backend": "GET /api/approval",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\approval.js:11",
+      "candidates": [
+        "GET /api/approval"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\approval.api.ts",
+      "line": 52,
+      "method": "POST",
+      "path": "/approval/${id}/reject",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/approval/:param/reject",
+      "backend": "POST /api/approval/:id/reject",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\approval.js:264",
+      "candidates": [
+        "POST /api/approval/:id/reject"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\approval.api.ts",
+      "line": 55,
+      "method": "POST",
+      "path": "/approval/${id}/review",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/approval/:param/review",
+      "backend": "POST /api/approval/:id/review",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\approval.js:86",
+      "candidates": [
+        "POST /api/approval/:id/review"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\approval.api.ts",
+      "line": 56,
+      "method": "GET",
+      "path": "/approval/${id}/detail",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/approval/:param/detail",
+      "backend": "GET /api/approval/:id/detail",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\approval.js:39",
+      "candidates": [
+        "GET /api/approval/:id/detail"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\approval.api.ts",
+      "line": 58,
+      "method": "POST",
+      "path": "/approval/${id}/finalize",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/approval/:param/finalize",
+      "backend": "POST /api/approval/:id/finalize",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\approval.js:132",
+      "candidates": [
+        "POST /api/approval/:id/finalize"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\auth.api.ts",
+      "line": 8,
+      "method": "POST",
+      "path": "/auth/login",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/auth/login",
+      "backend": "POST /api/auth/login",
+      "roles": "public",
+      "backendFile": "backend\\src\\routes\\auth.js:19",
+      "candidates": [
+        "POST /api/auth/login"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\auth.api.ts",
+      "line": 23,
+      "method": "POST",
+      "path": "/auth/logout",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/auth/logout",
+      "backend": "POST /api/auth/logout",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\auth.js:75",
+      "candidates": [
+        "POST /api/auth/logout"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\auth.api.ts",
+      "line": 33,
+      "method": "GET",
+      "path": "/auth/me",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/auth/me",
+      "backend": "GET /api/auth/me",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\auth.js:82",
+      "candidates": [
+        "GET /api/auth/me"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\barangKosong.api.ts",
+      "line": 10,
+      "method": "GET",
+      "path": "/barang-kosong",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/barang-kosong",
+      "backend": "GET /api/barang-kosong",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\barangKosong.js:8",
+      "candidates": [
+        "GET /api/barang-kosong"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\barangMasuk.api.ts",
+      "line": 23,
+      "method": "GET",
+      "path": "/barang-masuk",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/barang-masuk",
+      "backend": "GET /api/barang-masuk",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\barangMasuk.js:10",
+      "candidates": [
+        "GET /api/barang-masuk",
+        "POST /api/barang-masuk"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\history.api.ts",
+      "line": 52,
+      "method": "GET",
+      "path": "/history/masuk${buildQuery(filter)}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/history/masuk",
+      "backend": "GET /api/history/masuk",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\history.js:43",
+      "candidates": [
+        "GET /api/history/masuk"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\history.api.ts",
+      "line": 55,
+      "method": "GET",
+      "path": "/history/keluar${buildQuery(filter)}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/history/keluar",
+      "backend": "GET /api/history/keluar",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\history.js:68",
+      "candidates": [
+        "GET /api/history/keluar"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\history.api.ts",
+      "line": 58,
+      "method": "GET",
+      "path": "/history/user${buildQuery(filter)}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/history/user",
+      "backend": "GET /api/history/user",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\history.js:94",
+      "candidates": [
+        "GET /api/history/user"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\items.api.ts",
+      "line": 77,
+      "method": "GET",
+      "path": "/atk-items${buildQuery(query)}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/atk-items",
+      "backend": "GET /api/atk-items",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\items.js:14",
+      "candidates": [
+        "GET /api/atk-items",
+        "POST /api/atk-items"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\items.api.ts",
+      "line": 85,
+      "method": "GET",
+      "path": "/atk-items",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/atk-items",
+      "backend": "GET /api/atk-items",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\items.js:14",
+      "candidates": [
+        "GET /api/atk-items",
+        "POST /api/atk-items"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\items.api.ts",
+      "line": 91,
+      "method": "GET",
+      "path": "/atk-items/${id}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/atk-items/:param",
+      "backend": "GET /api/atk-items/:id",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\items.js:17",
+      "candidates": [
+        "GET /api/atk-items/:id",
+        "PUT /api/atk-items/:id",
+        "DELETE /api/atk-items/:id"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\items.api.ts",
+      "line": 94,
+      "method": "PUT",
+      "path": "/atk-items/${id}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/atk-items/:param",
+      "backend": "PUT /api/atk-items/:id",
+      "roles": "superadmin",
+      "backendFile": "backend\\src\\routes\\items.js:20",
+      "candidates": [
+        "GET /api/atk-items/:id",
+        "PUT /api/atk-items/:id",
+        "DELETE /api/atk-items/:id"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\items.api.ts",
+      "line": 97,
+      "method": "DELETE",
+      "path": "/atk-items/${id}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/atk-items/:param",
+      "backend": "DELETE /api/atk-items/:id",
+      "roles": "superadmin",
+      "backendFile": "backend\\src\\routes\\items.js:111",
+      "candidates": [
+        "GET /api/atk-items/:id",
+        "PUT /api/atk-items/:id",
+        "DELETE /api/atk-items/:id"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\newItemRequests.api.ts",
+      "line": 51,
+      "method": "GET",
+      "path": "/new-item-requests",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/new-item-requests",
+      "backend": "GET /api/new-item-requests",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\newItemRequests.js:17",
+      "candidates": [
+        "GET /api/new-item-requests",
+        "POST /api/new-item-requests"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\newItemRequests.api.ts",
+      "line": 54,
+      "method": "POST",
+      "path": "/new-item-requests",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/new-item-requests",
+      "backend": "POST /api/new-item-requests",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\newItemRequests.js:55",
+      "candidates": [
+        "GET /api/new-item-requests",
+        "POST /api/new-item-requests"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\newItemRequests.api.ts",
+      "line": 57,
+      "method": "POST",
+      "path": "/new-item-requests/${id}/approve",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/new-item-requests/:param/approve",
+      "backend": "POST /api/new-item-requests/:id/approve",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\newItemRequests.js:131",
+      "candidates": [
+        "POST /api/new-item-requests/:id/approve"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\newItemRequests.api.ts",
+      "line": 60,
+      "method": "POST",
+      "path": "/new-item-requests/${id}/reject",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/new-item-requests/:param/reject",
+      "backend": "POST /api/new-item-requests/:id/reject",
+      "roles": "admin,superadmin",
+      "backendFile": "backend\\src\\routes\\newItemRequests.js:274",
+      "candidates": [
+        "POST /api/new-item-requests/:id/reject"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\notifications.api.ts",
+      "line": 14,
+      "method": "GET",
+      "path": "/notifications/inbox?limit=${encodeURIComponent(String(limit))}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/notifications/inbox",
+      "backend": "GET /api/notifications/inbox",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\notifications.js:36",
+      "candidates": [
+        "GET /api/notifications/inbox",
+        "DELETE /api/notifications/inbox"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\notifications.api.ts",
+      "line": 21,
+      "method": "PATCH",
+      "path": "/notifications/read-all",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/notifications/read-all",
+      "backend": "PATCH /api/notifications/read-all",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\notifications.js:47",
+      "candidates": [
+        "PATCH /api/notifications/read-all"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\notifications.api.ts",
+      "line": 25,
+      "method": "PATCH",
+      "path": "/notifications/inbox/${encodeURIComponent(String(notificationId))}/read",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/notifications/inbox/:param/read",
+      "backend": "PATCH /api/notifications/inbox/:notificationId/read",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\notifications.js:57",
+      "candidates": [
+        "PATCH /api/notifications/inbox/:notificationId/read"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\notifications.api.ts",
+      "line": 29,
+      "method": "DELETE",
+      "path": "/notifications/inbox",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/notifications/inbox",
+      "backend": "DELETE /api/notifications/inbox",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\notifications.js:68",
+      "candidates": [
+        "GET /api/notifications/inbox",
+        "DELETE /api/notifications/inbox"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\requests.api.ts",
+      "line": 45,
+      "method": "GET",
+      "path": "/requests${buildQuery(query)}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/requests",
+      "backend": "GET /api/requests",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\requests.js:11",
+      "candidates": [
+        "GET /api/requests",
+        "POST /api/requests"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\requests.api.ts",
+      "line": 48,
+      "method": "GET",
+      "path": "/requests",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/requests",
+      "backend": "GET /api/requests",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\requests.js:11",
+      "candidates": [
+        "GET /api/requests",
+        "POST /api/requests"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\requests.api.ts",
+      "line": 52,
+      "method": "POST",
+      "path": "/requests",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/requests",
+      "backend": "POST /api/requests",
+      "roles": "user,admin,superadmin",
+      "backendFile": "backend\\src\\routes\\requests.js:66",
+      "candidates": [
+        "GET /api/requests",
+        "POST /api/requests"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\units.api.ts",
+      "line": 15,
+      "method": "GET",
+      "path": "/units",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/units",
+      "backend": "GET /api/units",
+      "roles": "superadmin",
+      "backendFile": "backend\\src\\routes\\units.js:23",
+      "candidates": [
+        "GET /api/units",
+        "POST /api/units"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\units.api.ts",
+      "line": 16,
+      "method": "GET",
+      "path": "/units/names",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/units/names",
+      "backend": "GET /api/units/names",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\units.js:10",
+      "candidates": [
+        "GET /api/units/names"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\units.api.ts",
+      "line": 17,
+      "method": "POST",
+      "path": "/units",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/units",
+      "backend": "POST /api/units",
+      "roles": "superadmin",
+      "backendFile": "backend\\src\\routes\\units.js:40",
+      "candidates": [
+        "GET /api/units",
+        "POST /api/units"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\units.api.ts",
+      "line": 18,
+      "method": "DELETE",
+      "path": "/units/${id}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/units/:param",
+      "backend": "DELETE /api/units/:id",
+      "roles": "superadmin",
+      "backendFile": "backend\\src\\routes\\units.js:86",
+      "candidates": [
+        "DELETE /api/units/:id"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\users.api.ts",
+      "line": 9,
+      "method": "PUT",
+      "path": "/users/profile",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/users/profile",
+      "backend": "PUT /api/users/profile",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\users.js:10",
+      "candidates": [
+        "PUT /api/users/profile"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\users.api.ts",
+      "line": 14,
+      "method": "PUT",
+      "path": "/users/password",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/users/password",
+      "backend": "PUT /api/users/password",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\users.js:77",
+      "candidates": [
+        "PUT /api/users/password"
+      ]
+    },
+    {
+      "file": "frontend\\src\\api\\users.api.ts",
+      "line": 19,
+      "method": "DELETE",
+      "path": "/users/account",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/users/account",
+      "backend": "DELETE /api/users/account",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\users.js:118",
+      "candidates": [
+        "DELETE /api/users/account"
+      ]
+    },
+    {
+      "file": "frontend\\src\\hooks\\useDashboard.ts",
+      "line": 44,
+      "method": "GET",
+      "path": "/dashboard/metrics",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/dashboard/metrics",
+      "backend": "GET /api/dashboard/metrics",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\dashboard.js:8",
+      "candidates": [
+        "GET /api/dashboard/metrics"
+      ]
+    },
+    {
+      "file": "frontend\\src\\hooks\\useDashboard.ts",
+      "line": 66,
+      "method": "SSE",
+      "path": "/notifications/stream?token=${encodeURIComponent(token)}",
+      "source": "event-source",
+      "category": "sse",
+      "normalized": "/notifications/stream",
+      "backend": "GET /api/notifications/stream",
+      "roles": "any-auth",
+      "backendFile": "backend\\src\\routes\\notifications.js:22",
+      "candidates": [
+        "GET /api/notifications/stream"
+      ]
+    },
+    {
+      "file": "frontend\\src\\hooks\\useOpname.ts",
+      "line": 35,
+      "method": "GET",
+      "path": "/opname",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/opname",
+      "backend": "GET /api/opname",
+      "roles": "superadmin,admin",
+      "backendFile": "backend\\src\\routes\\opname.js:10",
+      "candidates": [
+        "GET /api/opname",
+        "POST /api/opname"
+      ]
+    },
+    {
+      "file": "frontend\\src\\hooks\\useOpname.ts",
+      "line": 50,
+      "method": "GET",
+      "path": "/opname/${id}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/opname/:param",
+      "backend": "GET /api/opname/:id",
+      "roles": "superadmin,admin",
+      "backendFile": "backend\\src\\routes\\opname.js:26",
+      "candidates": [
+        "GET /api/opname/:id",
+        "DELETE /api/opname/:id"
+      ]
+    },
+    {
+      "file": "frontend\\src\\hooks\\useOpname.ts",
+      "line": 54,
+      "method": "POST",
+      "path": "/opname",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/opname",
+      "backend": "POST /api/opname",
+      "roles": "superadmin,admin",
+      "backendFile": "backend\\src\\routes\\opname.js:46",
+      "candidates": [
+        "GET /api/opname",
+        "POST /api/opname"
+      ]
+    },
+    {
+      "file": "frontend\\src\\hooks\\useOpname.ts",
+      "line": 60,
+      "method": "PUT",
+      "path": "/opname/${sessionId}/items/${itemId}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/opname/:param/items/:param",
+      "backend": "PUT /api/opname/:id/items/:itemId",
+      "roles": "superadmin,admin",
+      "backendFile": "backend\\src\\routes\\opname.js:97",
+      "candidates": [
+        "PUT /api/opname/:id/items/:itemId"
+      ]
+    },
+    {
+      "file": "frontend\\src\\hooks\\useOpname.ts",
+      "line": 64,
+      "method": "POST",
+      "path": "/opname/${id}/finalize",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/opname/:param/finalize",
+      "backend": "POST /api/opname/:id/finalize",
+      "roles": "superadmin,admin",
+      "backendFile": "backend\\src\\routes\\opname.js:131",
+      "candidates": [
+        "POST /api/opname/:id/finalize"
+      ]
+    },
+    {
+      "file": "frontend\\src\\hooks\\useOpname.ts",
+      "line": 69,
+      "method": "DELETE",
+      "path": "/opname/${id}",
+      "source": "http",
+      "category": "http-client",
+      "normalized": "/opname/:param",
+      "backend": "DELETE /api/opname/:id",
+      "roles": "superadmin,admin",
+      "backendFile": "backend\\src\\routes\\opname.js:201",
+      "candidates": [
+        "GET /api/opname/:id",
+        "DELETE /api/opname/:id"
+      ]
+    },
+    {
+      "file": "frontend\\src\\pages\\AtkItems.tsx",
+      "line": 100,
+      "method": "POST",
+      "path": "/atk-items/bulk-stream",
+      "source": "manual-fetch",
+      "category": "http-client",
+      "normalized": "/atk-items/bulk-stream",
+      "backend": "POST /api/atk-items/bulk-stream",
+      "roles": "superadmin",
+      "backendFile": "backend\\src\\routes\\items.js:70",
+      "candidates": [
+        "POST /api/atk-items/bulk-stream"
+      ]
+    }
+  ]
+}

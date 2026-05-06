@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+
+  backend:
+    build: ./backend
+    container_name: inventory-backend
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data  # Consistent path with backend code
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=production
+      - TZ=Asia/Jakarta
+      - APP_TIME_ZONE=Asia/Jakarta
+      - DB_TIME_ZONE=+07:00
+      # JWT_SECRET loaded from .env, or override here if needed
+
+  frontend:
+    build: ./frontend
+    container_name: inventory-frontend
+    restart: always
+    ports:
+      - "5173:80" # Map host 5173 to container 80 (nginx)
+    depends_on:
+      - backend
+
+# Docker compose will automatically restart containers if they crash
+# To run: docker-compose up -d --build

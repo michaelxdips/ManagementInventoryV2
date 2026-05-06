@@ -1,0 +1,115 @@
+﻿C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\announcements.api.ts:22: const rows = await http.get<AnnouncementApiRow[]>('/announcements');
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\announcements.api.ts:31: const row = await http.post<AnnouncementApiRow, typeof body>('/announcements', body);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\announcements.api.ts:39: const row = await http.patch<AnnouncementApiRow, typeof body>(`/announcements/${id}`, body);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\announcements.api.ts:44: return http.delete<void>(`/announcements/${id}`);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\approval.api.ts:51: export const fetchApproval = () => http.get<ApprovalItem[]>('/approval');
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\approval.api.ts:52: export const rejectRequest = (id: number, reason?: string) => http.post<ApprovalItem>(`/approval/${id}/reject`, { reason });
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\approval.api.ts:55: export const reviewRequest = (id: number) => http.post<ReviewResponse>(`/approval/${id}/review`);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\approval.api.ts:56: export const fetchApprovalDetail = (id: number) => http.get<ApprovalDetail>(`/approval/${id}/detail`);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\approval.api.ts:58: http.post<FinalizeResponse>(`/approval/${id}/finalize`, { finalQty });
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\auth.api.ts:8: const data = await http.post<LoginResponse>('/auth/login', payload);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\auth.api.ts:23: await http.post('/auth/logout');
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\auth.api.ts:33: const data = await http.get<AuthUser>('/auth/me');
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\barangKosong.api.ts:10: export const fetchBarangKosong = () => http.get<BarangKosongItem[]>('/barang-kosong');
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\barangKosong.api.ts:12: http.post<BarangKosongItem>('/barang-kosong', payload);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\barangMasuk.api.ts:23: export const fetchBarangMasuk = () => http.get<BarangMasukItem[]>('/barang-masuk');
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\barangMasuk.api.ts:25: http.post<{ message: string; item: any }>('/barang-masuk', payload);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\history.api.ts:47: const data = await http.get<HistoryEntry[] | PaginatedResponse<HistoryEntry, 'entries'>>(url);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\history.api.ts:52: http.get<PaginatedResponse<HistoryEntry, 'entries'>>(`/history/masuk${buildQuery(filter)}`);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\history.api.ts:55: http.get<PaginatedResponse<HistoryEntry, 'entries'>>(`/history/keluar${buildQuery(filter)}`);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\history.api.ts:58: http.get<PaginatedResponse<HistoryEntry, 'entries'>>(`/history/user${buildQuery(filter)}`);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\http.ts:2: if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\http.ts:28: const res = await fetch(url, { ...options, headers });
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\items.api.ts:77: const data = await http.get<RawItemsPage>(`/atk-items${buildQuery(query)}`);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\items.api.ts:85: http.get<RawItem[] | RawItemsPage>('/atk-items').then((data) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\items.api.ts:91: http.get<RawItem>(`/atk-items/${id}`).then(mapItem);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\items.api.ts:94: http.put(`/atk-items/${id}`, payload);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\items.api.ts:97: http.delete<{ message: string }>(`/atk-items/${id}`);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\newItemRequests.api.ts:51: http.get<NewItemRequest[]>('/new-item-requests');
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\newItemRequests.api.ts:54: http.post<NewItemRequest>('/new-item-requests', payload);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\newItemRequests.api.ts:57: http.post<ApproveNewItemResponse>(`/new-item-requests/${id}/approve`, payload);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\newItemRequests.api.ts:60: http.post<RejectNewItemResponse>(`/new-item-requests/${id}/reject`, { reason });
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\notifications.api.ts:14: const data = await http.get<{ notifications: InboxNotification[] }>(
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\notifications.api.ts:21: await http.patch('/notifications/read-all');
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\notifications.api.ts:25: await http.patch(`/notifications/inbox/${encodeURIComponent(String(notificationId))}/read`);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\notifications.api.ts:29: await http.delete('/notifications/inbox');
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\requests.api.ts:45: http.get<RequestsPage>(`/requests${buildQuery(query)}`);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\requests.api.ts:48: const data = await http.get<RequestItem[] | RequestsPage>('/requests');
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\requests.api.ts:52: export const createRequest = (payload: CreateRequestPayload) => http.post<RequestItem>('/requests', payload);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\units.api.ts:15: export const fetchUnits = () => http.get<UnitItem[]>('/units');
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\units.api.ts:16: export const fetchUnitNames = () => http.get<string[]>('/units/names');
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\units.api.ts:17: export const createUnit = (payload: CreateUnitPayload) => http.post<UnitItem>('/units', payload);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\units.api.ts:18: export const deleteUnit = (id: number) => http.delete<void>(`/units/${id}`);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\users.api.ts:9: const data = await http.put<AuthUser>('/users/profile', payload);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\users.api.ts:14: const data = await http.put<{ message: string }>('/users/password', payload);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\api\users.api.ts:19: await http.delete('/users/account', { password });
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\hooks\useAudit.ts:68: const data = await http.get<AuditListResponse | AuditLog[]>(path);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\hooks\useDashboard.ts:43: http.get<DashboardMetrics>('/dashboard/metrics')
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\hooks\useDashboard.ts:63: http.get<DashboardMetrics>('/dashboard/metrics')
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\hooks\useNotifications.ts:112: const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\hooks\useOpname.ts:35: const data = await http.get<OpnameSession[]>('/opname');
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\hooks\useOpname.ts:50: return await http.get<OpnameSession>(`/opname/${id}`);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\hooks\useOpname.ts:54: const res = await http.post<{ id: number, message: string }>('/opname', { notes });
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\hooks\useOpname.ts:60: await http.put(`/opname/${sessionId}/items/${itemId}`, { physical_qty, notes });
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\hooks\useOpname.ts:64: await http.post<{ message: string }>(`/opname/${id}/finalize`, {});
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\hooks\useOpname.ts:69: await http.delete(`/opname/${id}`);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\pages\AtkItems.tsx:102: if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\pages\AtkItems.tsx:108: const response = await fetch(`${getBaseUrl()}/atk-items/bulk-stream`, {
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\pages\ProfileSettings.tsx:65: setShowConfirm(true);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\pages\ProfileSettings.tsx:87: // setShowConfirm(false); // Keep open on error so user can retry
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\pages\ProfileSettings.tsx:92: setShowConfirm(false);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\pages\StockOpname.tsx:65: setShowFinalizeConfirm(false);
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\pages\StockOpname.tsx:105: <Button onClick={() => setShowFinalizeConfirm(true)} disabled={actionLoading}>
+C:\Users\Michael\Documents\IF\ManagementInventory\frontend\src\pages\StockOpname.tsx:220: onCancel={() => setShowFinalizeConfirm(false)}
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\announcements.js:9: router.get('/', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\announcements.js:24: router.post('/', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\announcements.js:56: router.patch('/:id', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\announcements.js:112: router.delete('/:id', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\approval.js:11: router.get('/', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\approval.js:39: router.get('/:id/detail', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\approval.js:86: router.post('/:id/review', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\approval.js:132: router.post('/:id/finalize', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\approval.js:264: router.post('/:id/reject', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\audit.js:16: router.get('/', authenticate, authorize('superadmin', 'admin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\auth.js:19: router.post('/login', loginLimiter, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\auth.js:75: router.post('/logout', authenticate, (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\auth.js:82: router.get('/me', authenticate, (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\barangKosong.js:8: router.get('/', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\barangMasuk.js:10: router.get('/', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\barangMasuk.js:52: router.post('/', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\dashboard.js:8: router.get('/metrics', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\history.js:43: router.get('/masuk', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\history.js:68: router.get('/keluar', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\history.js:94: router.get('/user', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\items.js:14: router.get('/', authenticate, itemsController.getAllItems);
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\items.js:17: router.get('/:id', authenticate, itemsController.getItemById);
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\items.js:20: router.put('/:id', authenticate, authorize('superadmin'), itemsController.updateItem);
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\items.js:23: router.post('/', authenticate, authorize('superadmin'), itemsController.createItem);
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\items.js:26: router.post('/bulk', authenticate, authorize('superadmin'), upload.single('file'), (req, res, next) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\items.js:70: router.post('/bulk-stream', authenticate, authorize('superadmin'), upload.single('file'), (req, res, next) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\items.js:111: router.delete('/:id', authenticate, authorize('superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\newItemRequests.js:16: router.get('/', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\newItemRequests.js:54: router.post('/', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\newItemRequests.js:125: router.post('/:id/approve', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\newItemRequests.js:237: router.post('/:id/reject', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\notifications.js:22: router.get('/stream', sseAuth, authenticate, (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\notifications.js:36: router.get('/inbox', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\notifications.js:47: router.patch('/read-all', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\notifications.js:57: router.patch('/inbox/:notificationId/read', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\notifications.js:68: router.delete('/inbox', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\opname.js:10: router.get('/', authenticate, authorize('superadmin', 'admin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\opname.js:26: router.get('/:id', authenticate, authorize('superadmin', 'admin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\opname.js:46: router.post('/', authenticate, authorize('superadmin', 'admin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\opname.js:97: router.put('/:id/items/:itemId', authenticate, authorize('superadmin', 'admin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\opname.js:131: router.post('/:id/finalize', authenticate, authorize('superadmin', 'admin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\opname.js:201: router.delete('/:id', authenticate, authorize('superadmin', 'admin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\requests.js:11: router.get('/', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\requests.js:66: router.post('/', authenticate, authorize('user', 'admin', 'superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\requests.js:137: router.get('/:id', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\units.js:10: router.get('/names', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\units.js:23: router.get('/', authenticate, authorize('superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\units.js:40: router.post('/', authenticate, authorize('superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\units.js:86: router.delete('/:id', authenticate, authorize('superadmin'), async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\users.js:10: router.put('/profile', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\users.js:77: router.put('/password', authenticate, async (req, res) => {
+C:\Users\Michael\Documents\IF\ManagementInventory\backend\src\routes\users.js:118: router.delete('/account', authenticate, async (req, res) => {

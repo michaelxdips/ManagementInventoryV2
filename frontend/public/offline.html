@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - Inventory ATK</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      text-align: center;
+      max-width: 400px;
+    }
+    
+    .icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      background: #2f81f7;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: bold;
+      color: white;
+      box-shadow: 0 10px 30px rgba(47, 129, 247, 0.3);
+    }
+    
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #f1f5f9;
+    }
+    
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #94a3b8;
+      margin-bottom: 32px;
+    }
+    
+    .button {
+      display: inline-block;
+      padding: 12px 32px;
+      background: #2f81f7;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 16px;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(47, 129, 247, 0.3);
+    }
+    
+    .button:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(47, 129, 247, 0.4);
+    }
+    
+    .button:active {
+      transform: translateY(0);
+    }
+    
+    .status {
+      margin-top: 24px;
+      padding: 12px 20px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      font-size: 14px;
+      color: #fca5a5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">ATK</div>
+    <h1>Tidak Ada Koneksi Internet</h1>
+    <p>Aplikasi Inventory ATK memerlukan koneksi internet untuk mengakses data real-time. Silakan periksa koneksi Anda dan coba lagi.</p>
+    <button class="button" onclick="clearOfflineCacheAndReload()">Coba Lagi</button>
+    <div class="status">
+      <strong>Status:</strong> Offline
+    </div>
+  </div>
+  
+  <script>
+    async function clearOfflineCacheAndReload() {
+      try {
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registrations.map((registration) => registration.unregister()));
+        }
+
+        if ('caches' in window) {
+          const cacheNames = await caches.keys();
+          await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+        }
+      } catch (error) {
+        console.warn('Gagal membersihkan service worker/cache lama', error);
+      } finally {
+        window.location.replace('/');
+      }
+    }
+
+    // Auto-retry when online
+    window.addEventListener('online', () => {
+      clearOfflineCacheAndReload();
+    });
+    
+    // Update status indicator
+    function updateStatus() {
+      const status = document.querySelector('.status');
+      if (navigator.onLine) {
+        status.innerHTML = '<strong>Status:</strong> Online - Membersihkan cache lama...';
+        status.style.background = 'rgba(34, 197, 94, 0.1)';
+        status.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+        status.style.color = '#86efac';
+      }
+    }
+    
+    setInterval(updateStatus, 2000);
+  </script>
+</body>
+</html>

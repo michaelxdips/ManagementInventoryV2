@@ -1,0 +1,48 @@
+{
+    "name": "inventory-backend",
+    "version": "1.0.0",
+    "description": "Express.js backend for Inventory Management System",
+    "main": "src/index.js",
+    "type": "module",
+    "scripts": {
+        "dev": "node --watch src/index.js",
+        "start": "node src/index.js",
+        "migrate": "npx knex migrate:latest --knexfile knexfile.js",
+        "migrate:rollback": "npx knex migrate:rollback --knexfile knexfile.js",
+        "migrate:status": "npx knex migrate:status --knexfile knexfile.js",
+        "seed": "npx knex migrate:latest --knexfile knexfile.js && npx knex seed:run --knexfile knexfile.js",
+        "seed:data": "npx knex seed:run --knexfile knexfile.js",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "test:coverage": "vitest run --coverage",
+        "lint": "eslint src/**/*.js",
+        "format": "prettier --write src/**/*.js"
+    },
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.5",
+        "express": "^4.21.0",
+        "express-rate-limit": "^8.2.1",
+        "helmet": "^8.1.0",
+        "jsonwebtoken": "^9.0.2",
+        "knex": "^3.1.0",
+        "multer": "^2.1.1",
+        "mysql2": "^3.16.2",
+        "nodemailer": "^8.0.7",
+        "swagger-jsdoc": "^6.2.8",
+        "swagger-ui-express": "^5.0.1",
+        "xlsx": "^0.18.5"
+    },
+    "devDependencies": {
+        "@vitest/coverage-v8": "^4.1.5",
+        "eslint": "^9.39.2",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.5",
+        "globals": "^17.6.0",
+        "nodemon": "^3.1.11",
+        "prettier": "^3.8.1",
+        "supertest": "^7.2.2",
+        "vitest": "^4.1.5"
+    }
+}
