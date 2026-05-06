@@ -194,14 +194,39 @@ const RequestsCreate = () => {
           </label>
           <label className="form-field">
             <span className="form-label">Jumlah</span>
-            <input
-              className="input-control"
-              type="number"
-              min="1"
-              max={selectedItem?.quantity || undefined}
-              value={formValues.qty}
-              onChange={(e) => handleChange('qty', e.target.value)}
-            />
+            <div className="qty-stepper">
+              <button
+                type="button"
+                className="qty-stepper__button"
+                onClick={() => handleChange('qty', String(Math.max(1, Number(formValues.qty || 1) - 1)))}
+                disabled={!formValues.qty || Number(formValues.qty) <= 1}
+                aria-label="Kurangi jumlah"
+              >
+                −
+              </button>
+              <input
+                className="input-control qty-stepper__input"
+                type="number"
+                min="1"
+                max={selectedItem?.quantity || undefined}
+                value={formValues.qty}
+                onChange={(e) => handleChange('qty', e.target.value)}
+              />
+              <button
+                type="button"
+                className="qty-stepper__button"
+                onClick={() => {
+                  const currentQty = Number(formValues.qty || 0);
+                  const nextQty = currentQty + 1;
+                  if (selectedItem?.quantity && nextQty > selectedItem.quantity) return;
+                  handleChange('qty', String(nextQty));
+                }}
+                disabled={Boolean(selectedItem?.quantity && Number(formValues.qty || 0) >= selectedItem.quantity)}
+                aria-label="Tambah jumlah"
+              >
+                +
+              </button>
+            </div>
           </label>
           <label className="form-field">
             <span className="form-label">Satuan</span>

@@ -1,7 +1,9 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { useToast } from '../../components/ui/Toast';
+import NetworkSignalBar from '../../components/ui/NetworkSignalBar';
+import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 
 const Login = () => {
 	const [username, setUsername] = useState('');
@@ -11,9 +13,21 @@ const Login = () => {
 	const { login } = useAuth();
 	const navigate = useNavigate();
 	const { showToast } = useToast();
+	const { status } = useNetworkStatus();
+	const isConnectionUnavailable = status === 'offline' || status === 'server-down';
+
+	useEffect(() => {
+		if (isConnectionUnavailable) {
+			showToast('Tidak terhubung. Periksa jaringan atau pastikan server aktif.', 'warning');
+		}
+	}, [isConnectionUnavailable, showToast]);
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		if (isConnectionUnavailable) {
+			showToast('Tidak terhubung. Login dinonaktifkan sampai koneksi kembali.', 'warning');
+			return;
+		}
 		if (!username.trim() || !password.trim()) {
 			showToast('Username dan password wajib diisi');
 			return;
@@ -31,6 +45,7 @@ const Login = () => {
 
 	return (
 		<section className="auth-card">
+			<NetworkSignalBar variant="login" />
 			<div className="auth-icon" aria-hidden />
 			<h1 className="auth-title">Log in to your account</h1>
 			<p className="auth-subtitle">Enter your username and password below to log in</p>
@@ -80,8 +95,8 @@ const Login = () => {
 					</label>
 				</div>
 
-				<button className="primary-button" type="submit" disabled={submitting}>
-					Log in
+				<button className="primary-button" type="submit" disabled={submitting || isConnectionUnavailable}>
+					{isConnectionUnavailable ? 'Tidak terhubung' : submitting ? 'Logging in...' : 'Log in'}
 				</button>
 			</form>
 

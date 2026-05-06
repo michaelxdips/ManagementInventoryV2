@@ -5,6 +5,7 @@ import Icon from '../shared/Icon';
 import ThemeToggle from '../../ThemeToggle';
 import { useNotifications } from '../../../hooks/useNotifications';
 import NotificationBell from '../../ui/NotificationBell';
+import NetworkSignalBar from '../../ui/NetworkSignalBar';
 
 interface DesktopNavbarProps {
     sidebarCollapsed: boolean;
@@ -43,6 +44,7 @@ const DesktopNavbar = ({ sidebarCollapsed, onToggleSidebar }: DesktopNavbarProps
                 <span className="crumb-text">{activeTitle}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <NetworkSignalBar variant="compact" />
                 <NotificationBell 
                     notifications={notifications} 
                     isConnected={isConnected}

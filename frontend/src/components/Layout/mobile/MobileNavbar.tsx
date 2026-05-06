@@ -6,6 +6,7 @@ import Icon from '../shared/Icon';
 import ThemeToggle from '../../ThemeToggle';
 import { useNotifications } from '../../../hooks/useNotifications';
 import NotificationBell from '../../ui/NotificationBell';
+import NetworkSignalBar from '../../ui/NetworkSignalBar';
 
 /**
  * Mobile Navbar (Top Navigation) component.
@@ -96,6 +97,7 @@ const MobileNavbar = () => {
                                     <span className="brand-title">Inventory ATK</span>
                                 </div>
                             </div>
+                            <NetworkSignalBar variant="compact" />
                         </div>
 
                         <nav className="mobile-drawer-nav">
