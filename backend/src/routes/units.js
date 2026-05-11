@@ -56,7 +56,7 @@ router.post('/', authenticate, authorize('superadmin'), async (req, res) => {
         }
 
         // Hash password
-        const passwordHash = bcrypt.hashSync(password, 10);
+        const passwordHash = await bcrypt.hash(password, 10);
 
         // Create user with role 'user'
         const [result] = await pool.execute(`

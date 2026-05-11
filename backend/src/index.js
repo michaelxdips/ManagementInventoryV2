@@ -82,10 +82,6 @@ app.use('/api/announcements', announcementsRoutes);
 // API Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
 
 // 404 handler
 app.use((req, res) => {
@@ -109,4 +105,3 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 export default app;
-// Restart trigger 02/02/2026 14:15:18

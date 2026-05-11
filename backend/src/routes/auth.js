@@ -2,9 +2,10 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, isBlacklisted } from '../middleware/auth.js';
 import rateLimit from 'express-rate-limit';
 import { config } from '../config/env.js';
+import { addToBlacklist } from '../utils/tokenBlacklist.js';
 
 const router = Router();
 
@@ -42,7 +43,7 @@ router.post('/login', loginLimiter, async (req, res) => {
         }
 
         // Verify password
-        const isValidPassword = bcrypt.compareSync(password, user.password_hash);
+        const isValidPassword = await bcrypt.compare(password, user.password_hash);
         if (!isValidPassword) {
             return res.status(401).json({ message: 'Username atau password salah' });
         }
@@ -73,8 +74,12 @@ router.post('/login', loginLimiter, async (req, res) => {
 
 // POST /api/auth/logout
 router.post('/logout', authenticate, (req, res) => {
-    // In a simple JWT setup, logout is handled client-side by removing the token
-    // For more security, you could implement token blacklisting here
+    // FIX-P1-4: Implement server-side token blacklisting
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.split(' ')[1];
+        addToBlacklist(token);
+    }
     res.status(204).send();
 });
 

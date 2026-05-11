@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
 import { config } from '../config/env.js';
+import { isBlacklisted } from '../utils/tokenBlacklist.js';
 
 
 export const authenticate = async (req, res, next) => {
@@ -13,6 +14,11 @@ export const authenticate = async (req, res, next) => {
     const token = authHeader.split(' ')[1];
 
     try {
+        // FIX-P1-4: Check if token is blacklisted
+        if (isBlacklisted(token)) {
+            return res.status(401).json({ message: 'Token sudah tidak berlaku (Logged out)' });
+        }
+
         const decoded = jwt.verify(token, config.jwt.secret);
 
         const [rows] = await pool.execute(

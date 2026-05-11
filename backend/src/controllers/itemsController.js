@@ -62,26 +62,32 @@ export const getItemById = async (req, res) => {
 };
 
 export const updateItem = async (req, res) => {
+    // FIX-P1-2: Wrap in transaction + FOR UPDATE to prevent race conditions.
+    const connection = await pool.getConnection();
     try {
         const { id } = req.params;
         const { nama_barang, kode_barang, qty, satuan, lokasi_simpan, min_stock } = req.body;
 
-        // Check if item exists
-        const [rows] = await pool.query('SELECT * FROM atk_items WHERE id = ?', [id]);
+        await connection.beginTransaction();
+
+        // Check if item exists — lock row to prevent concurrent modifications
+        const [rows] = await connection.query('SELECT * FROM atk_items WHERE id = ? FOR UPDATE', [id]);
         const existing = rows[0];
 
         if (!existing) {
+            await connection.rollback();
             return res.status(404).json({ message: 'Item tidak ditemukan' });
         }
 
-        // FIX #1: Prevent negative stock
+        // Prevent negative stock
         if (typeof qty === 'number' && qty < 0) {
+            await connection.rollback();
             return res.status(400).json({ message: 'Quantity cannot be negative' });
         }
 
-        // FIX #2: Lock edit qty OR NAME saat ada pending request
+        // Lock edit qty OR NAME saat ada pending request
         if ((typeof qty === 'number' && qty !== existing.qty) || (nama_barang && nama_barang !== existing.nama_barang)) {
-            const [countRows] = await pool.query(`
+            const [countRows] = await connection.query(`
                 SELECT COUNT(*) as count 
                 FROM requests 
                 WHERE LOWER(item) = LOWER(?) AND (status = 'PENDING' OR status = 'APPROVAL_REVIEW')
@@ -90,6 +96,7 @@ export const updateItem = async (req, res) => {
             const pendingCount = countRows[0];
 
             if (pendingCount && pendingCount.count > 0) {
+                await connection.rollback();
                 return res.status(409).json({
                     message: 'Item cannot be edited (qty/name) while there are pending or in-review requests. Reject/Approve them first.'
                 });
@@ -97,7 +104,7 @@ export const updateItem = async (req, res) => {
         }
 
         // Update item
-        await pool.execute(`
+        await connection.execute(`
             UPDATE atk_items 
             SET nama_barang = ?, kode_barang = ?, qty = ?, satuan = ?, lokasi_simpan = ?, min_stock = ?
             WHERE id = ?
@@ -131,7 +138,7 @@ export const updateItem = async (req, res) => {
         }
 
         // Get updated item
-        const [updatedRows] = await pool.query('SELECT * FROM atk_items WHERE id = ?', [id]);
+        const [updatedRows] = await connection.query('SELECT * FROM atk_items WHERE id = ?', [id]);
         
         await writeAuditLog({
             tableName: 'atk_items',
@@ -140,13 +147,17 @@ export const updateItem = async (req, res) => {
             oldValues: existing,
             newValues: updatedRows[0],
             userId: req.user.id,
-            connection: pool,
+            connection,
         });
 
+        await connection.commit();
         res.json(updatedRows[0]);
     } catch (error) {
+        await connection.rollback();
         console.error('Update item error:', error);
         res.status(500).json({ message: 'Internal server error' });
+    } finally {
+        connection.release();
     }
 };
 

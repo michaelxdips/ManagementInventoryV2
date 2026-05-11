@@ -74,32 +74,30 @@ router.get('/metrics', authenticate, async (req, res) => {
                     WHERE a.qty > 0
                 `);
 
-                // Aggregate last 30 days and previous 30 days. Match by FK when
-                // available, and fall back to nama_barang for older rows.
-                const itemsWithUsage = await Promise.all(
-                    itemsWithHistory.map(async (item) => {
-                        const [[{ monthly_out = 0 } = {}]] = await pool.query(`
-                            SELECT IFNULL(SUM(qty), 0) as monthly_out
-                            FROM barang_keluar
-                            WHERE (atk_item_id = ? OR nama_barang = ?)
-                              AND date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-                        `, [item.id, item.nama_barang]);
+                // FIX-P1-1: Single aggregated query replaces N+1 per-item queries.
+                // Previously each item fired 2 queries (200 queries for 100 items).
+                const [usageRows] = await pool.query(`
+                    SELECT atk_item_id,
+                        IFNULL(SUM(CASE WHEN date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN qty ELSE 0 END), 0) as monthly_out,
+                        IFNULL(SUM(CASE WHEN date >= DATE_SUB(CURDATE(), INTERVAL 60 DAY) AND date < DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN qty ELSE 0 END), 0) as previous_monthly_out
+                    FROM barang_keluar
+                    WHERE date >= DATE_SUB(CURDATE(), INTERVAL 60 DAY)
+                    GROUP BY atk_item_id
+                `);
 
-                        const [[{ previous_monthly_out = 0 } = {}]] = await pool.query(`
-                            SELECT IFNULL(SUM(qty), 0) as previous_monthly_out
-                            FROM barang_keluar
-                            WHERE (atk_item_id = ? OR nama_barang = ?)
-                              AND date >= DATE_SUB(CURDATE(), INTERVAL 60 DAY)
-                              AND date < DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-                        `, [item.id, item.nama_barang]);
+                const usageMap = new Map();
+                for (const row of usageRows) {
+                    usageMap.set(row.atk_item_id, row);
+                }
 
-                        return {
-                            ...item,
-                            monthly_out: Number(monthly_out) || 0,
-                            previous_monthly_out: Number(previous_monthly_out) || 0
-                        };
-                    })
-                );
+                const itemsWithUsage = itemsWithHistory.map((item) => {
+                    const usage = usageMap.get(item.id) || {};
+                    return {
+                        ...item,
+                        monthly_out: Number(usage.monthly_out) || 0,
+                        previous_monthly_out: Number(usage.previous_monthly_out) || 0,
+                    };
+                });
 
                 // Run statistical prediction
                 const predictions = batchPredict(itemsWithUsage);

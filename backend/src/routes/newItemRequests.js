@@ -193,7 +193,7 @@ router.post('/:id/approve', authenticate, authorize('admin', 'superadmin'), asyn
         ]);
 
         const today = getWIBDate();
-        await connection.execute(
+        const [bmResult] = await connection.execute(
             `INSERT INTO barang_masuk (date, nama_barang, kode_barang, qty, satuan, pic, atk_item_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [today, request.item_name, finalCode, qty, finalSatuan, req.user.name || 'Approval Barang Baru', itemResult.insertId]
         );
@@ -215,10 +215,11 @@ router.post('/:id/approve', authenticate, authorize('admin', 'superadmin'), asyn
             recordId: id,
             action: 'APPROVE',
             oldValues: request,
-            newValues: updatedRequestRows[0],
+            newValues: { ...request, status: 'APPROVED', approved_by: req.user.id, approved_quantity: qty },
             userId: req.user.id,
             connection,
         });
+
         await writeAuditLog({
             tableName: 'atk_items',
             recordId: itemResult.insertId,
@@ -230,10 +231,11 @@ router.post('/:id/approve', authenticate, authorize('admin', 'superadmin'), asyn
         });
         await writeAuditLog({
             tableName: 'barang_masuk',
-            recordId: itemResult.insertId,
+            recordId: bmResult.insertId,
             action: 'CREATE_FROM_NEW_ITEM_REQUEST',
             oldValues: null,
             newValues: {
+                id: bmResult.insertId,
                 date: today,
                 nama_barang: request.item_name,
                 kode_barang: finalCode,

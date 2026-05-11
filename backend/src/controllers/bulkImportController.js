@@ -112,8 +112,8 @@ export const bulkImport = async (req, res) => {
         res.status(201).json({ message, insertedCount, updatedCount, lowStockCount: lowStockItems.length });
     } catch (error) {
         await connection.rollback();
-        console.error('Bulk import error:', error);
-        res.status(500).json({ message: 'Gagal import data: ' + error.message });
+        console.error('[bulkImport] Internal error:', error);
+        res.status(500).json({ message: 'Gagal import data. Silakan coba lagi.' });
     } finally {
         connection.release();
     }
@@ -290,8 +290,8 @@ export const bulkImportStream = async (req, res) => {
         res.end();
     } catch (error) {
         await connection.rollback();
-        console.error('Bulk import stream error:', error);
-        sendEvent('error', { message: 'Gagal import data: ' + error.message });
+        console.error('[bulkImportStream] Internal error:', error);
+        sendEvent('error', { message: 'Gagal import data. Silakan coba lagi.' });
         res.end();
     } finally {
         connection.release();

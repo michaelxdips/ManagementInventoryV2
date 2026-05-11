@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { readFileSync } from 'node:fs';
 
 dotenv.config();
 
@@ -54,9 +55,22 @@ const parseBooleanEnv = (name, fallback = false) => {
 const buildDbSslConfig = () => {
   const enabled = parseBooleanEnv('DB_SSL', isProduction);
   if (!enabled) return undefined;
-  return {
-    rejectUnauthorized: parseBooleanEnv('DB_SSL_REJECT_UNAUTHORIZED', isProduction),
+
+  const sslConfig = {
+    // FIX-P0-3: Default to true — rejecting unauthorized certs prevents MITM.
+    rejectUnauthorized: parseBooleanEnv('DB_SSL_REJECT_UNAUTHORIZED', true),
   };
+
+  // Support Aiven (or any provider) CA certificate via file path or inline PEM.
+  const caPath = process.env.DB_SSL_CA_PATH;
+  const caInline = process.env.DB_SSL_CA;
+  if (caPath) {
+    sslConfig.ca = readFileSync(caPath, 'utf-8');
+  } else if (caInline) {
+    sslConfig.ca = caInline;
+  }
+
+  return sslConfig;
 };
 
 export const config = {

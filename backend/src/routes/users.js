@@ -89,13 +89,13 @@ router.put('/password', authenticate, async (req, res) => {
         // Verify current password
         const [userRows] = await pool.query('SELECT password_hash FROM users WHERE id = ?', [req.user.id]);
         const user = userRows[0];
-        const isValid = bcrypt.compareSync(currentPassword, user.password_hash);
+        const isValid = await bcrypt.compare(currentPassword, user.password_hash);
         if (!isValid) {
             return res.status(400).json({ message: 'Password lama salah' });
         }
 
         // Update password
-        const newHash = bcrypt.hashSync(newPassword, 10);
+        const newHash = await bcrypt.hash(newPassword, 10);
         await pool.execute('UPDATE users SET password_hash = ? WHERE id = ?', [newHash, req.user.id]);
         await writeAuditLog({
             tableName: 'users',
@@ -129,7 +129,7 @@ router.delete('/account', authenticate, async (req, res) => {
         // Verify password first
         const [userRows] = await connection.query('SELECT password_hash FROM users WHERE id = ?', [req.user.id]);
         const user = userRows[0];
-        const isValid = bcrypt.compareSync(password, user.password_hash);
+        const isValid = await bcrypt.compare(password, user.password_hash);
 
         if (!isValid) {
             await connection.rollback();

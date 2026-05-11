@@ -1,11 +1,19 @@
 import notificationService from './notificationService.js';
 import { getWIBDateTime, normalizeDatesForWIB } from './date.js';
 
+const SENSITIVE = ['password_hash', 'password', 'token', 'secret'];
+const sanitize = (obj) => {
+    if (!obj || typeof obj !== 'object') return obj;
+    return Object.fromEntries(
+        Object.entries(obj).filter(([k]) => !SENSITIVE.includes(k))
+    );
+};
+
 const safeJson = (value) => {
     if (value === undefined) return null;
     if (value === null) return null;
     try {
-        return JSON.stringify(normalizeDatesForWIB(value));
+        return JSON.stringify(sanitize(normalizeDatesForWIB(value)));
     } catch {
         return JSON.stringify({ unserializable: true });
     }
