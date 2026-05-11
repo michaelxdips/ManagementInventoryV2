@@ -3,7 +3,7 @@ import Button from '../components/ui/Button';
 import Pagination from '../components/ui/Pagination';
 import { Table, THead, TBody, TR, TH, TD } from '../components/ui/Table';
 import { MobileCard, MobileCardList } from '../components/ui/MobileCard';
-import { fetchHistoryMasuk, HistoryEntry, HistoryFilter } from '../api/history.api';
+import { fetchHistoryMasukPage, HistoryEntry, HistoryFilter } from '../api/history.api';
 import { Download, FileText } from 'lucide-react';
 import { exportToExcel } from '../utils/exportExcel';
 import { exportToPdf } from '../utils/exportPdf';
