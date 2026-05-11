@@ -4,10 +4,10 @@ export const getApiBaseUrl = () => {
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
   const protocol = typeof window !== 'undefined' ? window.location.protocol : 'http:';
-  const port = typeof window !== 'undefined' ? window.location.port : '';
 
   if (hostname.includes('vercel.app')) return `${protocol}//${hostname}/api`;
-  if (port === '80' || port === '5173') return '/api';
+  
+  // Always use port 3000 for backend API in development
   return `${protocol}//${hostname}:3000/api`;
 };
 const API_BASE = getApiBaseUrl();
