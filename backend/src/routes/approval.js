@@ -182,10 +182,6 @@ router.post('/:id/finalize', authenticate, authorize('admin', 'superadmin'), asy
         }
 
         const newQty = item.qty - qty;
-        if (newQty < 0) {
-            await connection.rollback();
-            return res.status(400).json({ message: 'Stok tidak boleh negatif' });
-        }
 
         // Step 6: Update request status to APPROVED
         await connection.execute('UPDATE requests SET status = ? WHERE id = ?', ['APPROVED', id]);

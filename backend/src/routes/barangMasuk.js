@@ -25,6 +25,10 @@ router.get('/', authenticate, authorize('admin', 'superadmin'), async (req, res)
         `;
         const params = [];
 
+        // FIX-P2-3: Server-side pagination
+        const wantsPagination = req.query.page !== undefined || req.query.perPage !== undefined;
+        
+        let whereSql = '';
         if (from || to) {
             const conditions = [];
             if (from) {
@@ -35,13 +39,39 @@ router.get('/', authenticate, authorize('admin', 'superadmin'), async (req, res)
                 conditions.push('date <= ?');
                 params.push(to);
             }
-            query += ' WHERE ' + conditions.join(' AND ');
+            whereSql = ' WHERE ' + conditions.join(' AND ');
         }
 
-        query += ' ORDER BY date DESC, id DESC';
+        query += whereSql + ' ORDER BY date DESC, id DESC';
+
+        if (!wantsPagination) {
+            const [entries] = await pool.query(query, params);
+            return res.json(entries);
+        }
+
+        // Pagination
+        const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
+        const perPage = Math.min(Math.max(1, Number.parseInt(req.query.perPage, 10) || 15), 500);
+        const offset = (page - 1) * perPage;
+
+        const countQuery = `SELECT COUNT(*) as total FROM barang_masuk ${whereSql}`;
+        const [countRows] = await pool.query(countQuery, params);
+        const total = Number(countRows[0]?.total || 0);
+
+        query += ' LIMIT ? OFFSET ?';
+        params.push(perPage, offset);
 
         const [entries] = await pool.query(query, params);
-        res.json(entries);
+        
+        res.json({
+            items: entries,
+            pagination: {
+                page,
+                perPage,
+                total,
+                totalPages: Math.max(1, Math.ceil(total / perPage)),
+            },
+        });
     } catch (error) {
         console.error('Get barang masuk error:', error);
         res.status(500).json({ message: 'Internal server error' });

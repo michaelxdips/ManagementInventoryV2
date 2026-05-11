@@ -23,15 +23,17 @@ const HistoryMasuk = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const perPage = 10;
+  const perPage = 15;
 
   const loadData = (filter?: HistoryFilter) => {
     setLoading(true);
     setFetchError(null);
-    fetchHistoryMasuk(filter)
-      .then((rows) => {
-        setData(rows);
+    fetchHistoryMasukPage({ ...filter, page, perPage })
+      .then((res) => {
+        setData(res.entries);
+        setTotalPages(res.pagination.totalPages);
         setFetchError(null);
       })
       .catch(() => {
@@ -43,19 +45,8 @@ const HistoryMasuk = () => {
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
-
-  useEffect(() => {
-    setPage(1);
-  }, [from, to]);
-
-
-  const totalPages = Math.max(1, Math.ceil(data.length / perPage));
-  const currentPage = Math.min(page, totalPages);
-  const startIndex = (currentPage - 1) * perPage;
-  const endIndex = Math.min(startIndex + perPage, data.length);
-  const pageRows = data.slice(startIndex, endIndex);
+    loadData({ from: from || undefined, to: to || undefined });
+  }, [page, from, to]);
 
   const handleApply = () => {
     const nextFrom = parseDate(draftFrom);
@@ -67,7 +58,7 @@ const HistoryMasuk = () => {
     setError(null);
     setFrom(draftFrom);
     setTo(draftTo);
-    loadData({ from: draftFrom || undefined, to: draftTo || undefined });
+    setPage(1); // Reset to page 1 on filter change
   };
 
   const handleReset = () => {
@@ -77,7 +68,6 @@ const HistoryMasuk = () => {
     setTo('');
     setPage(1);
     setError(null);
-    loadData();
   };
 
   const handleExport = () => {
@@ -195,16 +185,16 @@ const HistoryMasuk = () => {
           <TBody>
             {loading ? (
               <SkeletonTableRows rows={6} columns={7} />
-            ) : pageRows.length === 0 ? (
+            ) : data.length === 0 ? (
               <EmptyTableRow
                 colSpan={7}
                 title="Tidak ada data pada rentang tanggal ini"
                 description="Coba ubah filter tanggal atau reset filter untuk melihat semua riwayat barang masuk."
               />
             ) : (
-              pageRows.map((row, idx) => (
+              data.map((row, idx) => (
                 <TR key={row.id}>
-                  <TD>{startIndex + idx + 1}</TD>
+                  <TD>{((page - 1) * perPage) + idx + 1}</TD>
                   <TD>{formatDateV2(row.date)}</TD>
                   <TD>{row.name}</TD>
                   <TD>{row.code}</TD>
@@ -219,18 +209,18 @@ const HistoryMasuk = () => {
 
         {/* Mobile Card View */}
         <MobileCardList
-          isEmpty={pageRows.length === 0}
+          isEmpty={data.length === 0}
           isLoading={loading}
           emptyMessage="Tidak ada data pada rentang tanggal ini"
         >
-          {pageRows.map((row, idx) => (
+          {data.map((row, idx) => (
             <MobileCard
               key={row.id}
               header={
                 <span className="mobile-card-header-title">{row.name}</span>
               }
               fields={[
-                { label: 'No', value: startIndex + idx + 1 },
+                { label: 'No', value: ((page - 1) * perPage) + idx + 1 },
                 { label: 'Tanggal', value: formatDateV2(row.date) },
                 { label: 'Kode', value: row.code },
                 { label: 'Jumlah', value: `${row.qty} ${row.unit}` },
@@ -242,9 +232,9 @@ const HistoryMasuk = () => {
 
         <div className="items-footer">
           <span className="items-meta">
-            Menampilkan {startIndex + 1} - {endIndex} dari {data.length} barang
+            Menampilkan halaman {page} dari {totalPages}
           </span>
-          <Pagination current={currentPage} total={totalPages} onChange={setPage} />
+          <Pagination current={page} total={totalPages} onChange={setPage} />
         </div>
       </div>
     </div>
