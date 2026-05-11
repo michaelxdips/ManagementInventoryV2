@@ -104,4 +104,8 @@ export const config = {
     windowMs: parseIntegerEnv('AUTH_RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000, { min: 1000 }),
     max: parseIntegerEnv('AUTH_RATE_LIMIT_MAX', 10, { min: 1 }),
   },
+  pagination: {
+    defaultPerPage: parseIntegerEnv('PAGINATION_DEFAULT_PER_PAGE', 15, { min: 1 }),
+    maxPerPage: parseIntegerEnv('PAGINATION_MAX_PER_PAGE', 500, { min: 10 }),
+  },
 };

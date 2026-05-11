@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 import { specs } from './config/swagger.js';
 import { config } from './config/env.js';
+import morgan from 'morgan';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -40,6 +41,13 @@ app.use(
 
 // Security Headers
 app.use(helmet());
+
+// FIX-P3-1: HTTP Request Logging
+if (process.env.NODE_ENV === 'production') {
+    app.use(morgan('combined'));
+} else if (process.env.NODE_ENV !== 'test') {
+    app.use(morgan('dev'));
+}
 
 const limiter = rateLimit({
     windowMs: config.rateLimit.windowMs,
@@ -96,12 +104,36 @@ app.use((err, req, res, next) => {
 
 // Start server - bind to 0.0.0.0 for local network access
 // Only start server if not in test mode (supertest will handle it)
+let server;
 if (process.env.NODE_ENV !== 'test') {
-    app.listen(PORT, '0.0.0.0', () => {
+    server = app.listen(PORT, '0.0.0.0', () => {
         console.log(`🚀 Server running on http://localhost:${PORT}`);
         console.log(`📦 API Base: http://localhost:${PORT}/api`);
         console.log(`🌐 Network access: http://<your-ip>:${PORT}`);
     });
+
+    // FIX-P3-2: Graceful Shutdown
+    const shutdown = async (signal) => {
+        console.log(`\n🛑 Received ${signal}. Shutting down gracefully...`);
+        try {
+            if (server) {
+                await new Promise((resolve) => server.close(resolve));
+                console.log('HTTP server closed.');
+            }
+            
+            const pool = (await import('./config/db.js')).default;
+            await pool.end();
+            console.log('Database connections closed.');
+            
+            process.exit(0);
+        } catch (err) {
+            console.error('Error during shutdown:', err);
+            process.exit(1);
+        }
+    };
+
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
+    process.on('SIGINT', () => shutdown('SIGINT'));
 }
 
 export default app;

@@ -1,7 +1,6 @@
 const DEFAULT_TIME_ZONE = 'Asia/Jakarta';
 
 export const APP_TIME_ZONE = process.env.APP_TIME_ZONE || DEFAULT_TIME_ZONE;
-export const DB_TIME_ZONE = process.env.DB_TIME_ZONE || '+07:00';
 
 const MYSQL_DATE_TIME_KEYS = new Set([
     'created_at',

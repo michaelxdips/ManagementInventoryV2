@@ -50,4 +50,3 @@ export const formatWIBDateTime = (date: DateInput): string => {
  * Format date for input field (YYYY-MM-DD) in WIB.
  * Required for <input type="date" /> value.
  */
-export const formatInputDate = getWIBInputDate;

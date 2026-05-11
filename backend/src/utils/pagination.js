@@ -1,18 +1,24 @@
-export const parsePagination = (query, defaults = {}) => {
-    const defaultPage = defaults.page || 1;
-    const defaultPerPage = defaults.perPage || 15;
-    const maxPerPage = defaults.maxPerPage || 200;
+import { config } from '../config/env.js';
 
-    const rawPage = Number.parseInt(query.page, 10);
-    const rawPerPage = Number.parseInt(query.perPage, 10);
+/**
+ * Safely parse page and perPage from query parameters.
+ * @param {Object} query - Express req.query object
+ * @param {Object} options - Default fallback values
+ * @returns {Object} { page, perPage, offset }
+ */
+export const parsePagination = (query, options = {}) => {
+  const defaultPage = options.page || 1;
+  const defaultPerPage = options.perPage || config.pagination.defaultPerPage || 15;
+  const maxPerPage = options.maxPerPage || config.pagination.maxPerPage || 500;
 
-    const page = Number.isFinite(rawPage) && rawPage > 0 ? rawPage : defaultPage;
-    const perPage = Number.isFinite(rawPerPage) && rawPerPage > 0
-        ? Math.min(rawPerPage, maxPerPage)
-        : defaultPerPage;
-    const offset = (page - 1) * perPage;
+  const page = Math.max(1, Number.parseInt(query.page, 10) || defaultPage);
+  const perPage = Math.min(
+    Math.max(1, Number.parseInt(query.perPage, 10) || defaultPerPage),
+    maxPerPage
+  );
+  const offset = (page - 1) * perPage;
 
-    return { page, perPage, offset };
+  return { page, perPage, offset };
 };
 
 export const buildPagination = ({ page, perPage, total }) => ({
