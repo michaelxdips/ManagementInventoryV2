@@ -2,10 +2,10 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
-import { authenticate, isBlacklisted } from '../middleware/auth.js';
+import { authenticate } from '../middleware/auth.js';
 import rateLimit from 'express-rate-limit';
 import { config } from '../config/env.js';
-import { addToBlacklist } from '../utils/tokenBlacklist.js';
+import { addToBlacklist, isBlacklisted } from '../utils/tokenBlacklist.js';
 
 const router = Router();
 
