@@ -7,7 +7,7 @@ services:
     container_name: inventory-backend
     restart: always
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     volumes:
       - ./data:/app/data  # Consistent path with backend code
     env_file:

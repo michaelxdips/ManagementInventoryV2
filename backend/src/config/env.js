@@ -1,9 +1,7 @@
 import dotenv from 'dotenv';
 import { readFileSync } from 'node:fs';
 
-// Load .env.test if NODE_ENV is test, otherwise load .env
-const envFile = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
-dotenv.config({ path: envFile });
+dotenv.config();
 
 const isProduction = process.env.NODE_ENV === 'production';
 const DEFAULT_DEV_JWT_SECRET = 'dev-only-inventory-secret-change-me';

@@ -4,10 +4,12 @@ import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import { Table, THead, TBody, TR, TH, TD } from '../components/ui/Table';
 import { MobileCard, MobileCardList } from '../components/ui/MobileCard';
-import { reviewRequest, fetchApproval, rejectRequest, ApprovalItem } from '../api/approval.api';
+import { reviewRequest, fetchApproval, rejectRequest, batchApproveRequests, batchRejectRequests, ApprovalItem } from '../api/approval.api';
 import { formatDateV2 } from '../utils/dateUtils';
+import { useToast } from '../components/ui/Toast';
 import { SkeletonTableRows } from '../components/ui/Skeleton';
 import { EmptyTableRow } from '../components/ui/EmptyState';
+import { useTranslation } from '../hooks/useTranslation';
 
 const CheckIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -38,14 +40,17 @@ const formatStatus = (status: ApprovalItem['status']) => {
 const Approval = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { t } = useTranslation();
   const [data, setData] = useState<ApprovalItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { showToast } = useToast();
   const [processingId, setProcessingId] = useState<number | null>(null);
   const [search, setSearch] = useState('');
   const [rejectTarget, setRejectTarget] = useState<ApprovalItem | null>(null);
   const [rejectReason, setRejectReason] = useState('');
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [isBatchReject, setIsBatchReject] = useState(false);
+  const [batchProcessing, setBatchProcessing] = useState(false);
 
   const loadData = useCallback(() => {
     setLoading(true);
@@ -64,12 +69,6 @@ const Approval = () => {
   useEffect(() => {
     loadData();
   }, [loadData]);
-
-  useEffect(() => {
-    if (!statusMessage) return;
-    const timer = setTimeout(() => setStatusMessage(null), 4000);
-    return () => clearTimeout(timer);
-  }, [statusMessage]);
 
   // OPTIMIZATION: Auto-Refresh (Real-time polling)
   // Poll every 10 seconds for new requests
@@ -111,11 +110,29 @@ const Approval = () => {
   };
 
   const confirmReject = async () => {
+    if (isBatchReject) {
+      if (selectedIds.size === 0) return;
+      setBatchProcessing(true);
+      try {
+        const res = await batchRejectRequests(Array.from(selectedIds), rejectReason.trim() || undefined);
+        showToast(res.message, 'success');
+        setRejectTarget(null);
+        setIsBatchReject(false);
+        setSelectedIds(new Set());
+        loadData();
+      } catch (err: any) {
+        setError(err.message || 'Gagal batch reject');
+      } finally {
+        setBatchProcessing(false);
+      }
+      return;
+    }
+
     if (!rejectTarget) return;
     setProcessingId(rejectTarget.id);
     try {
       await rejectRequest(rejectTarget.id, rejectReason.trim() || undefined);
-      setStatusMessage('Permintaan ditolak');
+      showToast('Permintaan ditolak', 'success');
       setRejectTarget(null);
       loadData();
     } catch (err: any) {
@@ -136,6 +153,43 @@ const Approval = () => {
     return row.name.toLowerCase().includes(s) || row.receiver.toLowerCase().includes(s) || row.dept.toLowerCase().includes(s);
   });
 
+  const handleToggleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedIds(new Set(filtered.map(r => r.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  const handleToggleSelect = (id: number) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setSelectedIds(next);
+  };
+
+  const handleBatchApprove = async () => {
+    if (selectedIds.size === 0) return;
+    setBatchProcessing(true);
+    try {
+      const res = await batchApproveRequests(Array.from(selectedIds));
+      showToast(res.message, 'success');
+      setSelectedIds(new Set());
+      loadData();
+    } catch (err: any) {
+      setError(err.message || 'Gagal batch approve');
+    } finally {
+      setBatchProcessing(false);
+    }
+  };
+
+  const handleBatchRejectInit = () => {
+    if (selectedIds.size === 0) return;
+    setRejectReason('');
+    setIsBatchReject(true);
+    setRejectTarget({ id: 0, name: `${selectedIds.size} permintaan terpilih` } as any); // Dummy target for modal
+  };
+
   const hasDashboardFilter = searchParams.has('status') || searchParams.has('requestId');
 
   const clearDashboardFilter = () => {
@@ -145,67 +199,82 @@ const Approval = () => {
   return (
     <div className="history-page">
       <div className="history-card">
-        <h2 className="history-title">Permintaan Barang Keluar</h2>
+        <h2 className="history-title">{t('approval.title')}</h2>
         <p style={{ color: 'var(--text-muted)', marginBottom: '16px' }}>
-          Setujui permintaan untuk mengurangi stok dan mencatat barang keluar.
+          {t('approval.subtitle')}
         </p>
 
         {/* Search Bar */}
         <div style={{ marginBottom: '16px' }}>
           <input
             className="input-control"
-            placeholder="Cari nama barang, penerima, atau unit..."
+            placeholder={t('approval.searchPlaceholder')}
             value={search}
             onChange={e => setSearch(e.target.value)}
             style={{ maxWidth: '400px' }}
           />
         </div>
 
+        {selectedIds.size > 0 && (
+          <div style={{ marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <span style={{ fontSize: '14px', fontWeight: 500, marginRight: '8px' }}>{selectedIds.size} {t('approval.selected')}</span>
+            <Button type="button" variant="primary" onClick={handleBatchApprove} disabled={batchProcessing}>
+              {batchProcessing ? t('inventory.modals.processRequest') : t('approval.approveSelected')}
+            </Button>
+            <Button type="button" variant="danger" onClick={handleBatchRejectInit} disabled={batchProcessing}>
+              {t('approval.rejectSelected')}
+            </Button>
+          </div>
+        )}
+
         {hasDashboardFilter && (
-          <div style={{ padding: '10px 14px', background: 'rgba(219, 171, 9, 0.09)', border: '1px solid rgba(219, 171, 9, 0.24)', borderRadius: '999px', color: '#9a7600', marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '10px', fontSize: '13px', fontWeight: 700 }}>
+          <div style={{ padding: '10px 14px', background: 'var(--warning-glow)', border: '1px solid var(--warning)', borderRadius: '999px', color: 'var(--warning)', marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '10px', fontSize: '13px', fontWeight: 700 }}>
             <span>{searchParams.has('requestId') ? `Filter dashboard: request #${searchParams.get('requestId')}` : 'Filter dashboard: pending/review'}</span>
             <Button type="button" variant="ghost" size="sm" onClick={clearDashboardFilter}>Reset</Button>
           </div>
         )}
 
-        {statusMessage && (
-          <div style={{
-            padding: '12px 16px',
-            background: 'var(--success-bg, #d4edda)',
-            color: 'var(--success-text, #155724)',
-            borderRadius: '6px',
-            marginBottom: '16px'
-          }}>
-            {statusMessage}
-          </div>
-        )}
-        {error && <div className="alert-danger">{error}</div>}
+
         <Table>
           <THead>
             <TR>
-              <TH style={{ width: '52px' }}>No</TH>
-              <TH>Tanggal</TH>
-              <TH>Nama Barang</TH>
-              <TH>Kode Barang</TH>
-              <TH>Jumlah</TH>
-              <TH>Satuan</TH>
-              <TH>Penerima</TH>
-              <TH>Unit</TH>
-              <TH style={{ width: '160px' }}>Action</TH>
+              <TH style={{ width: '40px' }}>
+                <input
+                  type="checkbox"
+                  checked={filtered.length > 0 && selectedIds.size === filtered.length}
+                  onChange={handleToggleSelectAll}
+                />
+              </TH>
+              <TH style={{ width: '52px' }}>{t('inventory.columns.no')}</TH>
+              <TH>{t('inventory.columns.date')}</TH>
+              <TH>{t('inventory.columns.itemName')}</TH>
+              <TH>{t('inventory.columns.itemCode')}</TH>
+              <TH>{t('inventory.columns.qty')}</TH>
+              <TH>{t('inventory.columns.unit')}</TH>
+              <TH>{t('inventory.columns.receiver')}</TH>
+              <TH>{t('inventory.columns.dept')}</TH>
+              <TH style={{ width: '160px' }}>{t('inventory.columns.action')}</TH>
             </TR>
           </THead>
           <TBody>
             {loading ? (
-              <SkeletonTableRows rows={6} columns={9} />
+              <SkeletonTableRows rows={6} columns={10} />
             ) : filtered.length === 0 ? (
               <EmptyTableRow
-                colSpan={9}
-                title={search ? 'Tidak ada hasil yang cocok' : 'Tidak ada permintaan yang menunggu persetujuan'}
-                description={search ? 'Coba gunakan kata kunci lain untuk nama barang, penerima, atau unit.' : 'Permintaan baru akan muncul otomatis saat user mengajukan barang keluar.'}
+                colSpan={10}
+                title={search ? t('inventory.noData') : t('approval.noData')}
+                description={search ? t('inventory.noDataDescSearch') : t('approval.noDataDesc')}
               />
             ) : (
               filtered.map((row, idx) => (
                 <TR key={row.id}>
+                  <TD>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(row.id)}
+                      onChange={() => handleToggleSelect(row.id)}
+                    />
+                  </TD>
                   <TD>{idx + 1}</TD>
                   <TD>{formatDateV2(row.date)}</TD>
                   <TD>{row.name}</TD>
@@ -234,7 +303,7 @@ const Approval = () => {
                           onClick={() => handleApprove(row)}
                           disabled={processingId === row.id}
                         >
-                          <CheckIcon /> {processingId === row.id ? '...' : 'Setujui'}
+                          <CheckIcon /> {processingId === row.id ? '...' : t('inventory.actions.approve')}
                         </Button>
                       )}
 
@@ -245,7 +314,7 @@ const Approval = () => {
                         onClick={() => handleReject(row)}
                         disabled={processingId === row.id}
                       >
-                        <XIcon /> Tolak
+                        <XIcon /> {t('inventory.actions.reject')}
                       </Button>
                     </div>
                   </TD>
@@ -259,7 +328,7 @@ const Approval = () => {
         <MobileCardList
           isEmpty={filtered.length === 0}
           isLoading={loading}
-          emptyMessage={search ? 'Tidak ada hasil yang cocok' : 'Tidak ada permintaan yang menunggu persetujuan'}
+          emptyMessage={search ? t('inventory.noData') : t('approval.noData')}
         >
           {filtered.map((row, idx) => (
             <MobileCard
@@ -271,12 +340,12 @@ const Approval = () => {
                 </>
               }
               fields={[
-                { label: 'No', value: idx + 1 },
-                { label: 'Tanggal', value: formatDateV2(row.date) },
-                { label: 'Kode', value: row.code || '-' },
-                { label: 'Jumlah', value: `${row.qty} ${row.unit}` },
-                { label: 'Penerima', value: row.receiver },
-                { label: 'Unit', value: row.dept },
+                { label: t('inventory.columns.no'), value: idx + 1 },
+                { label: t('inventory.columns.date'), value: formatDateV2(row.date) },
+                { label: t('inventory.columns.itemCode'), value: row.code || '-' },
+                { label: t('inventory.columns.qty'), value: `${row.qty} ${row.unit}` },
+                { label: t('inventory.columns.receiver'), value: row.receiver },
+                { label: t('inventory.columns.dept'), value: row.dept },
               ]}
               actions={
                 <>
@@ -296,7 +365,7 @@ const Approval = () => {
                       onClick={() => handleApprove(row)}
                       disabled={processingId === row.id}
                     >
-                      <CheckIcon /> {processingId === row.id ? '...' : 'Setujui'}
+                      <CheckIcon /> {processingId === row.id ? '...' : t('inventory.actions.approve')}
                     </Button>
                   )}
                   <Button
@@ -305,7 +374,7 @@ const Approval = () => {
                     onClick={() => handleReject(row)}
                     disabled={processingId === row.id}
                   >
-                    <XIcon /> Tolak
+                    <XIcon /> {t('inventory.actions.reject')}
                   </Button>
                 </>
               }
@@ -319,11 +388,15 @@ const Approval = () => {
         <div style={{ position: 'fixed', inset: 0, zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }} onClick={() => setRejectTarget(null)} />
           <div style={{ position: 'relative', background: 'var(--surface)', borderRadius: '12px', padding: '24px', width: '90%', maxWidth: '420px', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
-            <h3 style={{ margin: '0 0 8px', fontSize: '18px' }}>Tolak Permintaan</h3>
+            <h3 style={{ margin: '0 0 8px', fontSize: '18px' }}>{t('inventory.actions.reject')}</h3>
             <p style={{ color: 'var(--muted)', fontSize: '14px', margin: '0 0 16px' }}>
-              Tolak permintaan <strong>{rejectTarget.name}</strong> dari <strong>{rejectTarget.receiver}</strong>?
+              {isBatchReject ? (
+                <>{t('inventory.actions.reject')} <strong>{selectedIds.size}</strong> {t('approval.selected')}?</>
+              ) : (
+                <>{t('inventory.actions.reject')} <strong>{rejectTarget.name}</strong>?</>
+              )}
             </p>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: 'var(--muted)' }}>Alasan penolakan (opsional)</label>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: 'var(--muted)' }}>{t('approval.rejectReason')}</label>
             <textarea
               className="input-control"
               rows={3}
@@ -333,9 +406,9 @@ const Approval = () => {
               style={{ width: '100%', marginBottom: '16px', resize: 'vertical' }}
             />
             <div className="form-actions">
-              <Button type="button" variant="secondary" onClick={() => setRejectTarget(null)}>Batal</Button>
-              <Button type="button" variant="danger" onClick={confirmReject} disabled={processingId === rejectTarget.id}>
-                {processingId === rejectTarget.id ? 'Menolak...' : 'Tolak Permintaan'}
+              <Button type="button" variant="secondary" onClick={() => { setRejectTarget(null); setIsBatchReject(false); }}>{t('inventory.actions.cancel')}</Button>
+              <Button type="button" variant="danger" onClick={confirmReject} disabled={processingId === rejectTarget.id || batchProcessing}>
+                {processingId === rejectTarget.id || batchProcessing ? t('inventory.modals.processRequest') : t('inventory.actions.reject')}
               </Button>
             </div>
           </div>

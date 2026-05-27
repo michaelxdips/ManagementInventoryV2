@@ -3,6 +3,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../../hooks/useAuth';
 import { navItems, getVisibleNavItems } from '../shared/NavItems';
 import Icon from '../shared/Icon';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 /**
  * Mobile Bottom Navigation component.
@@ -12,6 +13,7 @@ const MobileBottomNav = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { hasRole } = useAuth();
+    const { t } = useTranslation();
 
     const visibleNavItems = getVisibleNavItems(navItems, hasRole);
 
@@ -59,7 +61,7 @@ const MobileBottomNav = () => {
                             <span className="mobile-bottom-icon">
                                 <Icon name={item.icon} />
                             </span>
-                            <span className="mobile-bottom-label">{item.label}</span>
+                            <span className="mobile-bottom-label">{t(item.label)}</span>
                         </NavLink>
                     );
                 })}
@@ -94,7 +96,7 @@ const MobileBottomNav = () => {
                                             <span className="mobile-bottom-more-icon">
                                                 <Icon name={item.icon} />
                                             </span>
-                                            <span>{item.label}</span>
+                                            <span>{t(item.label)}</span>
                                         </button>
                                     );
                                 })}

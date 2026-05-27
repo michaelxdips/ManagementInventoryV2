@@ -10,6 +10,7 @@ import { useToast } from '../components/ui/Toast';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { getWIBInputDate } from '../utils/dateUtils';
 import { SkeletonTableRows } from '../components/ui/Skeleton';
+import { useTranslation } from '../hooks/useTranslation';
 
 const StockOpname = () => {
     const { sessions, loading, error, createSession, deleteSession, getSession, updateItem, finalizeSession } = useOpname();
@@ -18,6 +19,7 @@ const StockOpname = () => {
     const [formNotes, setFormNotes] = useState('');
     const [showFinalizeConfirm, setShowFinalizeConfirm] = useState(false);
     const { showToast } = useToast();
+    const { t } = useTranslation();
 
     const handleCreate = async () => {
         try {
@@ -219,8 +221,8 @@ const StockOpname = () => {
         <div className="page-container">
             <header className="page-header page-header--stacked">
                 <div>
-                    <h1 className="page-title">Stock Opname</h1>
-                    <p className="page-description">Pencatatan dan pencocokan stok fisik secara berkala.</p>
+                    <h1 className="page-title">{t('stockOpname.title')}</h1>
+                    <p className="page-description">{t('stockOpname.subtitle')}</p>
                 </div>
             </header>
 
@@ -255,7 +257,7 @@ const StockOpname = () => {
                         {loading ? (
                             <SkeletonTableRows rows={5} columns={5} />
                         ) : sessions.length === 0 ? (
-                            <TR><TD colSpan={5} className="empty-row">Belum ada sesi stock opname.</TD></TR>
+                            <TR><TD colSpan={5} className="empty-row">{t('stockOpname.noData')}</TD></TR>
                         ) : (
                             sessions.map(s => (
                                 <TR key={s.id}>
@@ -288,7 +290,7 @@ const StockOpname = () => {
                 <MobileCardList
                     isEmpty={!loading && sessions.length === 0}
                     isLoading={loading}
-                    emptyMessage="Belum ada sesi stock opname."
+                    emptyMessage={t('stockOpname.noData')}
                 >
                     {sessions.map((s) => (
                         <MobileCard

@@ -12,7 +12,7 @@
         "migrate:status": "npx knex migrate:status --knexfile knexfile.js",
         "seed": "npx knex migrate:latest --knexfile knexfile.js && npx knex seed:run --knexfile knexfile.js",
         "seed:data": "npx knex seed:run --knexfile knexfile.js",
-        "test": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=.env.test vitest run",
+        "test": "vitest run",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
         "lint": "eslint src/**/*.js",
@@ -37,7 +37,6 @@
     },
     "devDependencies": {
         "@vitest/coverage-v8": "^4.1.5",
-        "cross-env": "^10.1.0",
         "eslint": "^9.39.2",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-prettier": "^5.5.5",

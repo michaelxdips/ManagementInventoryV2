@@ -6,6 +6,7 @@ import ThemeToggle from '../../ThemeToggle';
 import { useNotifications } from '../../../hooks/useNotifications';
 import NotificationBell from '../../ui/NotificationBell';
 import NetworkSignalBar from '../../ui/NetworkSignalBar';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 interface DesktopNavbarProps {
     sidebarCollapsed: boolean;
@@ -20,14 +21,16 @@ interface DesktopNavbarProps {
 const DesktopNavbar = ({ sidebarCollapsed, onToggleSidebar }: DesktopNavbarProps) => {
     const location = useLocation();
     const { hasRole } = useAuth();
+    const { t } = useTranslation();
     
     const token = localStorage.getItem('auth_token');
     const { notifications, isConnected, markAllAsRead, markOneAsRead, clearAll } = useNotifications(token);
 
     const visibleNavItems = getVisibleNavItems(navItems, hasRole);
-    const activeTitle = visibleNavItems.find((item) =>
+    const rawActiveTitle = visibleNavItems.find((item) =>
         location.pathname.startsWith(item.path)
-    )?.label ?? (location.pathname.startsWith('/settings') ? 'Settings' : 'Dashboard');
+    )?.label ?? (location.pathname.startsWith('/settings') ? 'settings.settingsTitle' : 'sidebar.dashboard');
+    const activeTitle = t(rawActiveTitle);
 
     return (
         <header className="topbar">

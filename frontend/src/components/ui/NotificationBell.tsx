@@ -66,8 +66,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({
         />
       </button>
 
-      {isOpen && (
-        <div className="notification-dropdown">
+        <div className={`notification-dropdown ${isOpen ? 'is-open' : ''}`}>
           <div className="notification-header">
             <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: 'var(--text)' }}>
               Notifikasi
@@ -80,7 +79,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#2f81f7',
+                    color: 'var(--accent)',
                     fontSize: '0.8rem',
                     cursor: 'pointer',
                   }}
@@ -95,7 +94,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#2f81f7',
+                    color: 'var(--accent)',
                     fontSize: '0.8rem',
                     cursor: 'pointer',
                   }}
@@ -160,7 +159,6 @@ const NotificationBell: React.FC<NotificationBellProps> = ({
             )}
           </div>
         </div>
-      )}
     </div>
   );
 };

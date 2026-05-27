@@ -7,6 +7,7 @@ import ThemeToggle from '../../ThemeToggle';
 import { useNotifications } from '../../../hooks/useNotifications';
 import NotificationBell from '../../ui/NotificationBell';
 import NetworkSignalBar from '../../ui/NetworkSignalBar';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 /**
  * Mobile Navbar (Top Navigation) component.
@@ -17,6 +18,7 @@ const MobileNavbar = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { hasRole, user, logout } = useAuth();
+    const { t } = useTranslation();
     const [menuOpen, setMenuOpen] = useState(false);
     const [loggingOut, setLoggingOut] = useState(false);
 
@@ -33,9 +35,10 @@ const MobileNavbar = () => {
         .join('') || 'U';
 
     const visibleNavItems = getVisibleNavItems(navItems, hasRole);
-    const activeTitle = visibleNavItems.find((item) =>
+    const rawActiveTitle = visibleNavItems.find((item) =>
         location.pathname.startsWith(item.path)
-    )?.label ?? (location.pathname.startsWith('/settings') ? 'Settings' : 'Dashboard');
+    )?.label ?? (location.pathname.startsWith('/settings') ? 'settings.settingsTitle' : 'sidebar.dashboard');
+    const activeTitle = t(rawActiveTitle);
 
     const handleNavClick = (path: string) => {
         navigate(path);
@@ -87,9 +90,8 @@ const MobileNavbar = () => {
             </header>
 
             {/* Mobile Drawer Menu */}
-            {menuOpen && (
-                <div className="mobile-drawer-overlay" onClick={() => setMenuOpen(false)}>
-                    <div className="mobile-drawer" onClick={(e) => e.stopPropagation()}>
+            <div className={`mobile-drawer-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)}>
+                <div className="mobile-drawer" onClick={(e) => e.stopPropagation()}>
                         <div className="mobile-drawer-header">
                             <div className="brand">
                                 <div className="brand-icon" aria-hidden />
@@ -111,7 +113,7 @@ const MobileNavbar = () => {
                                     <span className="nav-icon">
                                         <Icon name={item.icon} />
                                     </span>
-                                    <span className="nav-label">{item.label}</span>
+                                    <span className="nav-label">{t(item.label)}</span>
                                 </button>
                             ))}
                         </nav>
@@ -133,7 +135,7 @@ const MobileNavbar = () => {
                                 <span className="nav-icon">
                                     <Icon name="settings" />
                                 </span>
-                                <span className="nav-label">Settings</span>
+                                <span className="nav-label">{t('settings.settingsTitle')}</span>
                             </button>
 
                             <button
@@ -145,12 +147,11 @@ const MobileNavbar = () => {
                                 <span className="nav-icon">
                                     <Icon name="logout" />
                                 </span>
-                                <span className="nav-label">{loggingOut ? 'Logging out...' : 'Log out'}</span>
+                                <span className="nav-label">{loggingOut ? t('settings.deleting') : t('sidebar.logout')}</span>
                             </button>
                         </div>
-                    </div>
                 </div>
-            )}
+            </div>
         </>
     );
 };

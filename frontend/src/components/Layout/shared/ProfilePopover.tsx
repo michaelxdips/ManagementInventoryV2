@@ -59,12 +59,10 @@ const ProfilePopover = ({ isOpen, onClose, position = 'bottom' }: ProfilePopover
         return () => document.removeEventListener('mousedown', handleClick);
     }, [isOpen, onClose]);
 
-    if (!isOpen) return null;
-
     const positionClass = position === 'top' ? 'profile-popover--top' : 'profile-popover--bottom';
 
     return (
-        <div className={`profile-popover ${positionClass}`} ref={popoverRef}>
+        <div className={`profile-popover ${positionClass} ${isOpen ? 'is-open' : ''}`} ref={popoverRef}>
             <div className="profile-header">
                 <div className="avatar">{avatarText}</div>
                 <div className="profile-meta">

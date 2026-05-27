@@ -7,6 +7,8 @@ import { FileText } from 'lucide-react';
 import { exportToPdf } from '../utils/exportPdf';
 import { getWIBInputDate } from '../utils/dateUtils';
 import { SkeletonTableRows } from '../components/ui/Skeleton';
+import { useTranslation } from '../hooks/useTranslation';
+import { useToast } from '../components/ui/Toast';
 
 const PrintIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -21,7 +23,8 @@ const PrintIcon = () => (
 const BarangKosong = () => {
   const [items, setItems] = useState<BarangKosongItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
+  const { showToast } = useToast();
 
   useEffect(() => {
     let mounted = true;
@@ -30,11 +33,10 @@ const BarangKosong = () => {
       .then((data) => {
         if (!mounted) return;
         setItems(data);
-        setError(null);
       })
       .catch(() => {
         if (!mounted) return;
-        setError('Gagal memuat data barang kosong');
+        showToast(t('outOfStock.reqFailed'), 'error');
       })
       .finally(() => {
         if (mounted) setLoading(false);
@@ -42,7 +44,7 @@ const BarangKosong = () => {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [t, showToast]);
 
   return (
     <div className="history-page">
@@ -150,54 +152,56 @@ const BarangKosong = () => {
 
       {/* Actual Print Header rendered in DOM but hidden via CSS unless printing */}
       <div className="print-header">
-        <h1>Laporan Barang Kosong</h1>
-        <p>Inventory ATK</p>
-        <p>Dicetak pada: {new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+        <h1>{t('outOfStock.reportTitle')}</h1>
+        <p>{t('outOfStock.reportSubtitle')}</p>
+        <p>{t('outOfStock.printedOn')} {new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
       </div>
 
       <div className="requests-header section-spacer-sm">
-        <h2 className="history-title">List Barang Kosong</h2>
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => exportToPdf({
-            filename: `Barang_Kosong_${getWIBInputDate()}`,
-            title: 'Laporan Barang Kosong',
-            columns: [
-              { header: 'No', dataKey: 'no' },
-              { header: 'Nama Barang', dataKey: 'name' },
-              { header: 'Kode Barang', dataKey: 'code' },
-              { header: 'Lokasi Simpan', dataKey: 'location' },
-            ],
-            data: items.map((item, idx) => ({ no: idx + 1, name: item.name, code: item.code || '-', location: item.location || '-' }))
-          })}
-          disabled={items.length === 0}
-          style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
-        >
-          <FileText size={16} />
-          <span>PDF</span>
-        </Button>
-        <Button
-          type="button"
-          variant="secondary"
-          className="print-action"
-          onClick={() => typeof window !== 'undefined' && window.print()}
-        >
-          <PrintIcon />
-          <span>Print</span>
-        </Button>
+        <h2 className="history-title">{t('outOfStock.title')}</h2>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => exportToPdf({
+              filename: `Barang_Kosong_${getWIBInputDate()}`,
+              title: t('outOfStock.reportTitle'),
+              columns: [
+                { header: t('outOfStock.colNo'), dataKey: 'no' },
+                { header: t('outOfStock.colName'), dataKey: 'name' },
+                { header: t('outOfStock.colCode'), dataKey: 'code' },
+                { header: t('outOfStock.colLocation'), dataKey: 'location' },
+              ],
+              data: items.map((item, idx) => ({ no: idx + 1, name: item.name, code: item.code || '-', location: item.location || '-' }))
+            })}
+            disabled={items.length === 0}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+          >
+            <FileText size={16} />
+            <span>{t('outOfStock.btnPdf')}</span>
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            className="print-action"
+            onClick={() => typeof window !== 'undefined' && window.print()}
+          >
+            <PrintIcon />
+            <span>{t('outOfStock.btnPrint')}</span>
+          </Button>
+        </div>
       </div>
 
       <div className="history-card">
-        {error && <div className="alert-danger">{error}</div>}
+
 
         <Table>
           <THead>
             <TR>
-              <TH style={{ width: '52px' }}>No</TH>
-              <TH>Nama Barang</TH>
-              <TH>Kode Barang</TH>
-              <TH>Lokasi Simpan</TH>
+              <TH style={{ width: '52px' }}>{t('outOfStock.colNo')}</TH>
+              <TH>{t('outOfStock.colName')}</TH>
+              <TH>{t('outOfStock.colCode')}</TH>
+              <TH>{t('outOfStock.colLocation')}</TH>
             </TR>
           </THead>
           <TBody>
@@ -205,7 +209,7 @@ const BarangKosong = () => {
               <SkeletonTableRows rows={6} columns={4} />
             ) : items.length === 0 ? (
               <TR>
-                <TD colSpan={4}>Tidak ada data</TD>
+                <TD colSpan={4}>{t('outOfStock.emptyData')}</TD>
               </TR>
             ) : (
               items.map((item, idx) => (
@@ -224,7 +228,7 @@ const BarangKosong = () => {
         <MobileCardList
           isEmpty={items.length === 0}
           isLoading={loading}
-          emptyMessage="Tidak ada barang kosong"
+          emptyMessage={t('outOfStock.emptyList')}
         >
           {items.map((item, idx) => (
             <MobileCard
@@ -232,13 +236,13 @@ const BarangKosong = () => {
               header={
                 <>
                   <span className="mobile-card-header-title">{item.name}</span>
-                  <span className="badge badge-rejected">Habis</span>
+                  <span className="badge badge-rejected">{t('outOfStock.badgeEmpty')}</span>
                 </>
               }
               fields={[
-                { label: 'No', value: idx + 1 },
-                { label: 'Kode', value: item.code ?? '-' },
-                { label: 'Lokasi', value: item.location ?? '-' },
+                { label: t('outOfStock.colNo'), value: idx + 1 },
+                { label: t('outOfStock.colCode'), value: item.code ?? '-' },
+                { label: t('outOfStock.colLocation'), value: item.location ?? '-' },
               ]}
             />
           ))}

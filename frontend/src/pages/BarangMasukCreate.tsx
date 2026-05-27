@@ -5,6 +5,7 @@ import Input from '../components/ui/Input';
 import { createBarangMasuk } from '../api/barangMasuk.api';
 import { useToast } from '../components/ui/Toast';
 import { getWIBInputDate } from '../utils/dateUtils';
+import { useTranslation } from '../hooks/useTranslation';
 
 const BarangMasukCreate = () => {
     const navigate = useNavigate();
@@ -18,12 +19,13 @@ const BarangMasukCreate = () => {
         tanggal: getWIBInputDate(),
     });
     const [loading, setLoading] = useState(false);
+    const { t } = useTranslation();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!formData.nama_barang || !formData.satuan || formData.qty <= 0) {
-            showToast('Nama barang, jumlah, dan satuan wajib diisi');
+            showToast(t('inbound.errorRequiredFields'));
             return;
         }
 
@@ -43,7 +45,7 @@ const BarangMasukCreate = () => {
             // Redirect after 2 seconds
             setTimeout(() => navigate('/history-masuk'), 2000);
         } catch (err: any) {
-            showToast(err.message || 'Gagal mencatat barang masuk');
+            showToast(err.message || t('inbound.errorSaveFailed'));
         } finally {
             setLoading(false);
         }
@@ -52,39 +54,39 @@ const BarangMasukCreate = () => {
     return (
         <div className="history-page">
             <div className="history-card" style={{ maxWidth: '600px' }}>
-                <h2 className="history-title">Tambah Barang Masuk</h2>
+                <h2 className="history-title">{t('inbound.createTitle')}</h2>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>
-                    Catat barang yang masuk ke inventory untuk menambah stok.
+                    {t('inbound.createSubtitle')}
                 </p>
 
 
 
                 <form onSubmit={handleSubmit} className="edit-form">
                     <div className="form-group">
-                        <label htmlFor="nama_barang">Nama Barang *</label>
+                        <label htmlFor="nama_barang">{t('inbound.itemNameLabel')}</label>
                         <Input
                             id="nama_barang"
                             type="text"
                             value={formData.nama_barang}
                             onChange={(e) => setFormData({ ...formData, nama_barang: e.target.value })}
-                            placeholder="Contoh: Kertas A4"
+                            placeholder={t('inbound.itemNamePlaceholder')}
                             required
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="kode_barang">Kode Barang</label>
+                        <label htmlFor="kode_barang">{t('inbound.itemCodeLabel')}</label>
                         <Input
                             id="kode_barang"
                             type="text"
                             value={formData.kode_barang}
                             onChange={(e) => setFormData({ ...formData, kode_barang: e.target.value })}
-                            placeholder="Contoh: KRT-A4-001"
+                            placeholder={t('inbound.itemCodePlaceholder')}
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="tanggal">Tanggal *</label>
+                        <label htmlFor="tanggal">{t('inbound.dateLabel')}</label>
                         <Input
                             id="tanggal"
                             type="date"
@@ -95,7 +97,7 @@ const BarangMasukCreate = () => {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="qty">Jumlah *</label>
+                        <label htmlFor="qty">{t('inbound.qtyLabel')}</label>
                         <Input
                             id="qty"
                             type="number"
@@ -107,34 +109,34 @@ const BarangMasukCreate = () => {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="satuan">Satuan *</label>
+                        <label htmlFor="satuan">{t('inbound.unitLabel')}</label>
                         <Input
                             id="satuan"
                             type="text"
                             value={formData.satuan}
                             onChange={(e) => setFormData({ ...formData, satuan: e.target.value })}
-                            placeholder="Contoh: rim, pcs, kotak"
+                            placeholder={t('inbound.unitPlaceholder')}
                             required
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="lokasi_simpan">Lokasi Simpan</label>
+                        <label htmlFor="lokasi_simpan">{t('inbound.locationLabel')}</label>
                         <Input
                             id="lokasi_simpan"
                             type="text"
                             value={formData.lokasi_simpan}
                             onChange={(e) => setFormData({ ...formData, lokasi_simpan: e.target.value })}
-                            placeholder="Contoh: Lemari A1"
+                            placeholder={t('inbound.locationPlaceholder')}
                         />
                     </div>
 
                     <div className="form-actions">
                         <Button type="submit" disabled={loading}>
-                            {loading ? 'Menyimpan...' : 'Simpan Barang Masuk'}
+                            {loading ? t('inbound.saving') : t('inbound.save')}
                         </Button>
                         <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-                            Batal
+                            {t('inbound.cancel')}
                         </Button>
                     </div>
                 </form>

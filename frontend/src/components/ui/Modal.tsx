@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Button from './Button';
 
@@ -13,6 +13,23 @@ interface ModalProps {
 
 const Modal = ({ isOpen, onClose, title, children, footer, width = '500px' }: ModalProps) => {
     const overlayRef = useRef<HTMLDivElement>(null);
+    const [isRendered, setIsRendered] = useState(isOpen);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        if (isOpen) {
+            setIsRendered(true);
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => setIsVisible(true));
+            });
+        } else {
+            setIsVisible(false);
+            const timer = setTimeout(() => {
+                setIsRendered(false);
+            }, 300); // match CSS duration
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen]);
 
     // Close on Escape key
     useEffect(() => {
@@ -39,11 +56,11 @@ const Modal = ({ isOpen, onClose, title, children, footer, width = '500px' }: Mo
         }
     };
 
-    if (!isOpen) return null;
+    if (!isRendered) return null;
 
     return createPortal(
         <div
-            className="modal-overlay"
+            className={`modal-overlay ${isVisible ? 'is-visible' : ''}`}
             onClick={handleOverlayClick}
             ref={overlayRef}
             role="dialog"

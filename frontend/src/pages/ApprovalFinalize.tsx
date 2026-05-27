@@ -166,8 +166,9 @@ const ApprovalFinalize = () => {
                         {detail.status === 'PENDING' && (
                             <div style={{
                                 padding: '12px',
-                                background: '#fff3cd',
-                                color: '#856404',
+                                background: 'var(--warning-glow)',
+                                color: 'var(--warning)',
+                                border: '1px solid var(--warning)',
                                 borderRadius: '6px',
                                 marginBottom: '16px',
                                 fontSize: '14px'
@@ -226,7 +227,7 @@ const ApprovalFinalize = () => {
                                 required
                                 readOnly={detail.status !== 'APPROVAL_REVIEW'}
                                 style={{
-                                    borderColor: validationError ? '#c63d3d' : undefined,
+                                    borderColor: validationError ? 'var(--danger)' : undefined,
                                     background: detail.status !== 'APPROVAL_REVIEW' ? 'var(--surface-alt)' : undefined,
                                     cursor: detail.status !== 'APPROVAL_REVIEW' ? 'not-allowed' : 'text'
                                 }}
@@ -235,7 +236,7 @@ const ApprovalFinalize = () => {
                                 Permintaan asli: {detail.requestQty} · Stok: {detail.stok_tersedia}
                             </span>
                             {detail.status === 'APPROVAL_REVIEW' && validationError && (
-                                <span style={{ fontSize: '13px', color: 'var(--danger-text, #d73a49)', marginTop: '2px' }}>
+                                <span style={{ fontSize: '13px', color: 'var(--danger)', marginTop: '2px' }}>
                                     {validationError}
                                 </span>
                             )}

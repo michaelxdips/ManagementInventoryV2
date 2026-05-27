@@ -25,10 +25,10 @@ const ConfirmDialog = ({
   onCancel,
 }: ConfirmDialogProps) => (
   <Modal isOpen={open} title={title} onClose={onCancel}>
-    <p style={{ margin: '0 0 18px', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+    <p style={{ margin: '0 0 18px', color: 'var(--muted)', lineHeight: 1.6 }}>
       {message}
     </p>
-    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', flexWrap: 'wrap' }}>
+    <div className="flex-wrap-gap" style={{ justifyContent: 'flex-end', gap: '10px' }}>
       <Button type="button" variant="secondary" onClick={onCancel} disabled={loading}>
         {cancelLabel}
       </Button>

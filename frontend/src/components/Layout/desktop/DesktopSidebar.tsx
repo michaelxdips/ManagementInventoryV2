@@ -4,6 +4,7 @@ import useAuth from '../../../hooks/useAuth';
 import { navItems, getVisibleNavItems } from '../shared/NavItems';
 import Icon from '../shared/Icon';
 import ProfilePopover from '../shared/ProfilePopover';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 interface DesktopSidebarProps {
     collapsed: boolean;
@@ -16,6 +17,7 @@ interface DesktopSidebarProps {
  */
 const DesktopSidebar = ({ collapsed }: DesktopSidebarProps) => {
     const { hasRole, user } = useAuth();
+    const { t } = useTranslation();
     const [profileOpen, setProfileOpen] = useState(false);
 
     const displayName = user?.name ?? 'User';
@@ -50,13 +52,13 @@ const DesktopSidebar = ({ collapsed }: DesktopSidebarProps) => {
                     <NavLink
                         key={item.path}
                         to={item.path}
-                        title={collapsed ? item.label : undefined}
+                        title={collapsed ? t(item.label) : undefined}
                         className={({ isActive }) => `nav-item ${isActive ? 'is-active' : ''}`}
                     >
                         <span className="nav-icon">
                             <Icon name={item.icon} />
                         </span>
-                        <span className="nav-label">{item.label}</span>
+                        <span className="nav-label">{t(item.label)}</span>
                     </NavLink>
                 ))}
             </nav>

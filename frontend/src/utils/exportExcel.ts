@@ -12,6 +12,9 @@ export async function exportToExcel<T extends Record<string, unknown>>(
   columns: { header: string; key: keyof T }[],
   options: ExportOptions,
 ) {
+  // Give UI a chance to render loading state
+  await new Promise(resolve => setTimeout(resolve, 100));
+
   const XLSX = await import('xlsx');
   const { filename, sheetName = 'Data' } = options;
 

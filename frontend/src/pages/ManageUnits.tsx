@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { Table, THead, TBody, TR, TH, TD } from '../components/ui/Table';
@@ -6,6 +6,8 @@ import { MobileCard, MobileCardList } from '../components/ui/MobileCard';
 import { fetchUnits, deleteUnit, UnitItem } from '../api/units.api';
 import { SkeletonTableRows } from '../components/ui/Skeleton';
 import { EmptyTableRow } from '../components/ui/EmptyState';
+import { useTranslation } from '../hooks/useTranslation';
+import { useToast } from '../components/ui/Toast';
 
 const UserPlusIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -29,35 +31,28 @@ const ManageUnits = () => {
   const location = useLocation();
   const [units, setUnits] = useState<UnitItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<UnitItem | null>(null);
   const refreshFlag = (location.state as { refresh?: boolean } | null)?.refresh;
+  const { t } = useTranslation();
+  const { showToast } = useToast();
 
-  const loadData = () => {
+  const loadData = useCallback(() => {
     setLoading(true);
     fetchUnits()
       .then((rows) => {
         setUnits(rows);
-        setError(null);
       })
       .catch((err) => {
         setUnits([]);
-        setError(err.message || 'Gagal memuat data unit dari server');
+        showToast(err.message || t('units.loadError'), 'error');
       })
       .finally(() => setLoading(false));
-  };
+  }, [showToast, t]);
 
   useEffect(() => {
     loadData();
-  }, [refreshFlag]);
-
-  useEffect(() => {
-    if (!statusMessage) return;
-    const timer = setTimeout(() => setStatusMessage(null), 4000);
-    return () => clearTimeout(timer);
-  }, [statusMessage]);
+  }, [refreshFlag, loadData]);
 
   const handleDelete = async () => {
     if (!confirmTarget) return;
@@ -65,17 +60,17 @@ const ManageUnits = () => {
     setConfirmTarget(null);
     try {
       await deleteUnit(confirmTarget.id);
-      setStatusMessage(`Unit "${confirmTarget.name}" berhasil dihapus`);
+      showToast(t('units.deleteSuccess', { name: confirmTarget.name }), 'success');
       loadData();
     } catch (err: any) {
-      let msg = 'Gagal menghapus unit';
+      let msg = t('units.deleteFailed');
       try {
         const parsed = JSON.parse(err.message);
         msg = parsed.message || msg;
       } catch {
         msg = err.message || msg;
       }
-      setError(msg);
+      showToast(msg, 'error');
     } finally {
       setDeletingId(null);
     }
@@ -84,28 +79,23 @@ const ManageUnits = () => {
   return (
     <div className="history-page">
       <div className="requests-header section-spacer-sm">
-        <h2 className="history-title">List Unit</h2>
+        <h2 className="history-title">{t('units.title')}</h2>
         <Button type="button" variant="secondary" onClick={() => navigate('/manage-units/create')}>
           <UserPlusIcon />
-          <span>Tambah Unit</span>
+          <span>{t('units.addUnit')}</span>
         </Button>
       </div>
 
       <div className="history-card">
-        {statusMessage && (
-          <div className="alert-success mb-4">
-            {statusMessage}
-          </div>
-        )}
-        {error && <div className="alert-danger">{error}</div>}
+
 
         <Table>
           <THead>
             <TR>
-              <TH className="th-width-52">No</TH>
-              <TH>Nama Unit</TH>
-              <TH className="th-width-180">Username</TH>
-              <TH className="th-width-100">Aksi</TH>
+              <TH className="th-width-52">{t('units.colNo')}</TH>
+              <TH>{t('units.colName')}</TH>
+              <TH className="th-width-180">{t('units.colUsername')}</TH>
+              <TH className="th-width-100">{t('units.colAction')}</TH>
             </TR>
           </THead>
           <TBody>
@@ -114,8 +104,8 @@ const ManageUnits = () => {
             ) : units.length === 0 ? (
               <EmptyTableRow
                 colSpan={4}
-                title="Belum ada unit"
-                description="Tambahkan unit agar pengguna bisa login dan membuat request sesuai bagian masing-masing."
+                title={t('units.emptyTitle')}
+                description={t('units.emptyDesc')}
               />
             ) : (
               units.map((row, idx) => (
@@ -131,7 +121,7 @@ const ManageUnits = () => {
                       onClick={() => setConfirmTarget(row)}
                       disabled={deletingId === row.id}
                     >
-                      <TrashIcon /> {deletingId === row.id ? '...' : 'Hapus'}
+                      <TrashIcon /> {deletingId === row.id ? t('units.actionDeleting') : t('units.actionDelete')}
                     </Button>
                   </TD>
                 </TR>
@@ -144,7 +134,7 @@ const ManageUnits = () => {
         <MobileCardList
           isEmpty={units.length === 0}
           isLoading={loading}
-          emptyMessage="Belum ada unit"
+          emptyMessage={t('units.emptyTitle')}
         >
           {units.map((row, idx) => (
             <MobileCard
@@ -153,8 +143,8 @@ const ManageUnits = () => {
                 <span className="mobile-card-header-title">{row.name}</span>
               }
               fields={[
-                { label: 'No', value: idx + 1 },
-                { label: 'Username', value: row.username },
+                { label: t('units.colNo'), value: idx + 1 },
+                { label: t('units.colUsername'), value: row.username },
               ]}
               actions={
                 <Button
@@ -164,7 +154,7 @@ const ManageUnits = () => {
                   onClick={() => setConfirmTarget(row)}
                   disabled={deletingId === row.id}
                 >
-                  <TrashIcon /> {deletingId === row.id ? '...' : 'Hapus'}
+                  <TrashIcon /> {deletingId === row.id ? t('units.actionDeleting') : t('units.actionDelete')}
                 </Button>
               }
             />
@@ -176,17 +166,17 @@ const ManageUnits = () => {
       {confirmTarget && (
         <div className="modal-backdrop" onClick={() => setConfirmTarget(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <p className="modal-kicker">Konfirmasi Hapus</p>
-            <h3 className="modal-title">Hapus Unit "{confirmTarget.name}"?</h3>
+            <p className="modal-kicker">{t('units.modalKicker')}</p>
+            <h3 className="modal-title">{t('units.modalTitle', { name: confirmTarget.name })}</h3>
             <p className="modal-text">
-              Akun user <strong>{confirmTarget.username}</strong> akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.
+              {t('units.modalDesc1')}<strong>{confirmTarget.username}</strong>{t('units.modalDesc2')}
             </p>
             <div className="modal-actions">
               <Button type="button" variant="secondary" size="sm" onClick={() => setConfirmTarget(null)}>
-                Batal
+                {t('units.cancel')}
               </Button>
               <Button type="button" variant="danger" size="sm" onClick={handleDelete}>
-                <TrashIcon /> Hapus
+                <TrashIcon /> {t('units.actionDelete')}
               </Button>
             </div>
           </div>

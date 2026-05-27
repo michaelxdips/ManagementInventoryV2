@@ -1,36 +1,21 @@
 import React from 'react';
-import { FileText, CheckCircle, Clock, Plus, RefreshCw, Package, Bell, FastForward, ChevronRight } from 'lucide-react';
+import { FileText, CheckCircle, Clock, Plus, RefreshCw, Package, FastForward } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/ui/Button';
 import { DashboardMetrics } from '../../hooks/useDashboard';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTranslation } from '../../hooks/useTranslation';
+import DashboardGreeting from '../../components/dashboard/DashboardGreeting';
+import DashboardAnnouncement from '../../components/dashboard/DashboardAnnouncement';
 
-const COLORS = ['#2f81f7', '#28a745', '#dbab09', '#d73a49', '#6f42c1'];
-
-/** Progress track palette — explicit values so inactive steps stay readable on `surface-alt`. */
-const TRACK = {
-  rail: 'rgba(15, 23, 42, 0.22)',
-  labelMuted: '#64748b',
-  blue: '#2f81f7',
-  green: '#28a745',
-  red: '#d73a49',
-};
+const TRACK = { rail: 'var(--surface-alt)', blue: 'var(--accent)', green: 'var(--success)', red: 'var(--danger)' };
 
 function RequestProgressTrack({ status }: { status: string }) {
+  const { t } = useTranslation();
   const s = status.toUpperCase();
-  const pending = s === 'PENDING';
-  const approved = s === 'APPROVED';
-  const finished = s === 'FINISHED';
-  const rejected = s === 'REJECTED';
-
-  const line1Active = !pending;
-  const dot2Active = line1Active;
-  const line2Approve = approved || finished;
-  const line2Reject = rejected;
-
-  let line2Style: React.CSSProperties = { background: TRACK.rail };
-  if (line2Approve) line2Style = { background: TRACK.green };
-  else if (line2Reject) line2Style = { background: TRACK.red };
+  const isReviewOrBeyond = s !== 'PENDING';
+  const isFinished = s === 'FINISHED';
+  const isApproved = s === 'APPROVED';
+  const isRejected = s === 'REJECTED';
 
   const dotOuter = (active: boolean, color: string) => (
     <div
@@ -40,20 +25,20 @@ function RequestProgressTrack({ status }: { status: string }) {
         borderRadius: '50%',
         margin: '0 auto 6px',
         boxSizing: 'border-box',
-        border: active ? `solid 2px ${color}` : `solid 2px ${TRACK.rail}`,
-        background: active ? color : 'var(--surface-alt)',
+        border: active ? `solid 2px ${color}` : `solid 2px var(--border)`,
+        background: active ? color : 'var(--surface)',
       }}
     />
   );
 
-  const dot3Finalize = () => {
-    if (rejected) return dotOuter(true, TRACK.red);
-    if (approved || finished) return dotOuter(true, TRACK.green);
-    return dotOuter(false, TRACK.green);
-  };
+  const line = (active: boolean) => (
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', flex: '1 1 0%', minWidth: '12px', paddingTop: '5px' }}>
+      <div style={{ height: '3px', width: '100%', borderRadius: '2px', background: active ? TRACK.blue : 'var(--border)' }} />
+    </div>
+  );
 
   const label = (done: boolean, text: string) => (
-    <span style={{ fontSize: '12px', color: done ? 'var(--text)' : TRACK.labelMuted, fontWeight: done ? 600 : 500 }}>{text}</span>
+    <span style={{ fontSize: '12px', color: done ? 'var(--text)' : 'var(--muted)', fontWeight: done ? 600 : 500 }}>{text}</span>
   );
 
   return (
@@ -62,29 +47,25 @@ function RequestProgressTrack({ status }: { status: string }) {
       style={{
         display: 'flex',
         alignItems: 'stretch',
-        gap: '0',
-        marginTop: '4px',
+        gap: '4px',
+        marginTop: '12px',
         paddingTop: '12px',
         borderTop: '1px solid var(--border)',
       }}
     >
       <div style={{ flex: 1, textAlign: 'center', minWidth: 0 }}>
         {dotOuter(true, TRACK.blue)}
-        {label(true, 'Diajukan')}
+        {label(true, t('dashboard.submitted'))}
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', flex: '1.15 1 0%', minWidth: '12px', paddingTop: '5px' }}>
-        <div style={{ height: '3px', width: '100%', borderRadius: '2px', background: line1Active ? TRACK.blue : TRACK.rail }} />
-      </div>
+      {line(isReviewOrBeyond)}
       <div style={{ flex: 1, textAlign: 'center', minWidth: 0 }}>
-        {dot2Active ? dotOuter(true, TRACK.blue) : dotOuter(false, TRACK.blue)}
-        {label(dot2Active, 'Review')}
+        {dotOuter(isReviewOrBeyond, isRejected ? TRACK.red : TRACK.blue)}
+        {label(isReviewOrBeyond, isRejected ? t('dashboard.rejected') : t('dashboard.review'))}
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', flex: '1.15 1 0%', minWidth: '12px', paddingTop: '5px' }}>
-        <div style={{ height: '3px', width: '100%', borderRadius: '2px', ...line2Style }} />
-      </div>
+      {line(isFinished)}
       <div style={{ flex: 1, textAlign: 'center', minWidth: 0 }}>
-        {dot3Finalize()}
-        {label(approved || finished || rejected, rejected ? 'Ditolak' : finished ? 'Selesai' : 'Disetujui')}
+        {dotOuter(isFinished || isApproved, isRejected ? TRACK.red : (isFinished || isApproved ? TRACK.green : 'var(--border)'))}
+        {label(isFinished || isApproved || isRejected, isRejected ? t('dashboard.rejected') : (isFinished ? t('dashboard.finished') : t('dashboard.approved')))}
       </div>
     </div>
   );
@@ -99,239 +80,116 @@ interface Props {
 
 const UserDashboard: React.FC<Props> = ({ metrics, greeting, userName, onRefresh }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div style={{ display: 'grid', gap: '24px', minWidth: 0 }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
-        <div style={{ minWidth: 0 }}>
-          <h2 className="dashboard-greeting-title" style={{ margin: '0 0 4px', fontSize: '28px', fontWeight: 700 }}>{greeting}, {userName} 👋</h2>
-          <p className="dashboard-greeting-sub" style={{ margin: 0, color: 'var(--muted)', fontSize: '15px' }}>Kelola permintaan ATK dan pantau aktivitas Anda.</p>
-        </div>
+        <DashboardGreeting greeting={greeting} userName={userName} summaryText={t('dashboard.summary')} />
         <div style={{ display: 'flex', gap: '8px' }}>
           <Button type="button" variant="secondary" onClick={onRefresh} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <RefreshCw size={14} />
-            Refresh
+            {t('dashboard.refresh')}
           </Button>
           <Button type="button" variant="primary" onClick={() => navigate('/requests/create')} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Plus size={16} />
-            Buat Request
+            {t('dashboard.newRequest')}
           </Button>
         </div>
       </div>
 
       {/* Announcements Banner */}
-      {metrics.activeAnnouncements && metrics.activeAnnouncements.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {metrics.activeAnnouncements.map((ann, idx) => (
-            <div key={idx} style={{ padding: '16px 20px', background: 'var(--surface-alt)', border: '1px solid #2f81f7', borderLeft: '4px solid #2f81f7', borderRadius: '8px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-              <Bell size={20} color="#2f81f7" style={{ marginTop: '2px' }} />
-              <div>
-                <h4 style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 600, color: 'var(--text)' }}>{ann.title}</h4>
-                <p style={{ margin: 0, fontSize: '14px', color: 'var(--muted)', lineHeight: '1.5' }}>{ann.content}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      <DashboardAnnouncement announcements={metrics.activeAnnouncements} />
 
       {/* Metric Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
         
         <article className="dash-card" style={{ display: 'flex', flexDirection: 'column', padding: '24px' }}>
           <div style={{ marginBottom: '16px' }}>
-            <div style={{ padding: '12px', background: 'rgba(47, 129, 247, 0.1)', borderRadius: '12px', color: '#2f81f7', width: 'fit-content' }}>
+            <div style={{ padding: '12px', background: 'var(--accent-glow)', borderRadius: '12px', color: 'var(--accent)', width: 'fit-content' }}>
               <FileText size={24} />
             </div>
           </div>
-          <h3 style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--muted)', fontWeight: 500 }}>Total Request</h3>
+          <h3 style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--muted)', fontWeight: 500 }}>{t('dashboard.totalRequests')}</h3>
           <p style={{ margin: 0, fontSize: '32px', fontWeight: 700 }}>{metrics.myTotalRequests ?? 0}</p>
         </article>
 
         <article className="dash-card" style={{ display: 'flex', flexDirection: 'column', padding: '24px' }}>
           <div style={{ marginBottom: '16px' }}>
-            <div style={{ padding: '12px', background: 'rgba(219, 171, 9, 0.1)', borderRadius: '12px', color: '#dbab09', width: 'fit-content' }}>
+            <div style={{ padding: '12px', background: 'var(--warning-glow)', borderRadius: '12px', color: 'var(--warning)', width: 'fit-content' }}>
               <Clock size={24} />
             </div>
           </div>
-          <h3 style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--muted)', fontWeight: 500 }}>Menunggu Validasi</h3>
+          <h3 style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--muted)', fontWeight: 500 }}>{t('dashboard.pendingValidation')}</h3>
           <p style={{ margin: 0, fontSize: '32px', fontWeight: 700 }}>{metrics.myPendingRequests ?? 0}</p>
         </article>
 
         <article className="dash-card" style={{ display: 'flex', flexDirection: 'column', padding: '24px' }}>
           <div style={{ marginBottom: '16px' }}>
-            <div style={{ padding: '12px', background: 'rgba(40, 167, 69, 0.1)', borderRadius: '12px', color: '#28a745', width: 'fit-content' }}>
+            <div style={{ padding: '12px', background: 'var(--success-glow)', borderRadius: '12px', color: 'var(--success)', width: 'fit-content' }}>
               <CheckCircle size={24} />
             </div>
           </div>
-          <h3 style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--muted)', fontWeight: 500 }}>Disetujui</h3>
+          <h3 style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--muted)', fontWeight: 500 }}>{t('dashboard.approved')}</h3>
           <p style={{ margin: 0, fontSize: '32px', fontWeight: 700 }}>{metrics.myApprovedRequests ?? 0}</p>
         </article>
       </div>
 
-      {/* Quick Actions for User */}
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-        <Button type="button" variant="secondary" onClick={() => navigate('/items')} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Package size={16} />
-          Lihat Katalog Barang
-        </Button>
-        <Button type="button" variant="secondary" onClick={() => navigate('/requests')} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <FileText size={16} />
-          Semua Request Saya
-        </Button>
-      </div>
-
-      {/* Quick Re-order & Chart */}
-      {metrics.frequentItems && metrics.frequentItems.length > 0 && (
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '20px' }}>
+      {/* Frequent Items Section */}
+      <article className="dash-card" style={{ padding: '24px' }}>
           <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <FastForward size={18} color="#2f81f7" /> 
-            Sering Anda Minta (Distribusi)
+            <FastForward size={18} color="var(--accent)" /> 
+            {t('dashboard.frequentRequests')}
           </h3>
-          <div className="dashboard-frequent-row" style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', alignItems: 'center' }}>
-            
-            <div className="dashboard-frequent-pie" style={{ width: '200px', height: '200px', flexShrink: 0 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={metrics.frequentItems}
-                    dataKey="freq"
-                    nameKey="nama_barang"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
-                  >
-                    {metrics.frequentItems.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                    itemStyle={{ color: 'var(--text)', fontWeight: 600 }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', flex: 1 }}>
-              {metrics.frequentItems.map((item, idx) => (
-                <div key={idx} style={{ padding: '12px 16px', background: 'var(--surface-alt)', border: `1px solid ${COLORS[idx % COLORS.length]}40`, borderLeft: `4px solid ${COLORS[idx % COLORS.length]}`, borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '16px', flex: '1 1 200px' }}>
-                  <div>
-                    <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 600 }}>{item.nama_barang}</p>
-                    <p style={{ margin: 0, fontSize: '12px', color: 'var(--muted)' }}>Di-request {item.freq} kali</p>
-                  </div>
-                  <Button type="button" variant="primary" onClick={() => navigate('/requests/create')} style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', marginLeft: 'auto' }}>
-                    <Plus size={14} /> Request Lagi
-                  </Button>
-                </div>
-              ))}
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', alignItems: 'start' }}>
-
-        {/* Recent Requests */}
-        <article className="dash-card" style={{ padding: '24px' }}>
-          <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
-            <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Clock size={20} color="var(--muted)" />
-              Riwayat & Tracking Request
-            </h3>
-            <button
-              type="button"
-              onClick={() => navigate('/requests')}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '6px 10px',
-                fontSize: '13px',
-                fontWeight: 500,
-                color: '#2f81f7',
-                background: 'transparent',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-              }}
-              className="dashboard-history-link"
-            >
-              Lihat request
-              <ChevronRight size={16} strokeWidth={2} />
-            </button>
-          </div>
-          <p style={{ margin: '-8px 0 16px', fontSize: '13px', color: TRACK.labelMuted, lineHeight: 1.5 }}>
-            Pantau status permintaan terbaru Anda langsung dari ringkasan ini.
-          </p>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {metrics.myRecentRequests && metrics.myRecentRequests.length > 0 ? metrics.myRecentRequests.map(req => {
-              const st = req.status.toUpperCase();
-              let step = 1;
-              if (st === 'APPROVAL_REVIEW') step = 2;
-              if (st === 'APPROVED' || st === 'FINISHED' || st === 'REJECTED') step = 3;
-
-              return (
-                <div
-                  key={req.id}
-                  style={{
-                    padding: '14px 16px',
-                    background: 'var(--surface-alt)',
-                    borderRadius: '12px',
-                    border: '1px solid var(--border)',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', marginBottom: '0', flexWrap: 'wrap' }}>
-                    <div style={{ minWidth: 0 }}>
-                      <p style={{ margin: '0 0 4px', fontWeight: 600, fontSize: '15px', lineHeight: 1.35 }}>
-                        {req.nama_barang}{' '}
-                        <span style={{ color: TRACK.labelMuted, fontWeight: 500 }}>×{req.qty}</span>
-                      </p>
-                      <p style={{ margin: 0, fontSize: '12px', color: TRACK.labelMuted, fontWeight: 500 }}>
-                        {new Date(req.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </p>
-                    </div>
-                    <div style={{ flexShrink: 0 }}>
-                      {st === 'REJECTED' ? (
-                        <span style={{ fontSize: '12px', fontWeight: 600, color: TRACK.red, background: 'rgba(215, 58, 73, 0.12)', padding: '5px 10px', borderRadius: '999px' }}>
-                          Ditolak
-                        </span>
-                      ) : st === 'FINISHED' ? (
-                        <span style={{ fontSize: '12px', fontWeight: 600, color: '#1a7f37', background: 'rgba(40, 167, 69, 0.12)', padding: '5px 10px', borderRadius: '999px' }}>
-                          Selesai
-                        </span>
-                      ) : (
-                        <span
-                          style={{
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            color: step === 3 ? TRACK.green : TRACK.blue,
-                            background: step === 3 ? 'rgba(40, 167, 69, 0.12)' : 'rgba(47, 129, 247, 0.12)',
-                            padding: '5px 10px',
-                            borderRadius: '999px',
-                          }}
-                        >
-                          {step === 3 ? 'Disetujui' : 'Diproses'}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <RequestProgressTrack status={req.status} />
-                </div>
-              );
-            }) : (
-              <div style={{ padding: '24px', textAlign: 'center', color: 'var(--muted)' }}>
-                Belum ada riwayat request
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px' }}>
+            {metrics.frequentItems && metrics.frequentItems.length > 0 ? metrics.frequentItems.map((item, idx) => (
+              <div key={idx} style={{ padding: '16px', background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', transition: 'transform 0.2s, box-shadow 0.2s', cursor: 'pointer' }}
+                   onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)'; }}
+                   onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+                   onClick={() => navigate(`/requests/create?item=${encodeURIComponent(item.nama_barang)}`)}>
+                <Package size={24} color="var(--muted)" style={{ marginBottom: '12px' }} />
+                <h4 style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 600 }}>{item.nama_barang}</h4>
+                <p style={{ margin: '0 0 12px', fontSize: '12px', color: 'var(--muted)' }}>{t('dashboard.requestedCount', { count: item.freq })}</p>
+                <Button type="button" variant="secondary" style={{ width: '100%', fontSize: '12px', padding: '6px 0' }}>{t('dashboard.requestAgain')}</Button>
+              </div>
+            )) : (
+              <div style={{ gridColumn: '1 / -1', padding: '32px', textAlign: 'center', color: 'var(--muted)', background: 'var(--panel)', border: '1px dashed var(--border)', borderRadius: '12px' }}>
+                {t('dashboard.noRequestHistory')}
               </div>
             )}
           </div>
         </article>
-      </div>
+
+        {/* Request Tracking */}
+        <article className="dash-card" style={{ padding: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+            <div>
+              <h3 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 600 }}>{t('dashboard.historyAndTracking')}</h3>
+              <p style={{ margin: 0, fontSize: '13px', color: 'var(--muted)' }}>{t('dashboard.trackRecent')}</p>
+            </div>
+            <Button type="button" variant="secondary" onClick={() => navigate('/requests')}>
+              {t('dashboard.viewRequest')}
+            </Button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {metrics.myRecentRequests && metrics.myRecentRequests.length > 0 ? metrics.myRecentRequests.map(req => (
+              <div key={req.id} style={{ padding: '16px', background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 600 }}>{req.nama_barang} <span style={{ color: 'var(--muted)', fontWeight: 400 }}>× {req.qty}</span></h4>
+                  <span style={{ fontSize: '12px', color: 'var(--muted)' }}>
+                    {new Date(req.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                  </span>
+                </div>
+                <RequestProgressTrack status={req.status} />
+              </div>
+            )) : (
+              <div style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--muted)', background: 'var(--panel)', border: '1px dashed var(--border)', borderRadius: '12px' }}>
+                {t('dashboard.noRequestHistory')}
+              </div>
+            )}
+          </div>
+        </article>
     </div>
   );
 };

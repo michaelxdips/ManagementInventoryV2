@@ -19,6 +19,7 @@ import { getWIBInputDate } from '../utils/dateUtils';
 import { useSearchParams } from 'react-router-dom';
 import { SkeletonTableRows } from '../components/ui/Skeleton';
 import { EmptyTableRow } from '../components/ui/EmptyState';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface EditFormData {
 	name: string;
@@ -36,6 +37,7 @@ const AtkItems = () => {
 	const isSuperadmin = hasRole(['superadmin']);
 	const isAdminOrSuperadmin = hasRole(['admin', 'superadmin']);
 	const isUser = hasRole(['user']);
+	const { t } = useTranslation();
 
 	const [draftSearch, setDraftSearch] = useState('');
 	const [draftSort, setDraftSort] = useState<'asc' | 'desc'>('asc');
@@ -427,13 +429,13 @@ const AtkItems = () => {
 							variant="secondary"
 							onClick={() => exportToPdf({
 								filename: `Daftar_ATK_${getWIBInputDate()}`,
-								title: 'Daftar Inventaris ATK',
+								title: t('inventory.title'),
 								columns: [
-									{ header: 'Nama Barang', dataKey: 'name' },
-									{ header: 'Kode Barang', dataKey: 'code' },
-									{ header: 'Jumlah', dataKey: 'quantity' },
-									{ header: 'Satuan', dataKey: 'unit' },
-									{ header: 'Lokasi Simpan', dataKey: 'location' },
+									{ header: t('inventory.columns.itemName'), dataKey: 'name' },
+									{ header: t('inventory.columns.itemCode'), dataKey: 'code' },
+									{ header: t('inventory.columns.qty'), dataKey: 'quantity' },
+									{ header: t('inventory.columns.unit'), dataKey: 'unit' },
+									{ header: t('inventory.columns.location'), dataKey: 'location' },
 								],
 								data: filtered
 							})}
@@ -441,23 +443,23 @@ const AtkItems = () => {
 							style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
 						>
 							<FileText size={16} />
-							PDF
+							{t('inventory.pdf')}
 						</Button>
 						<Button
 							type="button"
 							variant="secondary"
 							onClick={() => exportToExcel(filtered, [
-								{ header: 'Nama Barang', key: 'name' },
-								{ header: 'Kode Barang', key: 'code' },
-								{ header: 'Jumlah', key: 'quantity' },
-								{ header: 'Satuan', key: 'unit' },
-								{ header: 'Lokasi Simpan', key: 'location' },
-							], { filename: `Daftar_ATK_${getWIBInputDate()}`, sheetName: 'Data ATK' })}
+								{ header: t('inventory.columns.itemName'), key: 'name' },
+								{ header: t('inventory.columns.itemCode'), key: 'code' },
+								{ header: t('inventory.columns.qty'), key: 'quantity' },
+								{ header: t('inventory.columns.unit'), key: 'unit' },
+								{ header: t('inventory.columns.location'), key: 'location' },
+							], { filename: `Daftar_ATK_${getWIBInputDate()}`, sheetName: t('inventory.title') })}
 							disabled={filtered.length === 0}
 							style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
 						>
 							<Download size={16} />
-							Excel
+							{t('inventory.excel')}
 						</Button>
 						{isSuperadmin && (
 							<Button
@@ -467,7 +469,7 @@ const AtkItems = () => {
 								style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
 							>
 								<Upload size={16} />
-								Import Excel
+								{t('inventory.importExcel')}
 							</Button>
 						)}
 					</div>
@@ -475,18 +477,18 @@ const AtkItems = () => {
 			</div>
 
 			{!isSuperadmin && isAdminOrSuperadmin && (
-				<div style={{ padding: '12px 16px', background: 'rgba(47, 129, 247, 0.05)', border: '1px solid rgba(47, 129, 247, 0.2)', borderRadius: '8px', color: '#2f81f7', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 500 }}>
-					<span style={{ fontSize: '16px' }}>ℹ️</span> Hanya superadmin yang dapat mengubah stok. Silakan hubungi superadmin untuk update stok.
+				<div style={{ padding: '12px 16px', background: 'var(--accent-glow)', border: '1px solid var(--accent)', borderRadius: '8px', color: 'var(--accent)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 500 }}>
+					{t('inventory.superadminNote')}
 				</div>
 			)}
 			{isUser && (
-				<div style={{ padding: '12px 16px', background: 'rgba(47, 129, 247, 0.05)', border: '1px solid rgba(47, 129, 247, 0.2)', borderRadius: '8px', color: '#2f81f7', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 500 }}>
-					<span style={{ fontSize: '16px' }}>ℹ️</span> Klik "Ambil" untuk mengajukan permintaan barang. Admin akan menyetujui permintaan Anda.
+				<div style={{ padding: '12px 16px', background: 'var(--accent-glow)', border: '1px solid var(--accent)', borderRadius: '8px', color: 'var(--accent)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 500 }}>
+					{t('inventory.userNote')}
 				</div>
 			)}
 
 			{hasDashboardFilter && (
-				<div style={{ padding: '10px 14px', background: 'rgba(47, 129, 247, 0.08)', border: '1px solid rgba(47, 129, 247, 0.22)', borderRadius: '999px', color: '#2f81f7', marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '10px', fontSize: '13px', fontWeight: 700 }}>
+				<div style={{ padding: '10px 14px', background: 'var(--accent-glow)', border: '1px solid var(--accent)', borderRadius: '999px', color: 'var(--accent)', marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '10px', fontSize: '13px', fontWeight: 700 }}>
 					<span>{searchParams.get('stock') === 'low' ? 'Filter dashboard: stok rendah/kosong' : `Filter dashboard: ${searchParams.get('search')}`}</span>
 					<Button type="button" variant="ghost" size="sm" onClick={clearDashboardFilter}>Reset</Button>
 				</div>
@@ -497,13 +499,13 @@ const AtkItems = () => {
 				<Table>
 					<THead>
 						<TR>
-							<TH style={{ width: '52px' }}>No</TH>
-							<TH>Nama Barang</TH>
-							<TH>Kode Barang</TH>
-							<TH>Jumlah</TH>
-							<TH>Satuan</TH>
-							<TH>Lokasi Simpan</TH>
-							<TH style={{ width: '160px' }}>Action</TH>
+							<TH style={{ width: '52px' }}>{t('inventory.columns.no')}</TH>
+							<TH>{t('inventory.columns.itemName')}</TH>
+							<TH>{t('inventory.columns.itemCode')}</TH>
+							<TH>{t('inventory.columns.qty')}</TH>
+							<TH>{t('inventory.columns.unit')}</TH>
+							<TH>{t('inventory.columns.location')}</TH>
+							<TH style={{ width: '160px' }}>{t('inventory.columns.action')}</TH>
 						</TR>
 					</THead>
 					<TBody>
@@ -512,8 +514,8 @@ const AtkItems = () => {
 						) : displayItems.length === 0 ? (
 							<EmptyTableRow
 								colSpan={7}
-								title="Tidak ada data"
-								description={searchTerm || searchParams.has('stock') ? 'Coba ubah kata kunci, urutan, atau reset filter dashboard.' : 'Data ATK akan tampil setelah item ditambahkan atau diimpor.'}
+								title={t('inventory.noData')}
+								description={searchTerm || searchParams.has('stock') ? t('inventory.noDataDescSearch') : t('inventory.noDataDescEmpty')}
 							/>
 						) : (
 							displayItems.map((item, idx) => {
@@ -539,10 +541,10 @@ const AtkItems = () => {
 												)}
 												{isSuperadmin ? (
 													<>
-													<Button type="button" variant="ghost" size="sm" onClick={() => handleEditClick(item)}>
-														✏ Edit
+													<Button type="button" variant="ghost" size="sm" onClick={() => handleEditClick(item)} aria-label={t('inventory.actions.edit')}>
+														✏ {t('inventory.actions.edit')}
 													</Button>
-													<Button type="button" variant="ghost" size="sm" onClick={() => handleDeleteClick(item)} style={{ color: 'var(--danger-text, #d73a49)' }}>
+													<Button type="button" variant="ghost" size="sm" onClick={() => handleDeleteClick(item)} aria-label={t('inventory.actions.delete')} style={{ color: 'var(--danger)' }}>
 														🗑
 													</Button>
 													</>
@@ -554,7 +556,7 @@ const AtkItems = () => {
 														onClick={() => handleRequestClick(item)}
 														disabled={item.quantity <= 0}
 													>
-														{item.quantity > 0 ? '📦 Ambil' : 'Habis'}
+														{item.quantity > 0 ? `📦 ${t('inventory.actions.take')}` : t('inventory.actions.outOfStock')}
 													</Button>
 												)}
 											</div>
@@ -570,7 +572,7 @@ const AtkItems = () => {
 				<MobileCardList
 					isEmpty={displayItems.length === 0}
 					isLoading={loading}
-					emptyMessage="Tidak ada data barang"
+					emptyMessage={t('inventory.noData')}
 				>
 					{displayItems.map((item, idx) => {
 						const isLowStock = item.quantity <= (item.minStock ?? 5) && item.quantity > 0;
@@ -582,24 +584,24 @@ const AtkItems = () => {
 								<>
 									<span className="mobile-card-header-title">{item.name}</span>
 									{item.quantity <= 0 && (
-										<span className="badge badge-rejected">Habis</span>
+										<span className="badge badge-rejected">{t('inventory.actions.outOfStock')}</span>
 									)}
 								</>
 							}
 							fields={[
-								{ label: 'No', value: startIndex + idx + 1 },
-								{ label: 'Kode', value: item.code || '-' },
-								{ label: 'Jumlah', value: `${item.quantity.toLocaleString('id-ID')} ${item.unit}` },
-								{ label: 'Lokasi', value: item.location || '-' },
+								{ label: t('inventory.columns.no'), value: startIndex + idx + 1 },
+								{ label: t('inventory.columns.itemCode'), value: item.code || '-' },
+								{ label: t('inventory.columns.qty'), value: `${item.quantity.toLocaleString('id-ID')} ${item.unit}` },
+								{ label: t('inventory.columns.location'), value: item.location || '-' },
 							]}
 							actions={
 								isSuperadmin ? (
 									<>
 										<Button type="button" variant="ghost" onClick={() => handleEditClick(item)}>
-											✏ Edit Barang
+											✏ {t('inventory.actions.edit')}
 										</Button>
-										<Button type="button" variant="ghost" onClick={() => handleDeleteClick(item)} style={{ color: 'var(--danger-text, #d73a49)' }}>
-											🗑 Hapus
+										<Button type="button" variant="ghost" onClick={() => handleDeleteClick(item)} style={{ color: 'var(--danger)' }}>
+											🗑 {t('inventory.actions.delete')}
 										</Button>
 									</>
 								) : isAdminOrSuperadmin ? null : (
@@ -609,7 +611,7 @@ const AtkItems = () => {
 										onClick={() => handleRequestClick(item)}
 										disabled={item.quantity <= 0}
 									>
-										{item.quantity > 0 ? '📦 Ambil Barang' : 'Stok Habis'}
+										{item.quantity > 0 ? `📦 ${t('inventory.actions.take')}` : t('inventory.actions.outOfStock')}
 									</Button>
 								)
 							}
@@ -630,14 +632,14 @@ const AtkItems = () => {
 			<Modal
 				isOpen={showEditModal}
 				onClose={() => setShowEditModal(false)}
-				title="Edit Barang"
+				title={t('inventory.modals.editTitle')}
 				footer={
 					<div className="form-actions">
 						<Button type="button" variant="secondary" onClick={() => setShowEditModal(false)}>
-							Batal
+							{t('inventory.actions.cancel')}
 						</Button>
 						<Button type="submit" form="edit-form" disabled={editLoading}>
-							{editLoading ? 'Menyimpan...' : 'Simpan'}
+							{editLoading ? t('inventory.actions.saving') : t('inventory.actions.save')}
 						</Button>
 					</div>
 				}
@@ -646,7 +648,7 @@ const AtkItems = () => {
 				<form id="edit-form" onSubmit={handleEditSubmit} className="responsive-modal-form">
 					<div className="form-group" style={{ marginBottom: 0 }}>
 						<label htmlFor="edit-name" style={{ display: 'block', marginBottom: '6px', fontWeight: 500, fontSize: '14px' }}>
-							Nama Barang *
+							{t('inventory.columns.itemName')} *
 						</label>
 						<Input
 							id="edit-name"
@@ -660,7 +662,7 @@ const AtkItems = () => {
 					</div>
 					<div className="form-group" style={{ marginBottom: 0 }}>
 						<label htmlFor="edit-code" style={{ display: 'block', marginBottom: '6px', fontWeight: 500, fontSize: '14px' }}>
-							Kode Barang
+							{t('inventory.columns.itemCode')}
 						</label>
 						<Input
 							id="edit-code"
@@ -674,7 +676,7 @@ const AtkItems = () => {
 					<div className="form-grid-2">
 						<div className="form-group" style={{ marginBottom: 0 }}>
 							<label htmlFor="edit-qty" style={{ display: 'block', marginBottom: '6px', fontWeight: 500, fontSize: '14px' }}>
-								Jumlah *
+								{t('inventory.columns.qty')} *
 							</label>
 							<Input
 								id="edit-qty"
@@ -689,7 +691,7 @@ const AtkItems = () => {
 						</div>
 						<div className="form-group" style={{ marginBottom: 0 }}>
 							<label htmlFor="edit-unit" style={{ display: 'block', marginBottom: '6px', fontWeight: 500, fontSize: '14px' }}>
-								Satuan *
+								{t('inventory.columns.unit')} *
 							</label>
 							<Input
 								id="edit-unit"
@@ -704,7 +706,7 @@ const AtkItems = () => {
 					</div>
 					<div className="form-group" style={{ marginBottom: 0 }}>
 						<label htmlFor="edit-location" style={{ display: 'block', marginBottom: '6px', fontWeight: 500, fontSize: '14px' }}>
-							Lokasi Simpan
+							{t('inventory.columns.location')}
 						</label>
 						<Input
 							id="edit-location"
@@ -717,7 +719,7 @@ const AtkItems = () => {
 					</div>
 					<div className="form-group" style={{ marginBottom: 0 }}>
 						<label htmlFor="edit-minstock" style={{ display: 'block', marginBottom: '6px', fontWeight: 500, fontSize: '14px' }}>
-							Peringatan Stok Minimum
+							{t('inventory.modals.minStockLabel')}
 						</label>
 						<Input
 							id="edit-minstock"
@@ -730,7 +732,7 @@ const AtkItems = () => {
 							style={{ width: '100%' }}
 						/>
 						<p className="form-hint">
-							Barang akan menyala kuning jika stok menyentuh angka ini atau di bawahnya.
+							{t('inventory.modals.minStockHint')}
 						</p>
 					</div>
 				</form>
@@ -740,14 +742,14 @@ const AtkItems = () => {
 			<Modal
 				isOpen={showRequestModal && !!requestItem}
 				onClose={() => setShowRequestModal(false)}
-				title="Ambil Barang"
+				title={t('inventory.modals.requestTitle')}
 				footer={
 					<div className="form-actions">
 						<Button type="button" variant="secondary" onClick={() => setShowRequestModal(false)}>
-							Batal
+							{t('inventory.actions.cancel')}
 						</Button>
 						<Button type="submit" form="request-form" disabled={requestLoading || !!requestSuccess}>
-							{requestLoading ? 'Memproses...' : 'Ajukan Permintaan'}
+							{requestLoading ? t('inventory.modals.processRequest') : t('inventory.modals.submitRequest')}
 						</Button>
 					</div>
 				}
@@ -755,8 +757,9 @@ const AtkItems = () => {
 				{requestSuccess && (
 					<div style={{
 						padding: '12px 16px',
-						background: 'var(--success-bg, #d4edda)',
-						color: 'var(--success-text, #155724)',
+						background: 'var(--success-glow)',
+						color: 'var(--success)',
+						border: '1px solid var(--success)',
 						borderRadius: '6px',
 						marginBottom: '16px'
 					}}>
@@ -767,7 +770,7 @@ const AtkItems = () => {
 				{requestItem && (
 					<form id="request-form" onSubmit={handleRequestSubmit} className="responsive-modal-form">
 						<div className="form-group">
-							<label htmlFor="req-name">Nama Barang</label>
+							<label htmlFor="req-name">{t('inventory.columns.itemName')}</label>
 							<Input
 								id="req-name"
 								type="text"
@@ -776,7 +779,7 @@ const AtkItems = () => {
 							/>
 						</div>
 						<div className="form-group">
-							<label htmlFor="req-qty">Jumlah Request</label>
+							<label htmlFor="req-qty">{t('inventory.modals.qtyRequest')}</label>
 							<Input
 								id="req-qty"
 								type="number"
@@ -787,11 +790,11 @@ const AtkItems = () => {
 								required
 							/>
 							<p className="form-hint">
-								Stok tersedia: {requestItem.quantity} {requestItem.unit}
+								{t('inventory.modals.stockAvailable')}: {requestItem.quantity} {requestItem.unit}
 							</p>
 						</div>
 						<div className="form-group">
-							<label htmlFor="req-penerima">Penerima *</label>
+							<label htmlFor="req-penerima">{t('inventory.columns.receiver')} *</label>
 							<Input
 								id="req-penerima"
 								type="text"
@@ -889,8 +892,8 @@ const AtkItems = () => {
 
 					{/* Error display */}
 					{importError && (
-						<div style={{ padding: '12px', background: 'rgba(215,58,73,0.1)', borderRadius: '8px', border: '1px solid rgba(215,58,73,0.25)' }}>
-							<div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#d73a49', fontWeight: 600, marginBottom: '4px' }}>
+						<div style={{ padding: '12px', background: 'var(--danger-glow)', borderRadius: '8px', border: '1px solid var(--danger)' }}>
+							<div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--danger)', fontWeight: 600, marginBottom: '4px' }}>
 								❌ Error
 							</div>
 							<div className="danger-text" style={{ fontSize: '13px', whiteSpace: 'pre-line' }}>{importError}</div>
@@ -940,16 +943,16 @@ const AtkItems = () => {
 							{/* Statistics cards */}
 							{(importStats.inserted > 0 || importStats.updated > 0 || importStats.skipped > 0 || importPhase === 'complete') && (
 								<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-									<div style={{ padding: '10px', background: 'rgba(40,167,69,0.08)', borderRadius: '8px', textAlign: 'center', border: '1px solid rgba(40,167,69,0.15)' }}>
-										<div style={{ fontSize: '22px', fontWeight: 700, color: '#28a745' }}>{importStats.inserted}</div>
+									<div style={{ padding: '10px', background: 'var(--success-glow)', borderRadius: '8px', textAlign: 'center', border: '1px solid var(--success)' }}>
+										<div style={{ fontSize: '22px', fontWeight: 700, color: 'var(--success)' }}>{importStats.inserted}</div>
 										<div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Ditambahkan</div>
 									</div>
-									<div style={{ padding: '10px', background: 'rgba(0,123,255,0.08)', borderRadius: '8px', textAlign: 'center', border: '1px solid rgba(0,123,255,0.15)' }}>
-										<div style={{ fontSize: '22px', fontWeight: 700, color: '#007bff' }}>{importStats.updated}</div>
+									<div style={{ padding: '10px', background: 'var(--accent-glow)', borderRadius: '8px', textAlign: 'center', border: '1px solid var(--accent)' }}>
+										<div style={{ fontSize: '22px', fontWeight: 700, color: 'var(--accent)' }}>{importStats.updated}</div>
 										<div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Diperbarui</div>
 									</div>
-									<div style={{ padding: '10px', background: 'rgba(255,193,7,0.08)', borderRadius: '8px', textAlign: 'center', border: '1px solid rgba(255,193,7,0.15)' }}>
-										<div style={{ fontSize: '22px', fontWeight: 700, color: '#e0a800' }}>{importStats.skipped}</div>
+									<div style={{ padding: '10px', background: 'var(--warning-glow)', borderRadius: '8px', textAlign: 'center', border: '1px solid var(--warning)' }}>
+										<div style={{ fontSize: '22px', fontWeight: 700, color: 'var(--warning)' }}>{importStats.skipped}</div>
 										<div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Dilewati</div>
 									</div>
 								</div>
@@ -994,8 +997,8 @@ const AtkItems = () => {
 												fontSize: '10px', 
 												padding: '1px 6px', 
 												borderRadius: '4px',
-												background: log.action === 'inserted' ? 'rgba(40,167,69,0.15)' : log.action === 'updated' ? 'rgba(0,123,255,0.15)' : 'rgba(255,193,7,0.15)',
-												color: log.action === 'inserted' ? '#28a745' : log.action === 'updated' ? '#007bff' : '#e0a800',
+												background: log.action === 'inserted' ? 'var(--success-glow)' : log.action === 'updated' ? 'var(--accent-glow)' : 'var(--warning-glow)',
+												color: log.action === 'inserted' ? 'var(--success)' : log.action === 'updated' ? 'var(--accent)' : 'var(--warning)',
 											}}>
 												{log.action === 'inserted' ? 'BARU' : log.action === 'updated' ? 'UPDATE' : 'SKIP'}
 											</span>

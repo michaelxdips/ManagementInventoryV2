@@ -11,6 +11,7 @@ import { formatDateV2 } from '../utils/dateUtils';
 import { useToast } from '../components/ui/Toast';
 import { SkeletonTableRows } from '../components/ui/Skeleton';
 import { EmptyTableRow } from '../components/ui/EmptyState';
+import { useTranslation } from '../hooks/useTranslation';
 
 const PlusIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -55,6 +56,7 @@ const Requests = () => {
   const { hasRole } = useAuth();
   const isUser = hasRole(['user']);
   const { showToast } = useToast();
+  const { t } = useTranslation();
 
   // New item form state
   const [showForm, setShowForm] = useState(false);
@@ -149,7 +151,7 @@ const Requests = () => {
   return (
     <div className="requests-page">
       <div className="requests-header">
-        <h2 className="history-title">Permintaan Barang</h2>
+        <h2 className="history-title">{t('requests.title')}</h2>
         {activeTab === 'ambil' && isUser && (
           <Button type="button" variant="secondary" onClick={() => navigate('/requests/create')}>
             <PlusIcon />
@@ -228,8 +230,8 @@ const Requests = () => {
               ) : ambilData.length === 0 ? (
                 <EmptyTableRow
                   colSpan={8}
-                  title={isUser ? (ambilSubTab === 'aktif' ? 'Tidak ada permintaan aktif' : 'Belum ada riwayat permintaan') : 'Tidak ada permintaan'}
-                  description={isUser ? (ambilSubTab === 'aktif' ? 'Request yang masih pending atau review akan tampil di sini.' : 'Request yang selesai atau ditolak akan tampil di riwayat.') : 'Permintaan user akan tampil setelah dibuat dari halaman ambil barang.'}
+                  title={t('requests.noData')}
+                  description={t('requests.noDataDesc')}
                 />
               ) : (
                 ambilData.map((row, idx) => (
@@ -260,13 +262,7 @@ const Requests = () => {
           <MobileCardList
             isEmpty={ambilData.length === 0}
             isLoading={loading}
-            emptyMessage={
-              isUser
-                ? ambilSubTab === 'aktif'
-                  ? 'Tidak ada permintaan aktif (menunggu proses).'
-                  : 'Belum ada riwayat.'
-                : 'Tidak ada permintaan'
-            }
+            emptyMessage={t('requests.noData')}
           >
             {ambilData.map((row, idx) => (
               <MobileCard

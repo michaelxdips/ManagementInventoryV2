@@ -58,6 +58,7 @@ function buildSseFallbackId(type: AppNotification['type'], data: Record<string, 
 export const useNotifications = (token: string | null) => {
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [isConnected, setIsConnected] = useState(false);
+  const [reconnectTrigger, setReconnectTrigger] = useState(0);
 
   const refreshInbox = useCallback(async () => {
     if (!token) return;
@@ -119,6 +120,10 @@ export const useNotifications = (token: string | null) => {
 
     eventSource.onerror = () => {
       setIsConnected(false);
+      eventSource.close();
+      setTimeout(() => {
+        setReconnectTrigger((prev) => prev + 1);
+      }, 10000);
     };
 
     eventSource.addEventListener('NEW_REQUEST', (event) => {
@@ -220,7 +225,7 @@ export const useNotifications = (token: string | null) => {
       eventSource.close();
       setIsConnected(false);
     };
-  }, [token, refreshInbox]);
+  }, [token, refreshInbox, reconnectTrigger]);
 
   useEffect(() => {
     if (!token || isConnected) return;

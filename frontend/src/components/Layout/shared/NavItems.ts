@@ -13,20 +13,20 @@ export type NavItem = {
  * This ensures navigation consistency across layouts.
  */
 export const navItems: NavItem[] = [
-    { label: 'Dashboard', path: '/dashboard', icon: 'grid' },
-    { label: 'Items', path: '/items', icon: 'box' },
-    { label: 'History Masuk', path: '/history-masuk', icon: 'in', roles: ['admin', 'superadmin'] },
-    { label: 'History Keluar', path: '/history-keluar', icon: 'out', roles: ['admin', 'superadmin'] },
-    { label: 'Requests', path: '/requests', icon: 'request', roles: ['user'] },
-    { label: 'Information', path: '/information', icon: 'info', roles: ['user'] },
-    { label: 'Barang Kosong', path: '/barang-kosong', icon: 'empty', roles: ['admin', 'superadmin'] },
-    { label: 'Approval', path: '/approval', icon: 'check', roles: ['admin', 'superadmin'] },
-    { label: 'Kalender Request', path: '/request-calendar', icon: 'calendar', roles: ['admin', 'superadmin'] },
-    { label: 'Request Baru', path: '/new-item-requests', icon: 'star', roles: ['admin', 'superadmin'] },
-    { label: 'Stock Opname', path: '/stock-opname', icon: 'file-text', roles: ['admin', 'superadmin'] },
-    { label: 'Audit Trail', path: '/audit-logs', icon: 'clock', roles: ['admin', 'superadmin'] },
-    { label: 'Pengumuman', path: '/announcements', icon: 'megaphone', roles: ['admin', 'superadmin'] },
-    { label: 'Kelola Unit', path: '/manage-units', icon: 'units', roles: ['superadmin'] },
+    { label: 'sidebar.dashboard', path: '/dashboard', icon: 'grid' },
+    { label: 'sidebar.items', path: '/items', icon: 'box' },
+    { label: 'sidebar.historyIn', path: '/history-masuk', icon: 'in', roles: ['admin', 'superadmin'] },
+    { label: 'sidebar.historyOut', path: '/history-keluar', icon: 'out', roles: ['admin', 'superadmin'] },
+    { label: 'sidebar.requests', path: '/requests', icon: 'request', roles: ['user'] },
+    { label: 'sidebar.information', path: '/information', icon: 'info', roles: ['user'] },
+    { label: 'sidebar.emptyItems', path: '/barang-kosong', icon: 'empty', roles: ['admin', 'superadmin'] },
+    { label: 'sidebar.approval', path: '/approval', icon: 'check', roles: ['admin', 'superadmin'] },
+    { label: 'sidebar.calendar', path: '/request-calendar', icon: 'calendar', roles: ['admin', 'superadmin'] },
+    { label: 'sidebar.newRequests', path: '/new-item-requests', icon: 'star', roles: ['admin', 'superadmin'] },
+    { label: 'sidebar.stockOpname', path: '/stock-opname', icon: 'file-text', roles: ['admin', 'superadmin'] },
+    { label: 'sidebar.audit', path: '/audit-logs', icon: 'clock', roles: ['admin', 'superadmin'] },
+    { label: 'sidebar.announcements', path: '/announcements', icon: 'megaphone', roles: ['admin', 'superadmin'] },
+    { label: 'sidebar.manageUnits', path: '/manage-units', icon: 'units', roles: ['superadmin'] },
 ];
 
 /**
@@ -35,8 +35,8 @@ export const navItems: NavItem[] = [
  * Remaining items go to "More" menu.
  */
 export const mobileBottomNavItems: NavItem[] = [
-    { label: 'Dashboard', path: '/dashboard', icon: 'grid' },
-    { label: 'Items', path: '/items', icon: 'box' },
+    { label: 'sidebar.dashboard', path: '/dashboard', icon: 'grid' },
+    { label: 'sidebar.items', path: '/items', icon: 'box' },
 ];
 
 /**

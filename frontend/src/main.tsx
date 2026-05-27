@@ -6,9 +6,11 @@ import { ThemeProvider } from './theme';
 import './styles.css';
 import './dashboard-utilities.css';
 import { AuthProvider } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { ToastProvider } from './components/ui/Toast';
 import { UpdatePrompt } from './components/UpdatePrompt';
 import ErrorBoundary from './components/ui/ErrorBoundary';
+import { registerSW } from 'virtual:pwa-register';
 
 const cleanupStaleDevServiceWorkers = async () => {
 	if (!import.meta.env.DEV || !('serviceWorker' in navigator)) return;
@@ -33,18 +35,23 @@ cleanupStaleDevServiceWorkers()
 		console.warn('Failed to clean stale dev service workers', error);
 	})
 	.finally(() => {
+		if (import.meta.env.PROD) {
+			registerSW({ immediate: true });
+		}
 		createRoot(rootElement).render(
 			<React.StrictMode>
 				<BrowserRouter>
 					<AuthProvider>
-						<ThemeProvider>
-							<ToastProvider>
-								<ErrorBoundary>
-									<App />
-									<UpdatePrompt />
-								</ErrorBoundary>
-							</ToastProvider>
-						</ThemeProvider>
+						<LanguageProvider>
+							<ThemeProvider>
+								<ToastProvider>
+									<ErrorBoundary>
+										<App />
+										<UpdatePrompt />
+									</ErrorBoundary>
+								</ToastProvider>
+							</ThemeProvider>
+						</LanguageProvider>
 					</AuthProvider>
 				</BrowserRouter>
 			</React.StrictMode>

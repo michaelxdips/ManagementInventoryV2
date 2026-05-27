@@ -9,6 +9,9 @@ interface ExportPdfOptions {
 }
 
 export const exportToPdf = async ({ filename, title, subtitle, columns, data }: ExportPdfOptions) => {
+  // Give UI a chance to render loading state
+  await new Promise(resolve => setTimeout(resolve, 100));
+
   const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
     import('jspdf'),
     import('jspdf-autotable'),

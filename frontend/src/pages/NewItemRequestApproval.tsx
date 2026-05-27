@@ -13,6 +13,7 @@ import {
 import { useToast } from '../components/ui/Toast';
 import { SkeletonTableRows } from '../components/ui/Skeleton';
 import { EmptyTableRow } from '../components/ui/EmptyState';
+import { useTranslation } from '../hooks/useTranslation';
 
 const CheckIcon = () => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -55,6 +56,7 @@ const NewItemRequestApproval = () => {
     const [processingId, setProcessingId] = useState<number | null>(null);
     const [statusFilter, setStatusFilter] = useState<StatusFilter>('PENDING');
     const [searchQuery, setSearchQuery] = useState('');
+    const { t } = useTranslation();
 
     // Approve modal
     const [approveTarget, setApproveTarget] = useState<NewItemRequest | null>(null);
@@ -75,10 +77,10 @@ const NewItemRequestApproval = () => {
             .then((rows) => setData(rows))
             .catch(() => {
                 setData([]);
-                showToast('Gagal memuat data dari server');
+                showToast(t('newItemApproval.reqFailed'), 'error');
             })
             .finally(() => setLoading(false));
-    }, [showToast]);
+    }, [showToast, t]);
 
     useEffect(() => {
         loadData();
@@ -119,7 +121,7 @@ const NewItemRequestApproval = () => {
         if (!approveTarget) return;
         const qty = parseInt(approveForm.approved_quantity, 10);
         if (!qty || qty <= 0 || isNaN(qty)) {
-            showToast('Jumlah harus lebih dari 0');
+            showToast(t('newItemApproval.errQty'), 'error');
             return;
         }
 
@@ -135,7 +137,7 @@ const NewItemRequestApproval = () => {
             setApproveTarget(null);
             loadData();
         } catch (err: any) {
-            let msg = 'Gagal menyetujui request';
+            let msg = t('newItemApproval.failApprove');
             if (err?.message) {
                 try {
                     const parsed = JSON.parse(err.message);
@@ -144,7 +146,7 @@ const NewItemRequestApproval = () => {
                     msg = err.message;
                 }
             }
-            showToast(msg);
+            showToast(msg, 'error');
         } finally {
             setProcessingId(null);
         }
@@ -160,7 +162,7 @@ const NewItemRequestApproval = () => {
     const handleReject = async () => {
         if (!rejectTarget) return;
         if (!rejectReason.trim()) {
-            showToast('Alasan penolakan wajib diisi');
+            showToast(t('newItemApproval.errRejectReason'), 'error');
             return;
         }
 
@@ -171,7 +173,7 @@ const NewItemRequestApproval = () => {
             setRejectTarget(null);
             loadData();
         } catch (err: any) {
-            let msg = 'Gagal menolak request';
+            let msg = t('newItemApproval.failReject');
             if (err?.message) {
                 try {
                     const parsed = JSON.parse(err.message);
@@ -180,7 +182,7 @@ const NewItemRequestApproval = () => {
                     msg = err.message;
                 }
             }
-            showToast(msg);
+            showToast(msg, 'error');
         } finally {
             setProcessingId(null);
         }
@@ -189,9 +191,9 @@ const NewItemRequestApproval = () => {
     return (
         <div className="history-page">
             <div className="history-card">
-                <h2 className="history-title">Request Barang Baru</h2>
+                <h2 className="history-title">{t('newItemApproval.title')}</h2>
                 <p className="text-muted mb-4">
-                    Kelola permintaan barang baru dari user. Approve akan menambahkan item baru ke inventory.
+                    {t('newItemApproval.description')}
                 </p>
 
                 {/* Filters */}
@@ -201,30 +203,30 @@ const NewItemRequestApproval = () => {
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
                     >
-                        <option value="PENDING">Pending</option>
-                        <option value="APPROVED">Approved</option>
-                        <option value="REJECTED">Rejected</option>
-                        <option value="ALL">Semua Status</option>
+                        <option value="PENDING">{t('newItemApproval.filterPending')}</option>
+                        <option value="APPROVED">{t('newItemApproval.filterApproved')}</option>
+                        <option value="REJECTED">{t('newItemApproval.filterRejected')}</option>
+                        <option value="ALL">{t('newItemApproval.filterAll')}</option>
                     </select>
                     <input
                         className="input-control"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Cari nama barang..."
+                        placeholder={t('newItemApproval.searchPlaceholder')}
                     />
                 </div>
 
                 <Table>
                     <THead>
                         <TR>
-                            <TH className="action-bar action-bar--wrap">No</TH>
-                            <TH>Nama Barang</TH>
-                            <TH>Deskripsi</TH>
-                            <TH>Satuan</TH>
-                            <TH>Diminta Oleh</TH>
-                            <TH>Tanggal</TH>
-                            <TH>Status</TH>
-                            <TH>Action</TH>
+                            <TH className="action-bar action-bar--wrap">{t('newItemApproval.colNo')}</TH>
+                            <TH>{t('newItemApproval.colName')}</TH>
+                            <TH>{t('newItemApproval.colDesc')}</TH>
+                            <TH>{t('newItemApproval.colUnit')}</TH>
+                            <TH>{t('newItemApproval.colRequestedBy')}</TH>
+                            <TH>{t('newItemApproval.colDate')}</TH>
+                            <TH>{t('newItemApproval.colStatus')}</TH>
+                            <TH>{t('newItemApproval.colAction')}</TH>
                         </TR>
                     </THead>
                     <TBody>
@@ -233,8 +235,8 @@ const NewItemRequestApproval = () => {
                         ) : filteredData.length === 0 ? (
                             <EmptyTableRow
                                 colSpan={8}
-                                title={statusFilter !== 'ALL' ? `Tidak ada request berstatus ${statusFilter.toLowerCase()}` : 'Tidak ada request barang baru'}
-                                description="Gunakan filter lain atau tunggu user mengirim request baru."
+                                title={statusFilter !== 'ALL' ? t('newItemApproval.emptyNoMatch', { status: statusFilter.toLowerCase() }) : t('newItemApproval.emptyNoData')}
+                                description={t('newItemApproval.emptyHint')}
                             />
                         ) : (
                             filteredData.map((row, idx) => (
@@ -260,7 +262,7 @@ const NewItemRequestApproval = () => {
                                                     onClick={() => openApproveModal(row)}
                                                     disabled={processingId === row.id}
                                                 >
-                                                    <CheckIcon /> {processingId === row.id ? '...' : 'Approve'}
+                                                    <CheckIcon /> {processingId === row.id ? t('newItemApproval.btnProcessing') : t('newItemApproval.btnApprove')}
                                                 </Button>
                                                 <Button
                                                     type="button"
@@ -269,16 +271,16 @@ const NewItemRequestApproval = () => {
                                                     onClick={() => openRejectModal(row)}
                                                     disabled={processingId === row.id}
                                                 >
-                                                    <XIcon /> Reject
+                                                    <XIcon /> {t('newItemApproval.btnReject')}
                                                 </Button>
                                             </div>
                                         ) : (
                                             <span className="text-muted text-sm">
                                                 {row.status === 'APPROVED' && row.approved_quantity
-                                                    ? `Qty: ${row.approved_quantity}`
+                                                    ? t('newItemApproval.msgQty', { qty: row.approved_quantity.toString() })
                                                     : row.status === 'REJECTED' && row.reject_reason
-                                                        ? `Alasan: ${row.reject_reason}`
-                                                        : 'Sudah diproses'}
+                                                        ? t('newItemApproval.msgReason', { reason: row.reject_reason })
+                                                        : t('newItemApproval.msgProcessed')}
                                             </span>
                                         )}
                                     </TD>
@@ -292,7 +294,7 @@ const NewItemRequestApproval = () => {
                 <MobileCardList
                     isEmpty={filteredData.length === 0}
                     isLoading={loading}
-                    emptyMessage={`Tidak ada request${statusFilter !== 'ALL' ? ` berstatus ${statusFilter.toLowerCase()}` : ''}`}
+                    emptyMessage={statusFilter !== 'ALL' ? t('newItemApproval.emptyNoMatch', { status: statusFilter.toLowerCase() }) : t('newItemApproval.emptyNoData')}
                 >
                     {filteredData.map((row, idx) => (
                         <MobileCard
@@ -306,11 +308,11 @@ const NewItemRequestApproval = () => {
                                 </>
                             }
                             fields={[
-                                { label: 'No', value: idx + 1 },
-                                { label: 'Deskripsi', value: row.description || '-' },
-                                { label: 'Satuan', value: row.satuan || '-' },
-                                { label: 'Diminta Oleh', value: row.requested_by_name },
-                                { label: 'Tanggal', value: formatDate(row.created_at) },
+                                { label: t('newItemApproval.colNo'), value: idx + 1 },
+                                { label: t('newItemApproval.colDesc'), value: row.description || '-' },
+                                { label: t('newItemApproval.colUnit'), value: row.satuan || '-' },
+                                { label: t('newItemApproval.colRequestedBy'), value: row.requested_by_name },
+                                { label: t('newItemApproval.colDate'), value: formatDate(row.created_at) },
                             ]}
                             actions={
                                 row.status === 'PENDING' ? (
@@ -321,7 +323,7 @@ const NewItemRequestApproval = () => {
                                             onClick={() => openApproveModal(row)}
                                             disabled={processingId === row.id}
                                         >
-                                            <CheckIcon /> {processingId === row.id ? '...' : 'Approve'}
+                                            <CheckIcon /> {processingId === row.id ? t('newItemApproval.btnProcessing') : t('newItemApproval.btnApprove')}
                                         </Button>
                                         <Button
                                             type="button"
@@ -329,7 +331,7 @@ const NewItemRequestApproval = () => {
                                             onClick={() => openRejectModal(row)}
                                             disabled={processingId === row.id}
                                         >
-                                            <XIcon /> Reject
+                                            <XIcon /> {t('newItemApproval.btnReject')}
                                         </Button>
                                     </>
                                 ) : undefined
@@ -343,61 +345,61 @@ const NewItemRequestApproval = () => {
             <Modal
                 isOpen={!!approveTarget}
                 onClose={() => setApproveTarget(null)}
-                title={`Approve: ${approveTarget?.item_name || ''}`}
+                title={t('newItemApproval.modalApproveTitle', { name: approveTarget?.item_name || '' })}
                 footer={
                     <div className="form-actions">
-                        <Button variant="ghost" onClick={() => setApproveTarget(null)}>Batal</Button>
+                        <Button variant="ghost" onClick={() => setApproveTarget(null)}>{t('newItemApproval.modalApproveBtnCancel')}</Button>
                         <Button
                             variant="secondary"
                             onClick={handleApprove}
                             disabled={processingId !== null}
                         >
-                            <CheckIcon /> {processingId ? 'Memproses...' : 'Approve & Buat Item'}
+                            <CheckIcon /> {processingId ? t('newItemApproval.modalApproveBtnProcessing') : t('newItemApproval.modalApproveBtnSubmit')}
                         </Button>
                     </div>
                 }
             >
                 <p className="form-hint">
-                    Approve akan membuat item baru di inventory dengan data berikut:
+                    {t('newItemApproval.modalApproveHint')}
                 </p>
                 <div className="responsive-modal-form">
                     <label className="form-field form-field--tight">
-                        <span className="form-label">Jumlah Stok Awal <span className="required-mark">*</span></span>
+                        <span className="form-label">{t('newItemApproval.modalApproveLabelQty')} <span className="required-mark">*</span></span>
                         <input
                             className="input-control"
                             type="number"
                             min="1"
                             value={approveForm.approved_quantity}
                             onChange={(e) => setApproveForm((p) => ({ ...p, approved_quantity: e.target.value }))}
-                            placeholder="Masukkan jumlah stok awal"
+                            placeholder={t('newItemApproval.modalApproveHolderQty')}
                             autoFocus
                         />
                     </label>
                     <label className="form-field form-field--tight">
-                        <span className="form-label">Satuan</span>
+                        <span className="form-label">{t('newItemApproval.modalApproveLabelUnit')}</span>
                         <input
                             className="input-control"
                             value={approveForm.satuan}
                             onChange={(e) => setApproveForm((p) => ({ ...p, satuan: e.target.value }))}
-                            placeholder={approveTarget?.satuan || 'pcs'}
+                            placeholder={approveTarget?.satuan ? t('newItemApproval.modalApproveHolderUnit', { unit: approveTarget.satuan }) : 'pcs'}
                         />
                     </label>
                     <label className="form-field form-field--tight">
-                        <span className="form-label">Kode Barang</span>
+                        <span className="form-label">{t('newItemApproval.modalApproveLabelCode')}</span>
                         <input
                             className="input-control"
                             value={approveForm.kode_barang}
                             onChange={(e) => setApproveForm((p) => ({ ...p, kode_barang: e.target.value }))}
-                            placeholder="Opsional"
+                            placeholder={t('newItemApproval.modalApproveHolderCode')}
                         />
                     </label>
                     <label className="form-field form-field--tight">
-                        <span className="form-label">Lokasi Simpan</span>
+                        <span className="form-label">{t('newItemApproval.modalApproveLabelLoc')}</span>
                         <input
                             className="input-control"
                             value={approveForm.lokasi_simpan}
                             onChange={(e) => setApproveForm((p) => ({ ...p, lokasi_simpan: e.target.value }))}
-                            placeholder="Contoh: Lemari A1"
+                            placeholder={t('newItemApproval.modalApproveHolderLoc')}
                         />
                     </label>
                 </div>
@@ -407,27 +409,27 @@ const NewItemRequestApproval = () => {
             <Modal
                 isOpen={!!rejectTarget}
                 onClose={() => setRejectTarget(null)}
-                title={`Tolak: ${rejectTarget?.item_name || ''}`}
+                title={t('newItemApproval.modalRejectTitle', { name: rejectTarget?.item_name || '' })}
                 footer={
                     <div className="form-actions">
-                        <Button variant="ghost" onClick={() => setRejectTarget(null)}>Batal</Button>
+                        <Button variant="ghost" onClick={() => setRejectTarget(null)}>{t('newItemApproval.modalRejectBtnCancel')}</Button>
                         <Button
                             variant="danger"
                             onClick={handleReject}
                             disabled={processingId !== null}
                         >
-                            <XIcon /> {processingId ? 'Memproses...' : 'Tolak Request'}
+                            <XIcon /> {processingId ? t('newItemApproval.modalRejectBtnProcessing') : t('newItemApproval.modalRejectBtnSubmit')}
                         </Button>
                     </div>
                 }
             >
                 <label className="form-field" style={{ margin: 0 }}>
-                    <span className="form-label">Alasan Penolakan <span className="required-mark">*</span></span>
+                    <span className="form-label">{t('newItemApproval.modalRejectLabelReason')} <span className="required-mark">*</span></span>
                     <textarea
                         className="input-control input-control--textarea-resize"
                         value={rejectReason}
                         onChange={(e) => setRejectReason(e.target.value)}
-                        placeholder="Jelaskan alasan penolakan..."
+                        placeholder={t('newItemApproval.modalRejectHolderReason')}
                         rows={3}
                         autoFocus
                     />

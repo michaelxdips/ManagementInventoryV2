@@ -334,4 +334,136 @@ router.post('/:id/reject', authenticate, authorize('admin', 'superadmin'), async
     }
 });
 
+// POST /api/approval/batch-approve
+router.post('/batch-approve', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+    const connection = await pool.getConnection();
+    try {
+        const { ids } = req.body;
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({ message: 'Tidak ada request yang dipilih' });
+        }
+
+        await connection.beginTransaction();
+        const results = [];
+        const errors = [];
+        let lowStockAlerts = [];
+
+        for (const id of ids) {
+            const [reqRows] = await connection.query('SELECT * FROM requests WHERE id = ? FOR UPDATE', [id]);
+            const request = reqRows[0];
+
+            if (!request) {
+                errors.push(`Request #${id} tidak ditemukan`);
+                continue;
+            }
+
+            if (request.status !== 'PENDING' && request.status !== 'APPROVAL_REVIEW') {
+                errors.push(`Request #${id} sudah diproses`);
+                continue;
+            }
+
+            const [itemRows] = await connection.query('SELECT * FROM atk_items WHERE id = ? FOR UPDATE', [request.atk_item_id]);
+            const item = itemRows[0];
+
+            if (!item) {
+                errors.push(`Barang untuk request #${id} tidak ditemukan`);
+                continue;
+            }
+
+            if (request.qty > item.qty) {
+                errors.push(`Stok tidak cukup untuk request #${id} (${item.nama_barang}). Diminta: ${request.qty}, Stok: ${item.qty}`);
+                continue;
+            }
+
+            const newQty = item.qty - request.qty;
+
+            await connection.execute('UPDATE requests SET status = ? WHERE id = ?', ['APPROVED', id]);
+            await connection.execute('UPDATE atk_items SET qty = ? WHERE id = ?', [newQty, item.id]);
+
+            const [barangKeluarResult] = await connection.execute(`
+                INSERT INTO barang_keluar (date, atk_item_id, nama_barang, kode_barang, qty, satuan, penerima, dept, request_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `, [request.date, item.id, item.nama_barang, item.kode_barang, request.qty, item.satuan, request.receiver, request.dept, request.id]);
+
+            const minStockLimit = item.min_stock !== undefined && item.min_stock !== null ? item.min_stock : 5;
+            if (newQty <= minStockLimit) {
+                lowStockAlerts.push({
+                    item: item.nama_barang,
+                    remaining: newQty,
+                    min: minStockLimit,
+                    message: newQty === 0 ? `Stok ${item.nama_barang} HABIS! Segera restock.` : `Stok ${item.nama_barang} menipis (sisa ${newQty} ${item.satuan}).`
+                });
+            }
+
+            results.push(id);
+        }
+
+        if (errors.length > 0 && results.length === 0) {
+            await connection.rollback();
+            return res.status(400).json({ message: 'Semua request gagal diproses', errors });
+        }
+
+        await connection.commit();
+
+        for (const alert of lowStockAlerts) {
+            notifyLowStockToAdmins(alert).catch(console.error);
+        }
+
+        res.json({ message: `Berhasil menyetujui ${results.length} permintaan.`, errors });
+    } catch (error) {
+        await connection.rollback();
+        console.error('Batch approve error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    } finally {
+        connection.release();
+    }
+});
+
+// POST /api/approval/batch-reject
+router.post('/batch-reject', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
+    const connection = await pool.getConnection();
+    try {
+        const { ids, reason } = req.body;
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({ message: 'Tidak ada request yang dipilih' });
+        }
+
+        await connection.beginTransaction();
+        const results = [];
+        const errors = [];
+
+        for (const id of ids) {
+            const [reqRows] = await connection.query('SELECT * FROM requests WHERE id = ? FOR UPDATE', [id]);
+            const request = reqRows[0];
+
+            if (!request) {
+                errors.push(`Request #${id} tidak ditemukan`);
+                continue;
+            }
+
+            if (request.status !== 'PENDING' && request.status !== 'APPROVAL_REVIEW') {
+                errors.push(`Request #${id} sudah diproses`);
+                continue;
+            }
+
+            await connection.execute('UPDATE requests SET status = ?, reject_reason = ? WHERE id = ?', ['REJECTED', reason || null, id]);
+            results.push(id);
+        }
+
+        if (errors.length > 0 && results.length === 0) {
+            await connection.rollback();
+            return res.status(400).json({ message: 'Semua request gagal diproses', errors });
+        }
+
+        await connection.commit();
+        res.json({ message: `Berhasil menolak ${results.length} permintaan.`, errors });
+    } catch (error) {
+        await connection.rollback();
+        console.error('Batch reject error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    } finally {
+        connection.release();
+    }
+});
+
 export default router;

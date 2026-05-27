@@ -56,3 +56,9 @@ export const reviewRequest = (id: number) => http.post<ReviewResponse>(`/approva
 export const fetchApprovalDetail = (id: number) => http.get<ApprovalDetail>(`/approval/${id}/detail`);
 export const finalizeRequest = (id: number, finalQty: number) =>
   http.post<FinalizeResponse>(`/approval/${id}/finalize`, { finalQty });
+
+export const batchApproveRequests = (ids: number[]) => 
+  http.post<{ message: string; errors?: string[] }>('/approval/batch-approve', { ids });
+
+export const batchRejectRequests = (ids: number[], reason?: string) => 
+  http.post<{ message: string; errors?: string[] }>('/approval/batch-reject', { ids, reason });

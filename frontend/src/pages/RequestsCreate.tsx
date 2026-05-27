@@ -6,6 +6,7 @@ import { fetchItems, Item } from '../api/items.api';
 import { fetchUnitNames } from '../api/units.api';
 import useAuth from '../hooks/useAuth';
 import { useToast } from '../components/ui/Toast';
+import { useTranslation } from '../hooks/useTranslation';
 
 const PlusIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -18,6 +19,7 @@ const RequestsCreate = () => {
   const { user } = useAuth();
   const isUserRole = user?.role === 'user';
   const { showToast } = useToast();
+  const { t } = useTranslation();
 
   const [items, setItems] = useState<Item[]>([]);
   const [unitOptions, setUnitOptions] = useState<string[]>([]);
@@ -71,31 +73,31 @@ const RequestsCreate = () => {
     e.preventDefault();
     const { item, date, qty, unit, receiver, dept } = formValues;
     if (!item || !date || !qty || !unit || !receiver || !dept) {
-      showToast('Semua field wajib diisi');
+      showToast(t('requests.errorAllFieldsRequired'));
       return;
     }
     const qtyNumber = Number(qty);
     if (Number.isNaN(qtyNumber) || qtyNumber <= 0) {
-      showToast('Jumlah harus lebih dari 0');
+      showToast(t('requests.errorQtyGreaterThanZero'));
       return;
     }
 
     // Validate against stock
     if (selectedItem && qtyNumber > selectedItem.quantity) {
-      showToast(`Stok tidak cukup. Tersedia: ${selectedItem.quantity} ${selectedItem.unit}`);
+      showToast(`${t('requests.errorStockNotEnough')} ${selectedItem.quantity} ${selectedItem.unit}`);
       return;
     }
 
     setSaving(true);
     createRequest({ item, date, qty: qtyNumber, unit, receiver, dept })
       .then(() => {
-        showToast('Request ATK berhasil dibuat', 'success');
+        showToast(t('requests.successCreated'), 'success');
         setFormValues({ item: '', date: '', qty: '', unit: '', receiver: '', dept: isUserRole && user?.name ? user.name : '' });
         setSelectedItem(null);
         setItemSearch('');
       })
       .catch((err: any) => {
-        let msg = 'Gagal menyimpan ke server';
+        let msg = t('requests.errorSaveFailed');
         if (err?.message) {
           try {
             const parsed = JSON.parse(err.message);
@@ -112,21 +114,21 @@ const RequestsCreate = () => {
   return (
     <div className="requests-page">
       <div className="requests-header section-spacer-md">
-        <h2 className="history-title">Masukkan Request</h2>
+        <h2 className="history-title">{t('requests.createTitle')}</h2>
         <Button type="button" variant="ghost" onClick={() => navigate('/requests')}>
-          Kembali ke list
+          {t('requests.backToList')}
         </Button>
       </div>
 
       <div className="history-card">
         <div className="history-title title-inline">
-          <PlusIcon /> <span>Form Request</span>
+          <PlusIcon /> <span>{t('requests.formTitle')}</span>
         </div>
 
         <form className="form-grid" onSubmit={handleSubmit}>
           {/* Nama Barang — Searchable Dropdown */}
           <label className="form-field form-field--relative">
-            <span className="form-label">Nama Barang</span>
+            <span className="form-label">{t('requests.itemLabel')}</span>
             <input
               className="input-control"
               value={itemSearch}
@@ -140,13 +142,13 @@ const RequestsCreate = () => {
                 }
               }}
               onFocus={() => { if (!selectedItem) setShowDropdown(true); }}
-              placeholder="Ketik untuk mencari barang..."
+              placeholder={t('requests.searchPlaceholder')}
               autoComplete="off"
             />
             {showDropdown && itemSearch && !selectedItem && (
               <div className="dropdown-panel dropdown-panel--search">
                 {filteredItems.length === 0 ? (
-                  <div className="dropdown-empty">Barang tidak ditemukan</div>
+                  <div className="dropdown-empty">{t('requests.itemNotFound')}</div>
                 ) : (
                   filteredItems.map((item) => (
                     <div
@@ -161,7 +163,7 @@ const RequestsCreate = () => {
                         </div>
                       </div>
                       <div className={item.quantity > 0 ? 'dropdown-stock dropdown-stock--positive' : 'dropdown-stock dropdown-stock--negative'}>
-                        Stok: {item.quantity} {item.unit}
+                        {t('requests.stock')} {item.quantity} {item.unit}
                       </div>
                     </div>
                   ))
@@ -177,13 +179,13 @@ const RequestsCreate = () => {
             )}
             {selectedItem && (
               <div className="field-note field-note--success">
-                ✓ Stok: {selectedItem.quantity} {selectedItem.unit}
+                ✓ {t('requests.stock')} {selectedItem.quantity} {selectedItem.unit}
               </div>
             )}
           </label>
 
           <label className="form-field">
-            <span className="form-label">Tanggal</span>
+            <span className="form-label">{t('requests.dateLabel')}</span>
             <input
               className="input-control"
               type="date"
@@ -193,14 +195,14 @@ const RequestsCreate = () => {
             />
           </label>
           <label className="form-field">
-            <span className="form-label">Jumlah</span>
+            <span className="form-label">{t('requests.qtyLabel')}</span>
             <div className="qty-stepper">
               <button
                 type="button"
                 className="qty-stepper__button"
                 onClick={() => handleChange('qty', String(Math.max(1, Number(formValues.qty || 1) - 1)))}
                 disabled={!formValues.qty || Number(formValues.qty) <= 1}
-                aria-label="Kurangi jumlah"
+                aria-label={t('requests.decreaseQty')}
               >
                 −
               </button>
@@ -222,14 +224,14 @@ const RequestsCreate = () => {
                   handleChange('qty', String(nextQty));
                 }}
                 disabled={Boolean(selectedItem?.quantity && Number(formValues.qty || 0) >= selectedItem.quantity)}
-                aria-label="Tambah jumlah"
+                aria-label={t('requests.increaseQty')}
               >
                 +
               </button>
             </div>
           </label>
           <label className="form-field">
-            <span className="form-label">Satuan</span>
+            <span className="form-label">{t('requests.unitLabel')}</span>
             <input
               className="input-control input-control--disabled"
               value={formValues.unit}
@@ -237,11 +239,11 @@ const RequestsCreate = () => {
             />
           </label>
           <label className="form-field">
-            <span className="form-label">Penerima</span>
+            <span className="form-label">{t('requests.receiverLabel')}</span>
             <input className="input-control" value={formValues.receiver} onChange={(e) => handleChange('receiver', e.target.value)} />
           </label>
           <label className="form-field">
-            <span className="form-label">Unit</span>
+            <span className="form-label">{t('requests.deptLabel')}</span>
             {isUserRole ? (
               <input
                 className="input-control input-control--disabled"
@@ -254,7 +256,7 @@ const RequestsCreate = () => {
                 value={formValues.dept}
                 onChange={(e) => handleChange('dept', e.target.value)}
               >
-                <option value="">-- Pilih Unit --</option>
+                <option value="">{t('requests.selectUnit')}</option>
                 {unitOptions.map((name) => (
                   <option key={name} value={name}>{name}</option>
                 ))}
@@ -266,7 +268,7 @@ const RequestsCreate = () => {
             <div className="items-meta" aria-live="polite" />
             <Button type="submit" variant="secondary" disabled={saving || !selectedItem}>
               <PlusIcon />
-              <span>{saving ? 'Mengirim...' : 'Simpan'}</span>
+              <span>{saving ? t('requests.saving') : t('requests.save')}</span>
             </Button>
           </div>
         </form>

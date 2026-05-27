@@ -11,6 +11,7 @@ import { formatDateV2, getWIBInputDate } from '../utils/dateUtils';
 import { useSearchParams } from 'react-router-dom';
 import { SkeletonTableRows } from '../components/ui/Skeleton';
 import { EmptyTableRow } from '../components/ui/EmptyState';
+import { useTranslation } from '../hooks/useTranslation';
 
 const parseDate = (value: string) => (value ? new Date(value) : null);
 
@@ -25,6 +26,7 @@ const HistoryKeluar = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const perPage = 10;
 
@@ -109,7 +111,7 @@ const HistoryKeluar = () => {
     <div className="history-page">
       <div className="history-card">
         <div className="page-header--stacked history-header-compact">
-          <h2 className="history-title mb-0">History Barang Keluar</h2>
+          <h2 className="history-title mb-0">{t('history.titleOut')}</h2>
           <div className="action-bar action-bar--wrap">
             <Button type="button" variant="secondary" onClick={() => exportToPdf({
               filename: `History_Barang_Keluar_${getWIBInputDate()}`,
@@ -127,11 +129,11 @@ const HistoryKeluar = () => {
               data: filteredData.map(d => ({ ...d, date: formatDateV2(d.date) }))
             })} disabled={data.length === 0} className="action-button-inline">
               <FileText size={16} />
-              PDF
+              {t('inventory.pdf')}
             </Button>
             <Button type="button" variant="secondary" onClick={handleExport} disabled={data.length === 0} className="action-button-inline">
               <Download size={16} />
-              Excel
+              {t('inventory.excel')}
             </Button>
           </div>
         </div>
@@ -185,7 +187,7 @@ const HistoryKeluar = () => {
 
           <div className="history-actions">
             <Button type="button" variant="secondary" onClick={applyFilters}>
-              Terapkan
+              {t('inventory.apply')}
             </Button>
             <Button type="button" variant="ghost" onClick={resetFilters}>
               Reset
@@ -199,14 +201,14 @@ const HistoryKeluar = () => {
         <Table>
           <THead>
             <TR>
-              <TH className="th-width-52">No</TH>
-              <TH>Tanggal</TH>
-              <TH>Nama Barang</TH>
-              <TH>Kode Barang</TH>
-              <TH>Jumlah</TH>
-              <TH>Satuan</TH>
-              <TH>Penerima</TH>
-              <TH>Unit</TH>
+              <TH className="th-width-52">{t('inventory.columns.no')}</TH>
+              <TH>{t('inventory.columns.date')}</TH>
+              <TH>{t('inventory.columns.itemName')}</TH>
+              <TH>{t('inventory.columns.itemCode')}</TH>
+              <TH>{t('inventory.columns.qty')}</TH>
+              <TH>{t('inventory.columns.unit')}</TH>
+              <TH>{t('inventory.columns.receiver')}</TH>
+              <TH>{t('inventory.columns.dept')}</TH>
             </TR>
           </THead>
           <TBody>
@@ -215,7 +217,7 @@ const HistoryKeluar = () => {
             ) : pageRows.length === 0 ? (
               <EmptyTableRow
                 colSpan={8}
-                title="Tidak ada data pada rentang tanggal ini"
+                title={t('inventory.noData')}
                 description={activeDept ? `Tidak ada barang keluar untuk unit ${activeDept} pada filter ini.` : 'Coba ubah filter tanggal atau reset filter untuk melihat semua riwayat barang keluar.'}
               />
             ) : (
@@ -239,7 +241,7 @@ const HistoryKeluar = () => {
         <MobileCardList
           isEmpty={pageRows.length === 0}
           isLoading={loading}
-          emptyMessage="Tidak ada data pada rentang tanggal ini"
+          emptyMessage={t('inventory.noData')}
         >
           {pageRows.map((row, idx) => (
             <MobileCard
@@ -248,12 +250,12 @@ const HistoryKeluar = () => {
                 <span className="mobile-card-header-title">{row.name}</span>
               }
               fields={[
-                { label: 'No', value: startIndex + idx + 1 },
-                { label: 'Tanggal', value: formatDateV2(row.date) },
-                { label: 'Kode', value: row.code },
-                { label: 'Jumlah', value: `${row.qty} ${row.unit}` },
-                { label: 'Penerima', value: row.receiver },
-                { label: 'Unit', value: row.dept },
+                { label: t('inventory.columns.no'), value: startIndex + idx + 1 },
+                { label: t('inventory.columns.date'), value: formatDateV2(row.date) },
+                { label: t('inventory.columns.itemCode'), value: row.code },
+                { label: t('inventory.columns.qty'), value: `${row.qty} ${row.unit}` },
+                { label: t('inventory.columns.receiver'), value: row.receiver },
+                { label: t('inventory.columns.dept'), value: row.dept },
               ]}
             />
           ))}

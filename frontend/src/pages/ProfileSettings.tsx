@@ -6,10 +6,12 @@ import useAuth from '../hooks/useAuth';
 import Modal from '../components/ui/Modal';
 import { updateProfile, deleteAccount } from '../api/users.api';
 import { useToast } from '../components/ui/Toast';
+import { useTranslation } from '../hooks/useTranslation';
 
 const ProfileSettings = () => {
 	const { user, updateUser, logout } = useAuth();
 	const navigate = useNavigate();
+	const { t, language, setLanguage } = useTranslation();
 
 	const [name, setName] = useState('');
 	const [username, setUsername] = useState('');
@@ -50,7 +52,7 @@ const ProfileSettings = () => {
 				email: trimmedEmail === '' ? null : trimmedEmail,
 			});
 			updateUser(updatedUser); // Update context instantly
-			setMessage('Profil berhasil disimpan');
+			setMessage(t('settings.profileSaved'));
 		} catch (err: any) {
 			const msg = typeof err?.message === 'string' ? (() => { try { return JSON.parse(err.message).message; } catch { return err.message; } })() : 'Gagal menyimpan profil';
 			showToast(msg || 'Gagal menyimpan profil');
@@ -84,7 +86,6 @@ const ProfileSettings = () => {
 			const msg = typeof err?.message === 'string' ? (() => { try { return JSON.parse(err.message).message; } catch { return err.message; } })() : 'Gagal menghapus akun. Password mungkin salah.';
 			showToast(msg || 'Gagal menghapus akun. Password mungkin salah.');
 			setSaving(false);
-			// setShowConfirm(false); // Keep open on error so user can retry
 		}
 	};
 
@@ -104,30 +105,49 @@ const ProfileSettings = () => {
 							<path d="M9 7h6M9 11h6M9 15h4" />
 						</svg>
 					</span>
-					<span className="settings-title">Profile settings</span>
+					<span className="settings-title">{t('settings.profileSettings')}</span>
 				</div>
 
 				<div className="settings-header">
-					<h1 className="settings-heading">Settings</h1>
-					<p className="settings-subtitle">Manage your profile and account settings</p>
+					<h1 className="settings-heading">{t('settings.settingsTitle')}</h1>
+					<p className="settings-subtitle">{t('settings.settingsSubtitle')}</p>
 				</div>
 
 				<div className="settings-tabs">
 					<Link className="settings-tab is-active" to="/settings">
-						Profile
+						{t('settings.tabProfile')}
 					</Link>
 					<Link className="settings-tab" to="/settings/password">
-						Password
+						{t('settings.tabPassword')}
 					</Link>
 				</div>
-
+				
 				<div className="settings-section">
-					<p className="section-kicker">Profile information</p>
-					<p className="section-muted">Update your name, username, and email for notifikasi status permintaan</p>
+					<p className="section-kicker">{t('settings.preferences')}</p>
+					<p className="section-muted">{t('settings.preferencesDesc')}</p>
 
 					<div className="settings-grid">
 						<label className="settings-field">
-							<span className="settings-label">Name</span>
+							<span className="settings-label">{t('settings.language')}</span>
+							<select
+								className="input-control settings-input"
+								value={language}
+								onChange={(e) => setLanguage(e.target.value as 'en' | 'id')}
+							>
+								<option value="id">Bahasa Indonesia</option>
+								<option value="en">English</option>
+							</select>
+						</label>
+					</div>
+				</div>
+
+				<div className="settings-section">
+					<p className="section-kicker">{t('settings.profileInfo')}</p>
+					<p className="section-muted">{t('settings.profileInfoDesc')}</p>
+
+					<div className="settings-grid">
+						<label className="settings-field">
+							<span className="settings-label">{t('settings.name')}</span>
 							<input
 								className="input-control settings-input"
 								value={name}
@@ -137,7 +157,7 @@ const ProfileSettings = () => {
 						</label>
 
 						<label className="settings-field">
-							<span className="settings-label">Username</span>
+							<span className="settings-label">{t('settings.username')}</span>
 							<input
 								className="input-control settings-input"
 								value={username}
@@ -147,13 +167,13 @@ const ProfileSettings = () => {
 						</label>
 
 						<label className="settings-field settings-field--full">
-							<span className="settings-label">Email (opsional)</span>
+							<span className="settings-label">{t('settings.emailOptional')}</span>
 							<input
 								type="email"
 								className="input-control settings-input"
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
-								placeholder="nama@perusahaan.com"
+								placeholder={t('settings.emailPlaceholder')}
 								autoComplete="email"
 							/>
 						</label>
@@ -163,19 +183,19 @@ const ProfileSettings = () => {
 						{message && <p className="items-meta text-success" role="status">{message}</p>}
 
 						<Button type="button" variant="primary" onClick={handleSave} disabled={saving}>
-							{saving ? 'Saving...' : 'Save'}
+							{saving ? t('settings.saving') : t('settings.save')}
 						</Button>
 					</div>
 				</div>
 
 				<div className="settings-section">
-					<p className="section-kicker">Delete account</p>
-					<p className="section-muted">Delete your account and all of its resources</p>
+					<p className="section-kicker">{t('settings.deleteAccount')}</p>
+					<p className="section-muted">{t('settings.deleteAccountDesc')}</p>
 
 					<div className="danger-card">
-						<p className="danger-title">Warning</p>
-						<p className="danger-text">Please proceed with caution, this cannot be undone.</p>
-						<Button type="button" variant="danger" onClick={handleDelete} disabled={saving}>Delete account</Button>
+						<p className="danger-title">{t('settings.warning')}</p>
+						<p className="danger-text">{t('settings.warningDesc')}</p>
+						<Button type="button" variant="danger" onClick={handleDelete} disabled={saving}>{t('settings.deleteAccountBtn')}</Button>
 					</div>
 				</div>
 			</div>
@@ -184,31 +204,29 @@ const ProfileSettings = () => {
 			<Modal
 				isOpen={showConfirm}
 				onClose={cancelDelete}
-				title="Hapus akun?"
+				title={t('settings.deleteConfirmTitle')}
 				footer={
 					<div className="modal-actions">
-						<Button type="button" variant="secondary" onClick={cancelDelete}>Batal</Button>
+						<Button type="button" variant="secondary" onClick={cancelDelete}>{t('settings.cancel')}</Button>
 						<Button type="submit" form="delete-form" variant="danger" disabled={saving}>
-							{saving ? 'Menghapus...' : 'Hapus Permanen'}
+							{saving ? t('settings.deleting') : t('settings.deletePermanent')}
 						</Button>
 					</div>
 				}
 			>
 				<div className="mb-4">
-					<p className="modal-kicker">Konfirmasi Keamanan</p>
+					<p className="modal-kicker">{t('settings.securityConfirm')}</p>
 					<p className="modal-helper-text">
-						Tindakan ini tidak dapat dibatalkan. Masukkan password Anda untuk konfirmasi.
+						{t('settings.securityConfirmDesc')}
 					</p>
-
-
 
 					<form id="delete-form" onSubmit={confirmDelete}>
 						<div className="form-group mt-4">
-							<label htmlFor="del-password">Password Anda</label>
+							<label htmlFor="del-password">{t('settings.yourPassword')}</label>
 							<Input
 								id="del-password"
 								type="password"
-								placeholder="Masukkan password saat ini"
+								placeholder={t('settings.passwordPlaceholder')}
 								value={deletePassword}
 								onChange={(e) => setDeletePassword(e.target.value)}
 								required

@@ -27,6 +27,7 @@ import auditRoutes from './routes/audit.js';
 import announcementsRoutes from './routes/announcements.js';
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = config.port;
 
 const corsOrigins = config.corsOrigins;
@@ -35,7 +36,7 @@ app.use(
     cors(
         corsOrigins.length > 0
             ? { origin: corsOrigins, credentials: true }
-            : { origin: true, credentials: true }
+            : { origin: process.env.NODE_ENV === 'production' ? false : true, credentials: true }
     )
 );
 
