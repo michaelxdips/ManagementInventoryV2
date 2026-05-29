@@ -3,7 +3,7 @@ import { useRegisterSW } from 'virtual:pwa-register/react';
 
 export function UpdatePrompt() {
   const {
-    offlineReady: [_offlineReady],
+    offlineReady: [offlineReady],
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
   } = useRegisterSW({

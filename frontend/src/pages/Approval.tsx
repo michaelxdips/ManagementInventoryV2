@@ -57,11 +57,11 @@ const Approval = () => {
     fetchApproval()
       .then((rows) => {
         setData(rows);
-        setError(null);
+        
       })
       .catch(() => {
         setData([]);
-        setError('Gagal memuat data dari server');
+        
       })
       .finally(() => setLoading(false));
   }, []);
@@ -95,9 +95,9 @@ const Approval = () => {
       const msg = err.message || 'Gagal memproses permintaan';
       try {
         const parsed = JSON.parse(msg);
-        setError(parsed.message || msg);
+        
       } catch {
-        setError(msg);
+        
       }
     } finally {
       setProcessingId(null);
@@ -121,7 +121,7 @@ const Approval = () => {
         setSelectedIds(new Set());
         loadData();
       } catch (err: any) {
-        setError(err.message || 'Gagal batch reject');
+        
       } finally {
         setBatchProcessing(false);
       }
@@ -136,7 +136,7 @@ const Approval = () => {
       setRejectTarget(null);
       loadData();
     } catch (err: any) {
-      setError(err.message || 'Gagal menolak permintaan');
+      
     } finally {
       setProcessingId(null);
     }
@@ -177,7 +177,7 @@ const Approval = () => {
       setSelectedIds(new Set());
       loadData();
     } catch (err: any) {
-      setError(err.message || 'Gagal batch approve');
+      
     } finally {
       setBatchProcessing(false);
     }
