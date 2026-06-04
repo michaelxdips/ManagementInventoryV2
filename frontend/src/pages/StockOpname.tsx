@@ -19,7 +19,7 @@ const StockOpname = () => {
     const [formNotes, setFormNotes] = useState('');
     const [showFinalizeConfirm, setShowFinalizeConfirm] = useState(false);
     const { showToast } = useToast();
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
 
     const handleCreate = async () => {
         try {
@@ -28,7 +28,9 @@ const StockOpname = () => {
             await loadSession(id);
             setFormNotes('');
         } catch (err: any) {
-            showToast(err.message || 'Gagal membuat sesi opname', 'error');
+            let msg = err.message || t('stockOpname.createError');
+            if (msg.includes('sesi DRAFT')) msg = t('stockOpname.draftExistsError');
+            showToast(msg, 'error');
         } finally {
             setActionLoading(false);
         }
@@ -40,7 +42,7 @@ const StockOpname = () => {
             const sess = await getSession(id);
             setActiveSession(sess);
         } catch (err: any) {
-            showToast(err.message || 'Gagal memuat sesi opname', 'error');
+            showToast(err.message || t('stockOpname.loadError'), 'error');
         } finally {
             setActionLoading(false);
         }
@@ -56,7 +58,7 @@ const StockOpname = () => {
                 items: activeSession.items?.map(i => i.item_id === itemId ? { ...i, physical_qty: physicalQty, difference: physicalQty - i.system_qty, notes } : i)
             });
         } catch (err: any) {
-            showToast('Gagal update item: ' + (err.message || 'Terjadi kesalahan'), 'error');
+            showToast(t('toast.stockOpname.updateFailed') + (err.message || t('toast.common.errorOccurred')), 'error');
         }
     };
 
@@ -65,11 +67,11 @@ const StockOpname = () => {
         try {
             setActionLoading(true);
             await finalizeSession(activeSession.id);
-            showToast('Berhasil finalisasi', 'success');
+            showToast(t('toast.stockOpname.finalizeSuccess'));
             setShowFinalizeConfirm(false);
             setActiveSession(null);
         } catch (err: any) {
-            showToast(err.message || 'Gagal finalize', 'error');
+            showToast(err.message || t('toast.stockOpname.finalizeFailed'), 'error');
         } finally {
             setActionLoading(false);
         }
@@ -80,11 +82,11 @@ const StockOpname = () => {
             <div className="page-container">
                 <header className="page-header page-header--stacked">
                     <div>
-                        <h1 className="page-title">Sesi Opname #{activeSession.id}</h1>
-                        <p className="page-description">Status: <span className="text-strong">{activeSession.status}</span> | Tanggal: {new Date(activeSession.opname_date).toLocaleString('id-ID')}</p>
+                        <h1 className="page-title">{t('stockOpname.sessionTitle', { id: activeSession.id })}</h1>
+                        <p className="page-description">{t('stockOpname.status')}: <span className="text-strong">{activeSession.status}</span> | {t('stockOpname.date')}: {new Date(activeSession.opname_date).toLocaleString(language === 'id' ? 'id-ID' : 'en-US')}</p>
                     </div>
                     <div className="action-bar action-bar--wrap">
-                        <Button variant="secondary" onClick={() => setActiveSession(null)}>Kembali</Button>
+                        <Button variant="secondary" onClick={() => setActiveSession(null)}>{t('common.back')}</Button>
                         <Button variant="secondary" onClick={() => exportToPdf({
                             filename: `Stock_Opname_${activeSession.id}_${getWIBInputDate()}`,
                             title: `Laporan Stock Opname #${activeSession.id}`,
@@ -107,7 +109,7 @@ const StockOpname = () => {
                         </Button>
                         {activeSession.status === 'DRAFT' && (
                             <Button onClick={() => setShowFinalizeConfirm(true)} disabled={actionLoading}>
-                                {actionLoading ? 'Menyimpan...' : 'Finalisasi & Update Stok'}
+                                {actionLoading ? t('common.saving') : t('stockOpname.finalize')}
                             </Button>
                         )}
                     </div>
@@ -117,12 +119,12 @@ const StockOpname = () => {
                     <Table>
                         <THead>
                             <TR>
-                                <TH>Kode</TH>
-                                <TH>Nama Barang</TH>
-                                <TH>Stok Sistem</TH>
-                                <TH className="th-width-150">Stok Fisik</TH>
-                                <TH>Selisih</TH>
-                                <TH>Catatan (Opsional)</TH>
+                                <TH>{t('inventory.columns.itemCode')}</TH>
+                                <TH>{t('inventory.columns.itemName')}</TH>
+                                <TH>{t('stockOpname.systemStock')}</TH>
+                                <TH className="th-width-150">{t('stockOpname.physicalStock')}</TH>
+                                <TH>{t('stockOpname.difference')}</TH>
+                                <TH>{t('stockOpname.noteOptional')}</TH>
                             </TR>
                         </THead>
                         <TBody>
@@ -152,7 +154,7 @@ const StockOpname = () => {
                                             disabled={activeSession.status === 'FINALIZED'}
                                             onChange={(e) => handleItemChange(item.item_id, item.physical_qty, e.target.value)}
                                             className="input-control input-control--compact"
-                                            placeholder="Alasan selisih..."
+                                            placeholder={t('stockOpname.notePlaceholder')}
                                         />
                                     </TD>
                                 </TR>
@@ -167,10 +169,10 @@ const StockOpname = () => {
                                 className={item.difference !== 0 ? 'card-warning' : undefined}
                                 header={<span className="mobile-card-header-title">{item.nama_barang}</span>}
                                 fields={[
-                                    { label: 'Kode', value: item.kode_barang || '-' },
-                                    { label: 'Stok sistem', value: item.system_qty },
+                                    { label: t('inventory.columns.itemCode'), value: item.kode_barang || '-' },
+                                    { label: t('stockOpname.systemStock'), value: item.system_qty },
                                     {
-                                        label: 'Selisih',
+                                        label: t('stockOpname.difference'),
                                         value: (
                                             <span className={item.difference < 0 ? 'text-danger text-strong' : item.difference > 0 ? 'text-success text-strong' : ''}>
                                                 {item.difference > 0 ? `+${item.difference}` : item.difference}
@@ -180,7 +182,7 @@ const StockOpname = () => {
                                 ]}
                                 actions={
                                     <div className="form-stack-compact">
-                                        <label className="form-label form-label--compact">Stok fisik</label>
+                                        <label className="form-label form-label--compact">{t('stockOpname.physicalStock')}</label>
                                         <Input
                                             type="number"
                                             value={item.physical_qty}
@@ -188,14 +190,14 @@ const StockOpname = () => {
                                             onChange={(e) => handleItemChange(item.item_id, parseInt(e.target.value) || 0, item.notes)}
                                             className="input-control input-control--compact"
                                         />
-                                        <label className="form-label form-label--compact">Catatan</label>
+                                        <label className="form-label form-label--compact">{t('stockOpname.note')}</label>
                                         <Input
                                             type="text"
                                             value={item.notes || ''}
                                             disabled={activeSession.status === 'FINALIZED'}
                                             onChange={(e) => handleItemChange(item.item_id, item.physical_qty, e.target.value)}
                                             className="input-control input-control--compact"
-                                            placeholder="Alasan selisih..."
+                                            placeholder={t('stockOpname.notePlaceholder')}
                                         />
                                     </div>
                                 }
@@ -227,16 +229,16 @@ const StockOpname = () => {
             </header>
 
             <div className="history-card page-card-spacing">
-                <h3 className="section-heading">Mulai Sesi Baru</h3>
+                <h3 className="section-heading">{t('stockOpname.startNewSession')}</h3>
                 <div className="filter-bar">
                     <input 
                         className="input-control input-control--flush filter-field--grow"
-                        placeholder="Catatan / Nama Sesi (Opsional)" 
+                        placeholder={t('stockOpname.sessionNotePlaceholder')} 
                         value={formNotes} 
                         onChange={(e) => setFormNotes(e.target.value)}
                     />
                     <Button onClick={handleCreate} disabled={actionLoading} className="button-no-shrink">
-                        {actionLoading ? 'Membuat...' : '+ Mulai Opname'}
+                        {actionLoading ? t('common.creating') : t('stockOpname.startOpname')}
                     </Button>
                 </div>
             </div>
@@ -246,11 +248,11 @@ const StockOpname = () => {
                 <Table>
                     <THead>
                         <TR>
-                            <TH>ID</TH>
-                            <TH>Tanggal</TH>
-                            <TH>Catatan</TH>
-                            <TH>Status</TH>
-                            <TH>Aksi</TH>
+                            <TH>{t('stockOpname.id')}</TH>
+                            <TH>{t('stockOpname.date')}</TH>
+                            <TH>{t('stockOpname.note')}</TH>
+                            <TH>{t('stockOpname.status')}</TH>
+                            <TH>{t('stockOpname.action')}</TH>
                         </TR>
                     </THead>
                     <TBody>
@@ -262,7 +264,7 @@ const StockOpname = () => {
                             sessions.map(s => (
                                 <TR key={s.id}>
                                     <TD>#{s.id}</TD>
-                                    <TD>{new Date(s.opname_date).toLocaleString('id-ID')}</TD>
+                                    <TD>{new Date(s.opname_date).toLocaleString(language === 'id' ? 'id-ID' : 'en-US')}</TD>
                                     <TD>{s.notes || '-'}</TD>
                                     <TD>
                                         <span className={`badge badge-${s.status === 'FINALIZED' ? 'approved' : 'pending'}`}>
@@ -272,12 +274,10 @@ const StockOpname = () => {
                                     <TD>
                                         <div className="action-buttons">
                                             <Button variant="secondary" size="sm" onClick={() => loadSession(s.id)}>
-                                                {s.status === 'DRAFT' ? 'Lanjutkan' : 'Lihat Hasil'}
+                                                {s.status === 'DRAFT' ? t('stockOpname.continue') : t('stockOpname.viewResult')}
                                             </Button>
                                             {s.status === 'DRAFT' && (
-                                                <Button variant="ghost" size="sm" className="danger-text-button" onClick={() => deleteSession(s.id)}>
-                                                    Hapus
-                                                </Button>
+                                                <Button variant="ghost" size="sm" className="danger-text-button" onClick={() => deleteSession(s.id)}>{t('common.delete')}</Button>
                                             )}
                                         </div>
                                     </TD>
@@ -302,13 +302,13 @@ const StockOpname = () => {
                                 </>
                             }
                             fields={[
-                                { label: 'Tanggal', value: new Date(s.opname_date).toLocaleString('id-ID') },
-                                { label: 'Catatan', value: s.notes || '-' },
+                                { label: t('stockOpname.date'), value: new Date(s.opname_date).toLocaleString('id-ID') },
+                                { label: t('stockOpname.note'), value: s.notes || '-' },
                             ]}
                             actions={
                                 <div className="form-stack-compact">
                                     <Button variant="secondary" size="sm" onClick={() => loadSession(s.id)}>
-                                        {s.status === 'DRAFT' ? 'Lanjutkan' : 'Lihat hasil'}
+                                        {s.status === 'DRAFT' ? t('stockOpname.continue') : t('stockOpname.viewResult')}
                                     </Button>
                                     {s.status === 'DRAFT' && (
                                         <Button

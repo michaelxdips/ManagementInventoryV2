@@ -67,11 +67,17 @@ router.post('/', authenticate, authorize('user', 'admin', 'superadmin'), async (
     try {
         const { date, item, qty, unit, receiver, dept } = req.body;
 
-        if (!date || !item || !qty || !unit || !receiver || !dept) {
+        if (!date || !item || qty === undefined || qty === null || qty === '' || !unit || !receiver || !dept) {
             return res.status(400).json({ message: 'Semua field wajib diisi' });
         }
 
-        if (qty <= 0) {
+        const parsedQty = Number(qty);
+
+        if (!Number.isInteger(parsedQty)) {
+            return res.status(400).json({ message: 'Jumlah permintaan harus berupa angka bulat' });
+        }
+
+        if (parsedQty <= 0) {
             return res.status(400).json({ message: 'Jumlah permintaan harus lebih dari 0' });
         }
 
@@ -98,7 +104,7 @@ router.post('/', authenticate, authorize('user', 'admin', 'superadmin'), async (
         const [result] = await pool.execute(`
       INSERT INTO requests (date, item, qty, unit, receiver, dept, status, user_id, atk_item_id)
       VALUES (?, ?, ?, ?, ?, ?, 'PENDING', ?, ?)
-    `, [date, validItemName, qty, unit, receiver, dept, req.user.id, validItemId]);
+    `, [date, validItemName, parsedQty, unit, receiver, dept, req.user.id, validItemId]);
 
         const [newRows] = await pool.query('SELECT * FROM requests WHERE id = ?', [result.insertId]);
         const row = newRows[0];

@@ -129,4 +129,138 @@ router.delete('/:id', authenticate, authorize('superadmin'), async (req, res) =>
     }
 });
 
+// PUT /api/units/:id - Update unit (name and username) - SUPERADMIN ONLY
+router.put('/:id', authenticate, authorize('superadmin'), async (req, res) => {
+    const connection = await pool.getConnection();
+    try {
+        const { id } = req.params;
+        const { name, username } = req.body;
+
+        if (!name || typeof name !== 'string' || name.trim() === '') {
+            return res.status(400).json({ message: 'Nama unit wajib diisi' });
+        }
+
+        if (!username || typeof username !== 'string' || username.trim() === '') {
+            return res.status(400).json({ message: 'Username wajib diisi' });
+        }
+
+        const formattedUsername = username.trim().toLowerCase();
+        
+        // Regex validation: lowercase a-z, 0-9, underscore, 3-50 chars, no space
+        const usernameRegex = /^[a-z0-9_]{3,50}$/;
+        if (!usernameRegex.test(formattedUsername)) {
+            return res.status(400).json({ message: 'Format username tidak valid. Hanya huruf kecil, angka, dan underscore, tanpa spasi (3-50 karakter).' });
+        }
+
+        await connection.beginTransaction();
+
+        // Check if unit exists and is actually a unit (role = 'user')
+        const [unitRows] = await connection.query('SELECT * FROM users WHERE id = ?', [id]);
+        if (unitRows.length === 0) {
+            await connection.rollback();
+            return res.status(404).json({ message: 'Unit tidak ditemukan' });
+        }
+        
+        const unit = unitRows[0];
+        if (unit.role !== 'user') {
+            await connection.rollback();
+            return res.status(403).json({ message: 'Akses ditolak: Tidak dapat mengedit admin atau superadmin melalui endpoint unit' });
+        }
+
+        // Check duplicate username (excluding self)
+        const [existingRows] = await connection.query('SELECT id FROM users WHERE username = ? AND id != ?', [formattedUsername, id]);
+        if (existingRows.length > 0) {
+            await connection.rollback();
+            return res.status(409).json({ message: 'Username sudah digunakan oleh akun lain' });
+        }
+
+        // Update database (only name and username)
+        await connection.execute(
+            'UPDATE users SET name = ?, username = ? WHERE id = ?',
+            [name.trim(), formattedUsername, id]
+        );
+
+        const [updatedRows] = await connection.query('SELECT id, name, username FROM users WHERE id = ?', [id]);
+        
+        await writeAuditLog({
+            tableName: 'users',
+            recordId: id,
+            action: 'UPDATE_UNIT',
+            oldValues: unit,
+            newValues: updatedRows[0], // Omitting password in returned newValues is fine for audit log logic
+            userId: req.user.id,
+            connection,
+        });
+
+        await connection.commit();
+        res.json(updatedRows[0]);
+    } catch (error) {
+        if (connection) await connection.rollback();
+        console.error('Update unit error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+// PATCH /api/units/:id/password - Reset unit password - SUPERADMIN ONLY
+router.patch('/:id/password', authenticate, authorize('superadmin'), async (req, res) => {
+    const connection = await pool.getConnection();
+    try {
+        const { id } = req.params;
+        const { newPassword } = req.body;
+
+        if (!newPassword || typeof newPassword !== 'string' || newPassword.length < 8) {
+            return res.status(400).json({ message: 'Password baru minimal 8 karakter' });
+        }
+
+        await connection.beginTransaction();
+
+        // Check if unit exists and is actually a unit (role = 'user')
+        const [unitRows] = await connection.query('SELECT * FROM users WHERE id = ?', [id]);
+        if (unitRows.length === 0) {
+            await connection.rollback();
+            return res.status(404).json({ message: 'Unit tidak ditemukan' });
+        }
+        
+        const unit = unitRows[0];
+        if (unit.role !== 'user') {
+            await connection.rollback();
+            return res.status(403).json({ message: 'Akses ditolak: Tidak dapat mereset password admin atau superadmin melalui endpoint unit' });
+        }
+
+        // Hash new password
+        const passwordHash = await bcrypt.hash(newPassword, 10);
+
+        // Update database
+        await connection.execute(
+            'UPDATE users SET password_hash = ? WHERE id = ?',
+            [passwordHash, id]
+        );
+
+        // Audit Log (Do not store password)
+        const dummyUnitValues = { ...unit };
+        delete dummyUnitValues.password_hash;
+        
+        await writeAuditLog({
+            tableName: 'users',
+            recordId: id,
+            action: 'RESET_UNIT_PASSWORD',
+            oldValues: dummyUnitValues,
+            newValues: dummyUnitValues, 
+            userId: req.user.id,
+            connection,
+        });
+
+        await connection.commit();
+        res.json({ message: 'Password unit berhasil direset.' });
+    } catch (error) {
+        if (connection) await connection.rollback();
+        console.error('Reset unit password error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
 export default router;

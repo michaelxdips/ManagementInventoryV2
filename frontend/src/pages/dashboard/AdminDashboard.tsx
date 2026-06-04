@@ -115,7 +115,7 @@ const AdminDashboard: React.FC<Props> = ({ metrics, greeting, userName, onRefres
           </h3>
           <div className="dashboard-chart-wrap" style={{ flex: 1, minHeight: 0, width: '100%', minWidth: 0 }}>
             {metrics.monthlyStats && metrics.monthlyStats.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={300} debounce={150}>
                 <BarChart data={metrics.monthlyStats} margin={{ top: 10, right: 16, left: 12, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                   <XAxis dataKey="month" stroke="var(--muted)" fontSize={12} tickLine={false} axisLine={false} />

@@ -1,3 +1,4 @@
+import { useTranslation } from '../hooks/useTranslation';
 import { useEffect, useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, ClipboardList, RotateCcw } from 'lucide-react';
 import { fetchRequests, RequestItem } from '../api/requests.api';
@@ -28,7 +29,7 @@ const FILTERS: { key: StatusBucket; label: string }[] = [
   { key: 'REJECTED', label: 'Rejected' },
 ];
 
-const WEEK_DAYS = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+// WEEK_DAYS will be computed dynamically
 
 const toWIBKey = (value: string | Date) => getWIBInputDate(value);
 
@@ -40,8 +41,8 @@ const getStatusBucket = (status: string): Exclude<StatusBucket, 'ALL'> | null =>
   return 'PENDING';
 };
 
-const formatMonthTitle = (date: Date) =>
-  date.toLocaleDateString('id-ID', {
+const formatMonthTitle = (date: Date, locale: string) =>
+  date.toLocaleDateString(locale, {
     timeZone: 'Asia/Jakarta',
     month: 'long',
     year: 'numeric',
@@ -69,6 +70,11 @@ const generateCalendarDays = (monthDate: Date): CalendarDay[] => {
 };
 
 const RequestCalendar = () => {
+  const { t, language } = useTranslation();
+  const locale = language === 'id' ? 'id-ID' : 'en-US';
+  const WEEK_DAYS = locale === 'id-ID' 
+    ? ['MIN', 'SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB']
+    : ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   const [requests, setRequests] = useState<RequestItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -154,18 +160,18 @@ const RequestCalendar = () => {
     <main className="request-calendar-page" aria-labelledby="request-calendar-title">
       <section className="calendar-hero">
         <div>
-          <h1 id="request-calendar-title">Kalender Request</h1>
-          <p>Overview permintaan barang berdasarkan tanggal operasional, status, dan detail harian.</p>
+          <h1 id="request-calendar-title">{t('calendar.title')}</h1>
+          <p>{t('calendar.desc')}</p>
         </div>
         <div className="calendar-toolbar" aria-label="Navigasi bulan kalender">
           <Button type="button" variant="secondary" onClick={goToToday}>
-            <RotateCcw size={16} /> Hari Ini
+            <RotateCcw size={16} /> {t('calendar.today')}
           </Button>
           <div className="calendar-month-switcher">
             <button id="calendar-prev-month" type="button" onClick={() => moveMonth(-1)} aria-label="Bulan sebelumnya">
               <ChevronLeft size={18} />
             </button>
-            <strong>{formatMonthTitle(activeMonth)}</strong>
+            <strong>{formatMonthTitle(activeMonth, locale)}</strong>
             <button id="calendar-next-month" type="button" onClick={() => moveMonth(1)} aria-label="Bulan berikutnya">
               <ChevronRight size={18} />
             </button>
@@ -175,23 +181,23 @@ const RequestCalendar = () => {
 
       <section className="calendar-summary-grid" aria-label="Ringkasan request bulan aktif">
         <article className="calendar-summary-card total">
-          <span>Total Request</span>
+          <span>{t('calendar.totalRequest')}</span>
           <strong>{summary.total}</strong>
-          <small>{formatMonthTitle(activeMonth)}</small>
+          <small>{formatMonthTitle(activeMonth, locale)}</small>
         </article>
         {(Object.keys(STATUS_META) as Exclude<StatusBucket, 'ALL'>[]).map((key) => (
           <article key={key} className={`calendar-summary-card ${STATUS_META[key].tone}`}>
             <span>{STATUS_META[key].label}</span>
             <strong>{summary[key]}</strong>
-            <small>{key === 'PENDING' ? 'Pending + Review' : 'Status bulan ini'}</small>
+            <small>{key === 'PENDING' ? t('calendar.pendingReview') : t('calendar.statusThisMonth')}</small>
           </article>
         ))}
       </section>
 
       <section className="calendar-filter-card">
         <div>
-          <h2>Filter Status</h2>
-          <p>Pilih status untuk memfokuskan badge dan detail pada kalender.</p>
+          <h2>{t('calendar.filterStatus')}</h2>
+          <p>{t('calendar.filterDesc')}</p>
         </div>
         <div className="calendar-filter-group" role="tablist" aria-label="Filter status request">
           {FILTERS.map((item) => (
@@ -202,7 +208,7 @@ const RequestCalendar = () => {
               className={filter === item.key ? 'is-active' : ''}
               onClick={() => setFilter(item.key)}
             >
-              {item.label}
+              {item.key === 'ALL' ? t('calendar.all') : item.label}
             </button>
           ))}
         </div>
@@ -236,7 +242,7 @@ const RequestCalendar = () => {
                   {dayRequests.length > 0 ? (
                     <span className="calendar-day-content">
                       <strong>{dayRequests.length}</strong>
-                      <span>request</span>
+                      <span>{t('calendar.request')}</span>
                     </span>
                   ) : (
                     <span className="calendar-day-empty">—</span>
@@ -255,7 +261,7 @@ const RequestCalendar = () => {
         <aside className="calendar-detail-panel" aria-label="Detail request tanggal terpilih">
           <div className="calendar-detail-header">
             <div>
-              <span>Detail Harian</span>
+              <span>{t('calendar.dailyDetail')}</span>
               <h2>{formatDateV2(selectedDate)}</h2>
             </div>
             <strong>{selectedRequests.length}</strong>
@@ -269,7 +275,7 @@ const RequestCalendar = () => {
           ) : selectedRequests.length === 0 ? (
             <div className="calendar-empty-state">
               <ClipboardList size={32} />
-              <p>Tidak ada request pada tanggal ini untuk filter yang dipilih.</p>
+              <p>{t('calendar.empty')}</p>
             </div>
           ) : (
             <div className="calendar-request-list">
@@ -284,10 +290,10 @@ const RequestCalendar = () => {
                     </div>
                     <span className={`calendar-status-chip ${STATUS_META[bucket].tone}`}>{STATUS_META[bucket].label}</span>
                     <dl>
-                      <div><dt>Qty</dt><dd>{request.qty} {request.unit}</dd></div>
-                      <div><dt>Tanggal</dt><dd>{formatDateV2(request.date)}</dd></div>
+                      <div><dt>{t('calendar.qty')}</dt><dd>{request.qty} {request.unit}</dd></div>
+                      <div><dt>{t('common.date')}</dt><dd>{formatDateV2(request.date)}</dd></div>
                     </dl>
-                    {request.reject_reason && <p className="calendar-reject-reason">Alasan: {request.reject_reason}</p>}
+                    {request.reject_reason && <p className="calendar-reject-reason">{t('calendar.reason')}: {request.reject_reason}</p>}
                   </article>
                 );
               })}

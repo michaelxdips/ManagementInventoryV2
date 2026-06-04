@@ -22,12 +22,14 @@ const ProfilePopover = ({ isOpen, onClose, position = 'bottom' }: ProfilePopover
 
     const displayName = user?.name ?? 'User';
     const displayUsername = user?.username ?? 'user';
-    const avatarText = (displayName || 'User')
-        .split(' ')
-        .filter(Boolean)
-        .slice(0, 2)
-        .map((part) => part[0]?.toUpperCase() ?? '')
-        .join('') || 'U';
+    const getInitials = (name: string) => {
+        if (!name) return 'U';
+        const words = name.split(/[\s-]+/).filter(w => /^[a-zA-Z]/.test(w));
+        if (words.length === 0) return 'U';
+        return words.slice(0, 2).map(w => w[0].toUpperCase()).join('');
+    };
+    const avatarText = getInitials(displayName);
+
 
     const handleSettings = () => {
         onClose();

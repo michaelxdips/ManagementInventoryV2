@@ -35,7 +35,7 @@ const ProfileSettings = () => {
 
 	const handleSave = async () => {
 		if (!name.trim() || !username.trim()) {
-			showToast('Name dan Username wajib diisi');
+			showToast(t('toast.settings.profileFieldsRequired'));
 			setMessage(null);
 			return;
 		}
@@ -55,7 +55,7 @@ const ProfileSettings = () => {
 			setMessage(t('settings.profileSaved'));
 		} catch (err: any) {
 			const msg = typeof err?.message === 'string' ? (() => { try { return JSON.parse(err.message).message; } catch { return err.message; } })() : 'Gagal menyimpan profil';
-			showToast(msg || 'Gagal menyimpan profil');
+			showToast(msg || t('toast.settings.profileFailed'));
 		} finally {
 			setSaving(false);
 		}
@@ -70,7 +70,7 @@ const ProfileSettings = () => {
 	const confirmDelete = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!deletePassword) {
-			showToast('Password diperlukan untuk konfirmasi penghapusan');
+			showToast(t('toast.settings.deletePasswordRequired'));
 			return;
 		}
 
@@ -84,7 +84,9 @@ const ProfileSettings = () => {
 			navigate('/login');
 		} catch (err: any) {
 			const msg = typeof err?.message === 'string' ? (() => { try { return JSON.parse(err.message).message; } catch { return err.message; } })() : 'Gagal menghapus akun. Password mungkin salah.';
-			showToast(msg || 'Gagal menghapus akun. Password mungkin salah.');
+			let displayMsg = msg || t('toast.settings.deleteFailed');
+			if (msg && msg.includes('superadmin terakhir')) displayMsg = t('toast.settings.deleteSuperadminFailed');
+			showToast(displayMsg);
 			setSaving(false);
 		}
 	};

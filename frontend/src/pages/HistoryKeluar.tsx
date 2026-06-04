@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Button from '../components/ui/Button';
 import Pagination from '../components/ui/Pagination';
 import { Table, THead, TBody, TR, TH, TD } from '../components/ui/Table';
 import { MobileCard, MobileCardList } from '../components/ui/MobileCard';
-import { fetchHistoryKeluar, HistoryEntry, HistoryFilter } from '../api/history.api';
+import { fetchHistoryKeluarPage, HistoryEntry, HistoryFilter } from '../api/history.api';
 import { Download, FileText } from 'lucide-react';
 import { exportToExcel } from '../utils/exportExcel';
 import { exportToPdf } from '../utils/exportPdf';
@@ -26,58 +26,46 @@ const HistoryKeluar = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const { t } = useTranslation();
 
-  const perPage = 10;
+  const perPage = 15;
+  const activeDept = searchParams.get('dept') || '';
 
-  const loadData = (filter?: HistoryFilter) => {
+  const loadData = useCallback((filter?: HistoryFilter & { dept?: string }) => {
     setLoading(true);
     setFetchError(null);
-    fetchHistoryKeluar(filter)
-      .then((rows) => {
-        setData(rows);
+    fetchHistoryKeluarPage({ ...filter, page, perPage, dept: activeDept })
+      .then((res) => {
+        setData(res.entries);
+        setTotalPages(res.pagination.totalPages);
+        setTotalItems(res.pagination.total);
         setFetchError(null);
       })
       .catch(() => {
-        setFetchError('Gagal memuat data dari server');
+        setFetchError(t('common.fetchError'));
       })
       .finally(() => {
         setLoading(false);
       });
-  };
+  }, [page, perPage, activeDept]);
 
   useEffect(() => {
-    loadData();
-  }, []);
-
-  useEffect(() => {
-    setPage(1);
-  }, [from, to]);
-
-
-  const activeDept = searchParams.get('dept') || '';
-  const filteredData = useMemo(() => {
-    if (!activeDept) return data;
-    return data.filter((row) => (row.dept || '').toLowerCase() === activeDept.toLowerCase());
-  }, [activeDept, data]);
-
-  const totalPages = Math.max(1, Math.ceil(filteredData.length / perPage));
-  const currentPage = Math.min(page, totalPages);
-  const startIndex = (currentPage - 1) * perPage;
-  const endIndex = Math.min(startIndex + perPage, filteredData.length);
-  const pageRows = filteredData.slice(startIndex, endIndex);
+    loadData({ from: from || undefined, to: to || undefined });
+  }, [loadData, from, to]);
 
   const applyFilters = () => {
     const nextFrom = parseDate(draftFrom);
     const nextTo = parseDate(draftTo);
     if (nextFrom && nextTo && nextFrom > nextTo) {
-      setError('Rentang tanggal tidak valid (dari harus lebih awal)');
+      setError(t('history.invalidDateRange'));
       return;
     }
     setError(null);
     setFrom(draftFrom);
     setTo(draftTo);
-    loadData({ from: draftFrom || undefined, to: draftTo || undefined });
+    setPage(1);
   };
 
   const resetFilters = () => {
@@ -88,11 +76,10 @@ const HistoryKeluar = () => {
     setSearchParams({});
     setPage(1);
     setError(null);
-    loadData();
   };
 
   const handleExport = () => {
-    exportToExcel(filteredData, [
+    exportToExcel(data, [
       { header: 'No', key: 'id' },
       { header: 'Tanggal', key: 'date' },
       { header: 'Nama Barang', key: 'name' },
@@ -126,7 +113,7 @@ const HistoryKeluar = () => {
                 { header: 'Penerima', dataKey: 'receiver' },
                 { header: 'Unit/Dept', dataKey: 'dept' },
               ],
-              data: filteredData.map(d => ({ ...d, date: formatDateV2(d.date) }))
+              data: data.map(d => ({ ...d, date: formatDateV2(d.date) }))
             })} disabled={data.length === 0} className="action-button-inline">
               <FileText size={16} />
               {t('inventory.pdf')}
@@ -146,7 +133,7 @@ const HistoryKeluar = () => {
         <div className="history-filters">
           {error && <p className="danger-text" role="alert">{error}</p>}
           <div className="filter-group">
-            <label className="filter-label">Dari Tanggal</label>
+            <label className="filter-label">{t('history.fromDate')}</label>
             <div className="date-input">
               <span className="date-icon" aria-hidden>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -166,7 +153,7 @@ const HistoryKeluar = () => {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">Hingga Tanggal</label>
+            <label className="filter-label">{t('history.toDate')}</label>
             <div className="date-input">
               <span className="date-icon" aria-hidden>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -214,16 +201,16 @@ const HistoryKeluar = () => {
           <TBody>
             {loading ? (
               <SkeletonTableRows rows={6} columns={8} />
-            ) : pageRows.length === 0 ? (
+            ) : data.length === 0 ? (
               <EmptyTableRow
                 colSpan={8}
                 title={t('inventory.noData')}
-                description={activeDept ? `Tidak ada barang keluar untuk unit ${activeDept} pada filter ini.` : 'Coba ubah filter tanggal atau reset filter untuk melihat semua riwayat barang keluar.'}
+                description={t('history.emptyDescOut')}
               />
             ) : (
-              pageRows.map((row, idx) => (
+              data.map((row, idx) => (
                 <TR key={row.id}>
-                  <TD>{startIndex + idx + 1}</TD>
+                  <TD>{((page - 1) * perPage) + idx + 1}</TD>
                   <TD>{formatDateV2(row.date)}</TD>
                   <TD>{row.name}</TD>
                   <TD>{row.code}</TD>
@@ -239,18 +226,18 @@ const HistoryKeluar = () => {
 
         {/* Mobile Card View */}
         <MobileCardList
-          isEmpty={pageRows.length === 0}
+          isEmpty={data.length === 0}
           isLoading={loading}
           emptyMessage={t('inventory.noData')}
         >
-          {pageRows.map((row, idx) => (
+          {data.map((row, idx) => (
             <MobileCard
               key={row.id}
               header={
                 <span className="mobile-card-header-title">{row.name}</span>
               }
               fields={[
-                { label: t('inventory.columns.no'), value: startIndex + idx + 1 },
+                { label: t('inventory.columns.no'), value: ((page - 1) * perPage) + idx + 1 },
                 { label: t('inventory.columns.date'), value: formatDateV2(row.date) },
                 { label: t('inventory.columns.itemCode'), value: row.code },
                 { label: t('inventory.columns.qty'), value: `${row.qty} ${row.unit}` },
@@ -263,9 +250,9 @@ const HistoryKeluar = () => {
 
         <div className="items-footer">
           <span className="items-meta">
-            Menampilkan {filteredData.length === 0 ? 0 : startIndex + 1} - {endIndex} dari {filteredData.length} barang
+            {t('common.showingPage', { page, total: totalPages })} ({totalItems} barang)
           </span>
-          <Pagination current={currentPage} total={totalPages} onChange={setPage} />
+          <Pagination current={page} total={totalPages} onChange={setPage} />
         </div>
       </div>
     </div>

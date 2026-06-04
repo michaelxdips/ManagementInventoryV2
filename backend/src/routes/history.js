@@ -20,9 +20,9 @@ const dateFilter = (query, params, alias = '') => {
     return conditions;
 };
 
-const runPaginatedHistory = async ({ req, res, baseSelect, baseFrom, baseWhere = [], orderBy, key = 'entries' }) => {
+const runPaginatedHistory = async ({ req, res, baseSelect, baseFrom, baseWhere = [], baseParams = [], orderBy, key = 'entries' }) => {
     const { page, perPage, offset } = parsePagination(req.query, { perPage: 15, maxPerPage: 500 });
-    const params = [];
+    const params = [...baseParams];
     const where = [...baseWhere];
 
     const dateAlias = baseFrom.includes('requests r') ? 'r' : '';
@@ -67,6 +67,13 @@ router.get('/masuk', authenticate, authorize('admin', 'superadmin'), async (req,
 // GET /api/history/keluar - Get barang keluar history (from approved requests)
 router.get('/keluar', authenticate, authorize('admin', 'superadmin'), async (req, res) => {
     try {
+        const baseWhere = [];
+        const baseParams = [];
+        if (req.query.dept) {
+            baseWhere.push('dept = ?');
+            baseParams.push(req.query.dept);
+        }
+
         await runPaginatedHistory({
             req,
             res,
@@ -82,6 +89,8 @@ router.get('/keluar', authenticate, authorize('admin', 'superadmin'), async (req
                     dept
             `,
             baseFrom: 'FROM barang_keluar',
+            baseWhere,
+            baseParams,
             orderBy: 'ORDER BY date DESC, id DESC',
         });
     } catch (error) {
@@ -114,6 +123,7 @@ router.get('/user', authenticate, async (req, res) => {
                 LEFT JOIN atk_items a ON r.atk_item_id = a.id
             `,
             baseWhere: ["r.user_id = ?", "r.status IN ('APPROVED', 'REJECTED')"],
+            baseParams: [req.user.id],
             orderBy: 'ORDER BY r.created_at DESC, r.id DESC',
         });
     } catch (error) {

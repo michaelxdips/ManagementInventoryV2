@@ -30,6 +30,8 @@ export type HistoryFilter = {
   to?: string;
   page?: number;
   perPage?: number;
+  dept?: string;
+  type?: string;
 };
 
 const buildQuery = (filter?: HistoryFilter) => {
@@ -39,6 +41,8 @@ const buildQuery = (filter?: HistoryFilter) => {
   if (filter.to) params.set('to', filter.to);
   if (filter.page) params.set('page', String(filter.page));
   if (filter.perPage) params.set('perPage', String(filter.perPage));
+  if (filter.dept) params.set('dept', filter.dept);
+  if (filter.type) params.set('type', filter.type);
   const qs = params.toString();
   return qs ? `?${qs}` : '';
 };

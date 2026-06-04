@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { updatePassword } from '../api/users.api';
 import { useToast } from '../components/ui/Toast';
+import { useTranslation } from '../hooks/useTranslation';
 
 const PasswordSettings = () => {
+  const { t } = useTranslation();
 	const [currentPassword, setCurrentPassword] = useState('');
 	const [newPassword, setNewPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
@@ -13,15 +15,15 @@ const PasswordSettings = () => {
 
 	const handleSave = async () => {
 		if (!currentPassword || !newPassword || !confirmPassword) {
-			showToast('Semua kolom wajib diisi');
+			showToast(t('toast.settings.allFieldsRequired'));
 			return;
 		}
 		if (newPassword.length < 6) {
-			showToast('Password baru minimal 6 karakter');
+			showToast(t('toast.settings.passwordMin6'));
 			return;
 		}
 		if (newPassword !== confirmPassword) {
-			showToast('Konfirmasi password tidak cocok');
+			showToast(t('toast.settings.passwordMismatch'));
 			return;
 		}
 
@@ -29,14 +31,14 @@ const PasswordSettings = () => {
 
 		try {
 			await updatePassword({ currentPassword, newPassword });
-			showToast('Password berhasil diperbarui', 'success');
+			showToast(t('toast.settings.passwordSuccess'));
 			// Reset form
 			setCurrentPassword('');
 			setNewPassword('');
 			setConfirmPassword('');
 		} catch (err: any) {
 			const msg = typeof err?.message === 'string' ? (() => { try { return JSON.parse(err.message).message; } catch { return err.message; } })() : 'Gagal memperbarui password';
-			showToast(msg || 'Gagal memperbarui password');
+			showToast(msg || t('toast.settings.passwordFailed'));
 		} finally {
 			setSaving(false);
 		}

@@ -1,3 +1,4 @@
+import { useTranslation } from '../hooks/useTranslation';
 import React, { useEffect, useState } from 'react';
 import { useAudit, AuditLog, fetchAuditLogs } from '../hooks/useAudit';
 import { Table, THead, TBody, TR, TH, TD } from '../components/ui/Table';
@@ -26,6 +27,7 @@ const parseErrorMessage = (err: any, fallback: string): string => {
 };
 
 const AuditLogs = () => {
+  const { t } = useTranslation();
     const { showToast } = useToast();
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
@@ -78,7 +80,7 @@ const AuditLogs = () => {
             return null;
         }).filter(Boolean);
 
-        return changes.length > 0 ? changes : <span style={{ color: 'var(--text-muted)' }}>Tidak ada data berubah</span>;
+        return changes.length > 0 ? changes : <span style={{ color: 'var(--text-muted)' }}>{t('audit.empty')}</span>;
     };
 
     const formatDiffText = (oldVals: any, newVals: any): string => {
@@ -129,17 +131,17 @@ const AuditLogs = () => {
                     changes: formatDiffText(log.old_values, log.new_values),
                 })),
                 [
-                    { header: 'Waktu', key: 'created_at' },
+                    { header: t('audit.time'), key: 'created_at' },
                     { header: 'Tabel', key: 'table_name' },
-                    { header: 'ID Record', key: 'record_id' },
+                    { header: t('audit.tableId'), key: 'record_id' },
                     { header: 'Aksi', key: 'action' },
-                    { header: 'Pengguna', key: 'user_name' },
-                    { header: 'Perubahan', key: 'changes' },
+                    { header: t('audit.user'), key: 'user_name' },
+                    { header: t('audit.changes'), key: 'changes' },
                 ],
                 { filename: `Audit_Trail_${getWIBInputDate()}`, sheetName: 'Audit Trail' }
             );
         } catch (err: any) {
-            showToast(parseErrorMessage(err, 'Gagal mengekspor data audit ke Excel'), 'error');
+            showToast(parseErrorMessage(err, t('toast.audit.exportExcelFailed')), 'error');
         } finally {
             setExporting(false);
         }
@@ -155,12 +157,12 @@ const AuditLogs = () => {
                 filename: `Audit_Trail_${getWIBInputDate()}`,
                 title: 'Laporan Audit Trail',
                 columns: [
-                    { header: 'Waktu', dataKey: 'created_at' },
+                    { header: t('audit.time'), dataKey: 'created_at' },
                     { header: 'Tabel', dataKey: 'table_name' },
                     { header: 'ID', dataKey: 'record_id' },
                     { header: 'Aksi', dataKey: 'action' },
-                    { header: 'Pengguna', dataKey: 'user_name' },
-                    { header: 'Perubahan', dataKey: 'changes' },
+                    { header: t('audit.user'), dataKey: 'user_name' },
+                    { header: t('audit.changes'), dataKey: 'changes' },
                 ],
                 data: exportRows.map((log) => ({
                     ...log,
@@ -170,7 +172,7 @@ const AuditLogs = () => {
                 })),
             });
         } catch (err: any) {
-            showToast(parseErrorMessage(err, 'Gagal mengekspor data audit ke PDF'), 'error');
+            showToast(parseErrorMessage(err, t('toast.audit.exportPdfFailed')), 'error');
         } finally {
             setExporting(false);
         }
@@ -188,7 +190,7 @@ const AuditLogs = () => {
             <header className="page-header page-header--stacked">
                 <div>
                     <h1 className="page-title">Audit Trail</h1>
-                    <p className="page-description">Rekam jejak mendalam untuk seluruh aktivitas modifikasi data.</p>
+                    <p className="page-description">{t('audit.desc')}</p>
                 </div>
                 <div className="action-bar action-bar--wrap">
                     <Button
@@ -216,28 +218,28 @@ const AuditLogs = () => {
 
             <div className="history-card filter-bar history-card--padded mb-4">
                 <div className="filter-field filter-field--grow">
-                    <label className="filter-label">Cari</label>
-                    <input className="input-control input-control--flush" placeholder="Cari tabel, pengguna, atau ID record..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                    <label className="filter-label">{t('common.search')}</label>
+                    <input className="input-control input-control--flush" placeholder={t('audit.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} />
                 </div>
                 <div className="filter-field filter-field--sm">
-                    <label className="filter-label">Aksi</label>
+                    <label className="filter-label">{t('audit.action')}</label>
                     <select
                         className="input-control input-control--flush input-control--select"
                         value={filterAction}
                         onChange={(e) => setFilterAction(e.target.value)}
                     >
-                        <option value="">Semua</option>
+                        <option value="">{t('audit.all')}</option>
                         <option value="CREATE">CREATE</option>
                         <option value="UPDATE">UPDATE</option>
                         <option value="DELETE">DELETE</option>
                     </select>
                 </div>
                 <div className="filter-field filter-field--md">
-                    <label className="filter-label">Dari</label>
+                    <label className="filter-label">{t('common.from')}</label>
                     <input type="date" className="input-control input-control--flush" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
                 </div>
                 <div className="filter-field filter-field--md">
-                    <label className="filter-label">Hingga</label>
+                    <label className="filter-label">{t('common.to')}</label>
                     <input type="date" className="input-control input-control--flush" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
                 </div>
             </div>
@@ -249,11 +251,11 @@ const AuditLogs = () => {
                     <Table>
                         <THead>
                             <TR>
-                                <TH>Waktu</TH>
-                                <TH>Tabel / ID</TH>
-                                <TH>Aksi</TH>
-                                <TH>Pengguna</TH>
-                                <TH>Perubahan</TH>
+                                <TH>{t('audit.time')}</TH>
+                                <TH>{t('audit.tableId')}</TH>
+                                <TH>{t('audit.action')}</TH>
+                                <TH>{t('audit.user')}</TH>
+                                <TH>{t('audit.changes')}</TH>
                             </TR>
                         </THead>
                         <TBody>
@@ -262,8 +264,8 @@ const AuditLogs = () => {
                             ) : pageRows.length === 0 ? (
                             <EmptyTableRow
                                 colSpan={5}
-                                title="Tidak ada rekam jejak yang cocok"
-                                description="Coba ubah filter tanggal, aksi, atau kata kunci pencarian."
+                                title={t('audit.empty')}
+                                description={t('audit.emptyDesc')}
                             />
                             ) : (
                                 pageRows.map((log) => (
@@ -290,7 +292,7 @@ const AuditLogs = () => {
                 <MobileCardList
                     isEmpty={!loading && pageRows.length === 0}
                     isLoading={loading}
-                    emptyMessage="Tidak ada rekam jejak yang cocok."
+                    emptyMessage={t('audit.empty')}
                 >
                     {pageRows.map((log) => (
                         <MobileCard
@@ -308,11 +310,11 @@ const AuditLogs = () => {
                                 </>
                             }
                             fields={[
-                                { label: 'Waktu', value: new Date(log.created_at).toLocaleString('id-ID') },
-                                { label: 'ID Record', value: log.record_id },
-                                { label: 'Pengguna', value: log.user_name || 'System' },
+                                { label: t('audit.time'), value: new Date(log.created_at).toLocaleString('id-ID') },
+                                { label: t('audit.tableId'), value: log.record_id },
+                                { label: t('audit.user'), value: log.user_name || 'System' },
                                 {
-                                    label: 'Perubahan',
+                                    label: t('audit.changes'),
                                     value: (
                                         <span className="audit-diff-text">{formatDiffText(log.old_values, log.new_values)}</span>
                                     ),
@@ -324,7 +326,7 @@ const AuditLogs = () => {
 
                 <div className="items-footer">
                     <span className="items-meta">
-                        Menampilkan {fromDisplay} - {toDisplay} dari {pagination.total} log
+                        {t('audit.showingLogs', { from: fromDisplay, to: toDisplay, total: pagination.total })}
                     </span>
                     <Pagination current={pagination.page} total={pagination.totalPages} onChange={setPage} />
                 </div>

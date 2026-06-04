@@ -405,7 +405,7 @@ const AtkItems = () => {
 					</span>
 					<input
 						className="input-control search-input"
-						placeholder="Cari Barang atau Kode Barang..."
+						placeholder={t('items.searchPlaceholder')}
 						value={draftSearch}
 						onChange={(e) => setDraftSearch(e.target.value)}
 					/>
@@ -416,11 +416,11 @@ const AtkItems = () => {
 					value={draftSort}
 					onChange={(e) => setDraftSort(e.target.value as 'asc' | 'desc')}
 				>
-					<option value="asc">Jumlah Terkecil</option>
-					<option value="desc">Jumlah Terbesar</option>
+					<option value="asc">{t('items.sortAsc')}</option>
+					<option value="desc">{t('items.sortDesc')}</option>
 				</select>
 				<Button type="button" className="apply-button" onClick={handleApply} variant="secondary">
-					Terapkan
+					{t('common.apply')}
 				</Button>
 				{isAdminOrSuperadmin && (
 					<div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>

@@ -95,9 +95,9 @@ const Approval = () => {
       const msg = err.message || 'Gagal memproses permintaan';
       try {
         const parsed = JSON.parse(msg);
-        
+        showToast(parsed.message || msg, 'error');
       } catch {
-        
+        showToast(msg, 'error');
       }
     } finally {
       setProcessingId(null);
@@ -121,7 +121,7 @@ const Approval = () => {
         setSelectedIds(new Set());
         loadData();
       } catch (err: any) {
-        
+        showToast(err.message || t('toast.approval.rejectFailed'), 'error');
       } finally {
         setBatchProcessing(false);
       }
@@ -132,11 +132,11 @@ const Approval = () => {
     setProcessingId(rejectTarget.id);
     try {
       await rejectRequest(rejectTarget.id, rejectReason.trim() || undefined);
-      showToast('Permintaan ditolak', 'success');
+      showToast(t('toast.approval.rejectSuccess'));
       setRejectTarget(null);
       loadData();
     } catch (err: any) {
-      
+      showToast(err.message || t('toast.approval.rejectFailed'), 'error');
     } finally {
       setProcessingId(null);
     }
@@ -177,7 +177,7 @@ const Approval = () => {
       setSelectedIds(new Set());
       loadData();
     } catch (err: any) {
-      
+      showToast(err.message || t('toast.approval.approveFailed'), 'error');
     } finally {
       setBatchProcessing(false);
     }
@@ -293,7 +293,7 @@ const Approval = () => {
                           onClick={() => navigate(`/approval/${row.id}/finalize`)}
                           disabled={processingId === row.id}
                         >
-                          <CheckIcon /> Lanjut Review
+                          <CheckIcon /> {t('approval.continueReview')}
                         </Button>
                       ) : (
                         <Button
@@ -356,7 +356,7 @@ const Approval = () => {
                       onClick={() => navigate(`/approval/${row.id}/finalize`)}
                       disabled={processingId === row.id}
                     >
-                      <CheckIcon /> Lanjut Review
+                      <CheckIcon /> {t('approval.continueReview')}
                     </Button>
                   ) : (
                     <Button

@@ -49,7 +49,7 @@
     "preferencesDesc": "Kelola pengaturan bahasa dan tampilan"
   },
   "dashboard": {
-    "summary": "Berikut ringkasan inventaris terkini.",
+    "summary": "Berikut ringkasan inventaris terbaru.",
     "refresh": "Refresh",
     "totalItems": "Total Barang",
     "lowStock": "Stok Rentan (<10)",
@@ -89,7 +89,7 @@
     "quickActions": "Aksi Cepat",
     "myRequests": "Permintaanku",
     "latestAnnouncements": "Pengumuman Terbaru",
-    "newRequest": "Request Baru",
+    "newRequest": "Permintaan Baru",
     "inventoryCatalog": "Katalog Inventaris",
     "viewAll": "Lihat Semua",
     "emptyAnnouncements": "Tidak ada pengumuman tersedia",
@@ -99,12 +99,31 @@
     "submitted": "Diajukan",
     "review": "Review",
     "frequentRequests": "Sering Anda Minta (Distribusi)",
-    "requestedCount": "Di-request {{count}} kali",
-    "requestAgain": "Request Lagi",
+    "requestedCount": "Diminta {{count}} kali",
+    "requestAgain": "Minta Lagi",
     "historyAndTracking": "Riwayat & Tracking Request",
     "viewRequest": "Lihat request",
     "trackRecent": "Pantau status permintaan terbaru Anda langsung dari ringkasan ini.",
-    "noRequestHistory": "Belum ada riwayat request"
+    "noRequestHistory": "Belum ada riwayat request",
+    "greetingMorning": "Selamat Pagi",
+    "greetingAfternoon": "Selamat Siang",
+    "greetingEvening": "Selamat Malam",
+    "latestSummary": "Berikut ringkasan inventaris terbaru.",
+    "totalRequests": "Total Permintaan",
+    "pendingValidation": "Menunggu Validasi",
+    "approvedRequests": "Permintaan Disetujui",
+    "rejectedRequests": "Permintaan Ditolak",
+    "announcements": "Pengumuman",
+    "frequentlyRequested": "Sering Diminta",
+    "distribution": "Distribusi",
+    "frequentSubtitle": "Barang yang paling sering diminta oleh unit Anda.",
+    "requestedTimes": "Diminta {{count}} kali",
+    "noFrequentItems": "Belum ada barang yang sering diminta.",
+    "noAnnouncements": "Belum ada pengumuman.",
+    "viewRequests": "Lihat Permintaan",
+    "viewHistory": "Lihat Riwayat",
+    "preparing": "Menyiapkan ringkasan inventory terbaru...",
+    "loadError": "Gagal Memuat Dashboard"
   },
   "inventory": {
     "title": "Daftar ATK",
@@ -155,7 +174,7 @@
     }
   },
   "approval": {
-    "title": "Permintaan Barang Keluar",
+    "title": "Persetujuan",
     "subtitle": "Setujui permintaan untuk mengurangi stok dan mencatat barang keluar.",
     "searchPlaceholder": "Cari nama barang, penerima, atau unit...",
     "selected": "dipilih",
@@ -163,7 +182,18 @@
     "rejectSelected": "Tolak Terpilih",
     "noData": "Tidak ada permintaan yang menunggu persetujuan",
     "noDataDesc": "Permintaan baru akan muncul otomatis saat user mengajukan barang keluar.",
-    "rejectReason": "Alasan penolakan (opsional)"
+    "rejectReason": "Alasan penolakan (opsional)",
+    "outboundRequests": "Permintaan Barang Keluar",
+    "desc": "Setujui permintaan untuk mengurangi stok dan mencatat barang keluar.",
+    "search": "Cari nama barang, penerima, atau departemen...",
+    "continueReview": "Lanjut Review",
+    "approve": "Setujui",
+    "reject": "Tolak",
+    "empty": "Tidak ada permintaan",
+    "reviewTitle": "Tinjau Permintaan",
+    "approvedQty": "Jumlah Disetujui",
+    "qtyInfo": "Jumlah yang disetujui dan akan dipotong dari stok.",
+    "finishAndRecord": "Selesai & Catat Barang Keluar"
   },
   "inbound": {
     "title": "History Barang Masuk",
@@ -204,7 +234,24 @@
     "modalTitle": "Hapus Unit \"{{name}}\"?",
     "modalDesc1": "Akun user ",
     "modalDesc2": " akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.",
-    "cancel": "Batal"
+    "cancel": "Batal",
+    "editUnit": "Edit Unit",
+    "actionEdit": "Edit",
+    "actionResetPassword": "Reset Password",
+    "editSuccess": "Unit \"{{name}}\" berhasil diperbarui",
+    "editFailed": "Gagal memperbarui unit",
+    "resetPasswordTitle": "Reset Password Unit",
+    "resetPasswordWarning": "Password unit ini akan diganti. User harus menggunakan password baru saat login berikutnya.",
+    "newPassword": "Password Baru",
+    "confirmPassword": "Konfirmasi Password Baru",
+    "resetSuccess": "Password berhasil direset",
+    "resetFailed": "Gagal mereset password",
+    "passwordMismatch": "Konfirmasi password tidak cocok",
+    "passwordMinLength": "Password minimal 8 karakter",
+    "saveChanges": "Simpan Perubahan",
+    "nameRequired": "Nama unit wajib diisi",
+    "usernameRequired": "Username wajib diisi",
+    "usernameInvalid": "Username hanya boleh berisi huruf kecil, angka, dan underscore (tanpa spasi)"
   },
   "announcements": {
     "reqFailed": "Permintaan gagal",
@@ -326,7 +373,13 @@
     "titleOut": "Riwayat Barang Keluar",
     "subtitleOut": "Data historis permintaan barang keluar yang telah selesai diproses.",
     "filterByStatus": "Filter Status",
-    "allStatuses": "Semua Status"
+    "allStatuses": "Semua Status",
+    "inboundTitle": "Riwayat Masuk",
+    "outboundTitle": "Riwayat Keluar",
+    "fromDate": "Dari Tanggal",
+    "toDate": "Hingga Tanggal",
+    "apply": "Terapkan",
+    "reset": "Reset"
   },
   "requests": {
     "title": "Daftar Permintaan ATK",
@@ -354,7 +407,34 @@
     "increaseQty": "Tambah jumlah",
     "subtitle": "Pantau status permintaan barang Anda di sini.",
     "noData": "Belum ada request",
-    "noDataDesc": "Anda belum membuat permintaan apapun."
+    "noDataDesc": "Anda belum membuat permintaan apapun.",
+    "myRequests": "Permintaan Saya",
+    "takeItem": "Ambil Barang",
+    "newItemRequest": "Request Barang Baru",
+    "processing": "Sedang diproses",
+    "history": "Riwayat",
+    "newRequest": "Permintaan Baru",
+    "closeForm": "Tutup Form",
+    "submitRequest": "Kirim Request",
+    "itemName": "Nama Barang",
+    "description": "Deskripsi",
+    "unit": "Satuan",
+    "category": "Kategori",
+    "requestReason": "Alasan Request",
+    "date": "Tanggal",
+    "quantity": "Jumlah",
+    "receiver": "Penerima",
+    "department": "Unit",
+    "status": "Status",
+    "reason": "Alasan",
+    "requestNewItemTitle": "Request Barang Baru",
+    "requestNewItemDesc": "Request barang yang belum ada di inventory. Barang yang sudah ada gunakan tab \"Ambil Barang\".",
+    "descExample": "Contoh: Spidol Boardmarker Biru",
+    "descAddExample": "Deskripsi tambahan (opsional)",
+    "unitExample": "Contoh: pcs, pack, rim (opsional)",
+    "catExample": "Contoh: ATK, Elektronik (opsional)",
+    "reasonExample": "Jelaskan alasan request (opsional)",
+    "emptyNewRequest": "Ajukan barang yang belum tersedia di inventory melalui tombol Request Baru."
   },
   "stockOpname": {
     "title": "Stock Opname",
@@ -367,6 +447,150 @@
     "systemStock": "Stok Sistem",
     "discrepancy": "Selisih",
     "notes": "Keterangan / Catatan",
-    "submit": "Simpan Penyesuaian"
+    "submit": "Simpan Penyesuaian",
+    "desc": "Sesuaikan stok fisik dengan data sistem.",
+    "startNewSession": "Mulai Sesi Baru",
+    "sessionNotePlaceholder": "Catatan / Nama Sesi (Opsional)",
+    "startOpname": "+ Mulai Opname",
+    "continue": "Lanjutkan",
+    "viewResult": "Lihat Hasil",
+    "delete": "Hapus",
+    "id": "ID",
+    "date": "Tanggal",
+    "note": "Catatan",
+    "status": "Status",
+    "action": "Aksi",
+    "sessionTitle": "Sesi Opname #{{id}}",
+    "difference": "Selisih",
+    "noteOptional": "Catatan (Opsional)",
+    "notePlaceholder": "Alasan selisih...",
+    "finalize": "Finalisasi & Update Stok",
+    "deleteSession": "Hapus Sesi",
+    "draftExistsError": "Selesaikan atau batalkan sesi DRAFT yang sedang berjalan terlebih dahulu",
+    "createError": "Gagal membuat sesi opname",
+    "loadError": "Gagal memuat sesi opname"
+  },
+  "calendar": {
+    "title": "Kalender Permintaan",
+    "desc": "Ringkasan permintaan barang berdasarkan tanggal operasional, status, dan detail harian.",
+    "today": "Hari Ini",
+    "totalRequests": "Total Permintaan",
+    "filterStatus": "Filter Status",
+    "filterDesc": "Pilih status untuk memfokuskan badge dan detail pada kalender.",
+    "all": "Semua",
+    "dailyDetail": "Detail Harian",
+    "requestItem": "permintaan",
+    "thisMonthStatus": "Status bulan ini",
+    "totalRequest": "Total Request",
+    "pendingReview": "Pending + Review",
+    "statusThisMonth": "Status bulan ini",
+    "request": "request",
+    "qty": "Qty",
+    "reason": "Alasan"
+  },
+  "audit": {
+    "title": "Log Audit",
+    "desc": "Rekam jejak seluruh aktivitas modifikasi data.",
+    "searchPlaceholder": "Cari tabel, pengguna, atau ID record...",
+    "action": "Aksi",
+    "all": "Semua",
+    "time": "Waktu",
+    "tableId": "ID Record",
+    "user": "Pengguna",
+    "changes": "Perubahan",
+    "empty": "Tidak ada data berubah",
+    "emptyDesc": "Coba ubah filter tanggal, aksi, atau kata kunci pencarian.",
+    "showingLogs": "Menampilkan {{from}} - {{to}} dari {{total}} log"
+  },
+  "common": {
+    "fetchError": "Gagal memuat data dari server",
+    "confirm": "Ya, lanjutkan",
+    "cancel": "Batal",
+    "apply": "Terapkan",
+    "reset": "Reset",
+    "delete": "Hapus",
+    "continue": "Lanjutkan",
+    "search": "Cari",
+    "action": "Aksi",
+    "all": "Semua",
+    "from": "Dari",
+    "to": "Hingga",
+    "date": "Tanggal",
+    "status": "Status",
+    "unit": "Unit",
+    "quantity": "Jumlah",
+    "noChangedData": "Tidak ada data berubah",
+    "tryAgain": "Coba Lagi",
+    "back": "Kembali",
+    "deleteSession": "Hapus Sesi",
+    "creating": "Membuat..."
+  },
+  "status": {
+    "pending": "Menunggu",
+    "review": "Review",
+    "approved": "Disetujui",
+    "rejected": "Ditolak",
+    "draft": "Draft",
+    "finalized": "Selesai"
+  },
+  "items": {
+    "sortAsc": "Jumlah Terkecil",
+    "sortDesc": "Jumlah Terbesar",
+    "apply": "Terapkan",
+    "takeItem": "Ambil Barang",
+    "outOfStock": "Stok Habis",
+    "searchPlaceholder": "Cari barang atau kode barang...",
+    "showing": "Menampilkan {{from}} - {{to}} dari {{total}} barang",
+    "userNote": "Klik \"Ambil\" untuk mengajukan permintaan. Admin akan menyetujui permintaan Anda."
+  },
+  "information": {
+    "latestInfo": "Info Terbaru",
+    "activeAnnouncements": "Pengumuman Aktif",
+    "noActiveAnnouncements": "Belum ada pengumuman aktif."
+  },
+  "toast": {
+    "approval": {
+      "rejectFailed": "Gagal menolak permintaan",
+      "rejectSuccess": "Permintaan ditolak",
+      "approveFailed": "Gagal menyetujui permintaan"
+    },
+    "audit": {
+      "exportExcelFailed": "Gagal mengekspor data audit ke Excel",
+      "exportPdfFailed": "Gagal mengekspor data audit ke PDF"
+    },
+    "auth": {
+      "noConnection": "Tidak terhubung. Periksa jaringan atau pastikan server aktif.",
+      "loginDisabled": "Tidak terhubung. Login dinonaktifkan sampai koneksi kembali.",
+      "credentialsRequired": "Username dan password wajib diisi",
+      "passwordMinLength": "Password minimal 4 karakter",
+      "loginFailed": "Login gagal, periksa kembali kredensial"
+    },
+    "inbound": {
+      "masterDataLoadFailed": "Gagal memuat master data barang"
+    },
+    "settings": {
+      "allFieldsRequired": "Semua kolom wajib diisi",
+      "passwordMin6": "Password baru minimal 6 karakter",
+      "passwordMismatch": "Konfirmasi password tidak cocok",
+      "passwordSuccess": "Password berhasil diperbarui",
+      "passwordFailed": "Gagal memperbarui password",
+      "profileFieldsRequired": "Name dan Username wajib diisi",
+      "profileFailed": "Gagal menyimpan profil",
+      "deletePasswordRequired": "Password diperlukan untuk konfirmasi penghapusan",
+      "deleteFailed": "Gagal menghapus akun. Password mungkin salah.",
+      "deleteSuperadminFailed": "Tidak dapat menghapus superadmin terakhir"
+    },
+    "requests": {
+      "nameRequired": "Nama barang wajib diisi",
+      "newRequestSuccess": "Request barang baru berhasil dikirim"
+    },
+    "stockOpname": {
+      "updateFailed": "Gagal update item: ",
+      "finalizeSuccess": "Berhasil finalisasi",
+      "finalizeFailed": "Gagal finalize"
+    },
+    "common": {
+      "errorOccurred": "Terjadi kesalahan"
+    }
   }
 }

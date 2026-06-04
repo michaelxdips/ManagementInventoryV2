@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from '../hooks/useTranslation';
 import Button from '../components/ui/Button';
 import { fetchApprovalDetail, finalizeRequest, reviewRequest, ApprovalDetail } from '../api/approval.api';
 
@@ -12,6 +13,7 @@ const SaveIcon = () => (
 );
 
 const ApprovalFinalize = () => {
+    const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [detail, setDetail] = useState<ApprovalDetail | null>(null);
@@ -31,7 +33,7 @@ const ApprovalFinalize = () => {
                 setError(null);
             })
             .catch((err) => {
-                let msg = 'Gagal memuat detail permintaan';
+                let msg = t('approval.loadError');
                 try {
                     const parsed = JSON.parse(err.message);
                     msg = parsed.message || msg;
@@ -53,8 +55,8 @@ const ApprovalFinalize = () => {
     };
 
     const getValidationError = (): string | null => {
-        if (!detail) return 'Data tidak tersedia';
-        if (finalQty <= 0) return 'Jumlah harus lebih dari 0';
+        if (!detail) return t('approval.dataNotAvailable');
+        if (finalQty <= 0) return t('approval.qtyZeroError');
         if (finalQty > detail.requestQty) return `Jumlah tidak boleh melebihi permintaan (${detail.requestQty})`;
         if (finalQty > detail.stok_tersedia) return `Jumlah tidak boleh melebihi stok tersedia (${detail.stok_tersedia})`;
         return null;
@@ -74,7 +76,7 @@ const ApprovalFinalize = () => {
             // Redirect after short delay
             setTimeout(() => navigate('/approval'), 2000);
         } catch (err: any) {
-            let msg = 'Gagal menyelesaikan permintaan';
+            let msg = t('approval.finalizeError');
             try {
                 const parsed = JSON.parse(err.message);
                 msg = parsed.message || msg;
@@ -95,9 +97,9 @@ const ApprovalFinalize = () => {
             // Reload details to refresh status
             const data = await fetchApprovalDetail(parseInt(id));
             setDetail(data);
-            setSuccess('Status diupdate ke Review. Silakan lanjutkan.');
+            setSuccess(t('approval.statusReview'));
         } catch (err: any) {
-            let msg = 'Gagal update status';
+            let msg = t('approval.updateError');
             try {
                 const parsed = JSON.parse(err.message);
                 msg = parsed.message || msg;
@@ -115,7 +117,7 @@ const ApprovalFinalize = () => {
             <div className="history-page">
                 <div className="history-card" style={{ maxWidth: '600px' }}>
                     <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '40px 0' }}>
-                        Memuat data...
+                        {t('common.loading')}
                     </p>
                 </div>
             </div>
@@ -126,11 +128,11 @@ const ApprovalFinalize = () => {
         return (
             <div className="history-page">
                 <div className="history-card" style={{ maxWidth: '600px' }}>
-                    <h2 className="history-title">Review Barang Keluar</h2>
+                    <h2 className="history-title">{t('approval.reviewTitle')}</h2>
                     <p className="danger-text" role="alert">{error}</p>
                     <div style={{ marginTop: '16px' }}>
                         <Button type="button" variant="secondary" onClick={() => navigate('/approval')}>
-                            ← Kembali ke Approval
+                            ← {t('approval.backToApproval')}
                         </Button>
                     </div>
                 </div>
@@ -143,8 +145,8 @@ const ApprovalFinalize = () => {
             <div className="history-card" style={{ maxWidth: '600px' }}>
                 <h2 className="history-title" style={{ color: 'var(--text-muted)' }}>
                     {detail && (detail.status === 'APPROVED' || detail.status === 'FINISHED')
-                        ? 'Detail Barang Keluar'
-                        : 'Review Barang Keluar'}
+                        ? t('approval.detailTitle')
+                        : t('approval.reviewTitle')}
                 </h2>
 
                 {success && (
@@ -173,13 +175,13 @@ const ApprovalFinalize = () => {
                                 marginBottom: '16px',
                                 fontSize: '14px'
                             }}>
-                                ⚠️ Permintaan ini masih <strong>PENDING</strong>. Klik "Mulai Review" untuk memproses.
+                                ⚠️ {t('approval.pendingWarning')}
                             </div>
                         )}
 
                         {/* Nama Barang (readonly) */}
                         <div className="form-group">
-                            <label style={{ color: 'var(--text-muted)' }}>Nama Barang</label>
+                            <label style={{ color: 'var(--text-muted)' }}>{t('inventory.columns.itemName')}</label>
                             <input
                                 type="text"
                                 value={detail.name}
@@ -190,7 +192,7 @@ const ApprovalFinalize = () => {
 
                         {/* Kode Barang (readonly) */}
                         <div className="form-group">
-                            <label style={{ color: 'var(--text-muted)' }}>Kode Barang</label>
+                            <label style={{ color: 'var(--text-muted)' }}>{t('inventory.columns.itemCode')}</label>
                             <input
                                 type="text"
                                 value={detail.kode_barang || '-'}
@@ -201,7 +203,7 @@ const ApprovalFinalize = () => {
 
                         {/* Lokasi Barang (readonly) */}
                         <div className="form-group">
-                            <label style={{ color: 'var(--text-muted)' }}>Lokasi Barang</label>
+                            <label style={{ color: 'var(--text-muted)' }}>{t('inventory.columns.location')}</label>
                             <input
                                 type="text"
                                 value={detail.lokasi_barang || '-'}
@@ -214,7 +216,7 @@ const ApprovalFinalize = () => {
 
                         {/* Jumlah (editable ONLY if APPROVAL_REVIEW) */}
                         <div className="form-group">
-                            <label style={{ color: 'var(--text-muted)' }}>Jumlah Disetujui</label>
+                            <label style={{ color: 'var(--text-muted)' }}>{t('approval.approvedQty')}</label>
                             <input
                                 type="number"
                                 min="1"
@@ -233,7 +235,7 @@ const ApprovalFinalize = () => {
                                 }}
                             />
                             <span style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                                Permintaan asli: {detail.requestQty} · Stok: {detail.stok_tersedia}
+                                {t('approval.qtyInfo', { reqQty: detail.requestQty, stockQty: detail.stok_tersedia })}
                             </span>
                             {detail.status === 'APPROVAL_REVIEW' && validationError && (
                                 <span style={{ fontSize: '13px', color: 'var(--danger)', marginTop: '2px' }}>
@@ -244,7 +246,7 @@ const ApprovalFinalize = () => {
 
                         {/* Satuan (readonly) */}
                         <div className="form-group">
-                            <label style={{ color: 'var(--text-muted)' }}>Satuan</label>
+                            <label style={{ color: 'var(--text-muted)' }}>{t('inventory.columns.unit')}</label>
                             <input
                                 type="text"
                                 value={detail.satuan}
@@ -261,7 +263,7 @@ const ApprovalFinalize = () => {
                                 onClick={() => navigate('/approval')}
                                 disabled={submitting}
                             >
-                                ← Kembali
+                                ← {t('common.back')}
                             </Button>
 
                             {/* Show logic based on status */}
@@ -278,7 +280,7 @@ const ApprovalFinalize = () => {
                                     type="submit"
                                     disabled={submitting || !!validationError}
                                 >
-                                    <SaveIcon /> {submitting ? 'Memproses...' : 'Selesai & Catat Barang Keluar'}
+                                    <SaveIcon /> {submitting ? t('common.processing') : t('approval.finishAndRecord')}
                                 </Button>
                             ) : (
                                 <div style={{
@@ -288,7 +290,7 @@ const ApprovalFinalize = () => {
                                     fontSize: '14px',
                                     fontWeight: 600
                                 }}>
-                                    Status: {detail.status}
+                                    {t('requests.status')}: {detail.status}
                                 </div>
                             )}
                         </div>

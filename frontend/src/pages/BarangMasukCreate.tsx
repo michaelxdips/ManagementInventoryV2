@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { createBarangMasuk } from '../api/barangMasuk.api';
+import { fetchItems, Item } from '../api/items.api';
 import { useToast } from '../components/ui/Toast';
 import { getWIBInputDate } from '../utils/dateUtils';
 import { useTranslation } from '../hooks/useTranslation';
@@ -10,6 +11,7 @@ import { useTranslation } from '../hooks/useTranslation';
 const BarangMasukCreate = () => {
     const navigate = useNavigate();
     const { showToast } = useToast();
+    const [items, setItems] = useState<Item[]>([]);
     const [formData, setFormData] = useState({
         nama_barang: '',
         kode_barang: '',
@@ -21,11 +23,40 @@ const BarangMasukCreate = () => {
     const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
 
+    useEffect(() => {
+        fetchItems()
+            .then(setItems)
+            .catch(() => showToast(t('toast.inbound.masterDataLoadFailed')));
+    }, [showToast]);
+
+    const handleItemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedName = e.target.value;
+        const selectedItem = items.find(item => item.name === selectedName);
+        
+        if (selectedItem) {
+            setFormData({
+                ...formData,
+                nama_barang: selectedItem.name,
+                kode_barang: selectedItem.code || '',
+                satuan: selectedItem.unit || '',
+                lokasi_simpan: selectedItem.location || '',
+            });
+        } else {
+            setFormData({
+                ...formData,
+                nama_barang: '',
+                kode_barang: '',
+                satuan: '',
+                lokasi_simpan: '',
+            });
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!formData.nama_barang || !formData.satuan || formData.qty <= 0) {
-            showToast(t('inbound.errorRequiredFields'));
+            showToast(t('inbound.errorRequiredFields'), 'error');
             return;
         }
 
@@ -45,7 +76,7 @@ const BarangMasukCreate = () => {
             // Redirect after 2 seconds
             setTimeout(() => navigate('/history-masuk'), 2000);
         } catch (err: any) {
-            showToast(err.message || t('inbound.errorSaveFailed'));
+            showToast(err.message || t('inbound.errorSaveFailed'), 'error');
         } finally {
             setLoading(false);
         }
@@ -56,22 +87,26 @@ const BarangMasukCreate = () => {
             <div className="history-card" style={{ maxWidth: '600px' }}>
                 <h2 className="history-title">{t('inbound.createTitle')}</h2>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>
-                    {t('inbound.createSubtitle')}
+                    Pilih barang dari master data untuk menambahkan stok (Barang Masuk).
                 </p>
-
-
 
                 <form onSubmit={handleSubmit} className="edit-form">
                     <div className="form-group">
                         <label htmlFor="nama_barang">{t('inbound.itemNameLabel')}</label>
-                        <Input
+                        <select
                             id="nama_barang"
-                            type="text"
+                            className="input-control"
                             value={formData.nama_barang}
-                            onChange={(e) => setFormData({ ...formData, nama_barang: e.target.value })}
-                            placeholder={t('inbound.itemNamePlaceholder')}
+                            onChange={handleItemChange}
                             required
-                        />
+                        >
+                            <option value="">-- Pilih Barang --</option>
+                            {items.map(item => (
+                                <option key={item.id} value={item.name}>
+                                    {item.name} {item.code ? `(${item.code})` : ''}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="form-group">
@@ -82,6 +117,7 @@ const BarangMasukCreate = () => {
                             value={formData.kode_barang}
                             onChange={(e) => setFormData({ ...formData, kode_barang: e.target.value })}
                             placeholder={t('inbound.itemCodePlaceholder')}
+                            readOnly
                         />
                     </div>
 
@@ -116,7 +152,7 @@ const BarangMasukCreate = () => {
                             value={formData.satuan}
                             onChange={(e) => setFormData({ ...formData, satuan: e.target.value })}
                             placeholder={t('inbound.unitPlaceholder')}
-                            required
+                            readOnly
                         />
                     </div>
 
@@ -128,11 +164,12 @@ const BarangMasukCreate = () => {
                             value={formData.lokasi_simpan}
                             onChange={(e) => setFormData({ ...formData, lokasi_simpan: e.target.value })}
                             placeholder={t('inbound.locationPlaceholder')}
+                            readOnly
                         />
                     </div>
 
                     <div className="form-actions">
-                        <Button type="submit" disabled={loading}>
+                        <Button type="submit" disabled={loading || !formData.nama_barang}>
                             {loading ? t('inbound.saving') : t('inbound.save')}
                         </Button>
                         <Button type="button" variant="secondary" onClick={() => navigate(-1)}>

@@ -1,3 +1,4 @@
+import { useTranslation } from '../hooks/useTranslation';
 import useAuth from '../hooks/useAuth';
 import { useDashboard } from '../hooks/useDashboard';
 import AdminDashboard from './dashboard/AdminDashboard';
@@ -12,7 +13,8 @@ const Dashboard = () => {
 
 	// Greeting based on time of day
 	const hour = new Date().getHours();
-	const greeting = hour < 12 ? 'Selamat Pagi' : hour < 17 ? 'Selamat Siang' : 'Selamat Malam';
+	const { t } = useTranslation();
+	const greeting = hour < 12 ? t('dashboard.greetingMorning') : hour < 17 ? t('dashboard.greetingAfternoon') : t('dashboard.greetingEvening');
 
 	if (loading) {
 		return (
@@ -20,7 +22,7 @@ const Dashboard = () => {
 				<header className="page-header">
 					<div>
 						<h1 className="page-title">Dashboard</h1>
-						<p className="page-description">Menyiapkan ringkasan inventory terbaru...</p>
+						<p className="page-description">{t('dashboard.preparing')}</p>
 					</div>
 				</header>
 				<section className="calendar-summary-grid">
@@ -37,11 +39,11 @@ const Dashboard = () => {
 		return (
 			<div className="dashboard-error-state">
 				<AlertCircle size={48} color="#d73a49" />
-				<h3 className="dashboard-error-title">Gagal Memuat Dashboard</h3>
+				<h3 className="dashboard-error-title">{t('dashboard.loadError')}</h3>
 				<p className="dashboard-error-message">{error}</p>
 				<Button type="button" variant="secondary" onClick={refetch} className="action-button-inline mt-2">
 					<RefreshCw size={16} />
-					Coba Lagi
+					{t('common.tryAgain')}
 				</Button>
 			</div>
 		);

@@ -104,7 +104,26 @@
     "historyAndTracking": "Request History & Tracking",
     "viewRequest": "View request",
     "trackRecent": "Track the status of your recent requests directly from this summary.",
-    "noRequestHistory": "No request history yet"
+    "noRequestHistory": "No request history yet",
+    "greetingMorning": "Good Morning",
+    "greetingAfternoon": "Good Afternoon",
+    "greetingEvening": "Good Evening",
+    "latestSummary": "Here is the latest inventory summary.",
+    "totalRequests": "Total Requests",
+    "pendingValidation": "Pending Validation",
+    "approvedRequests": "Approved Requests",
+    "rejectedRequests": "Rejected Requests",
+    "announcements": "Announcements",
+    "frequentlyRequested": "Frequently Requested",
+    "distribution": "Distribution",
+    "frequentSubtitle": "Items most requested by your unit.",
+    "requestedTimes": "Requested {{count}} times",
+    "noFrequentItems": "No frequently requested items yet.",
+    "noAnnouncements": "No announcements available.",
+    "viewRequests": "View Requests",
+    "viewHistory": "View History",
+    "preparing": "Preparing latest inventory summary...",
+    "loadError": "Failed to Load Dashboard"
   },
   "inventory": {
     "title": "Stationery List",
@@ -155,7 +174,7 @@
     }
   },
   "approval": {
-    "title": "Outbound Requests",
+    "title": "Approval",
     "subtitle": "Approve requests to deduct stock and record outbound items.",
     "searchPlaceholder": "Search item name, receiver, or department...",
     "selected": "selected",
@@ -163,7 +182,18 @@
     "rejectSelected": "Reject Selected",
     "noData": "No pending approvals",
     "noDataDesc": "New requests will automatically appear when a user submits an outbound request.",
-    "rejectReason": "Rejection reason (optional)"
+    "rejectReason": "Rejection reason (optional)",
+    "outboundRequests": "Outbound Requests",
+    "desc": "Approve requests to deduct stock and record outbound items.",
+    "search": "Search item name, receiver, or department...",
+    "continueReview": "Continue Review",
+    "approve": "Approve",
+    "reject": "Reject",
+    "empty": "No requests found",
+    "reviewTitle": "Review Request",
+    "approvedQty": "Approved Quantity",
+    "qtyInfo": "Amount to be approved and deducted from stock.",
+    "finishAndRecord": "Finish & Record Outbound"
   },
   "inbound": {
     "title": "Inbound History",
@@ -204,7 +234,24 @@
     "modalTitle": "Delete Unit \"{{name}}\"?",
     "modalDesc1": "The user account ",
     "modalDesc2": " will be permanently deleted. This action cannot be undone.",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "editUnit": "Edit Unit",
+    "actionEdit": "Edit",
+    "actionResetPassword": "Reset Password",
+    "editSuccess": "Unit \"{{name}}\" updated successfully",
+    "editFailed": "Failed to update unit",
+    "resetPasswordTitle": "Reset Unit Password",
+    "resetPasswordWarning": "This unit's password will be changed. The user must use the new password on their next login.",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "resetSuccess": "Password reset successfully",
+    "resetFailed": "Failed to reset password",
+    "passwordMismatch": "Password confirmation does not match",
+    "passwordMinLength": "Password must be at least 8 characters",
+    "saveChanges": "Save Changes",
+    "nameRequired": "Unit name is required",
+    "usernameRequired": "Username is required",
+    "usernameInvalid": "Username can only contain lowercase letters, numbers, and underscores (no spaces)"
   },
   "announcements": {
     "reqFailed": "Request failed",
@@ -326,7 +373,13 @@
     "titleOut": "Outbound History",
     "subtitleOut": "Historical data of completed outbound item requests.",
     "filterByStatus": "Filter Status",
-    "allStatuses": "All Statuses"
+    "allStatuses": "All Statuses",
+    "inboundTitle": "Inbound History",
+    "outboundTitle": "Outbound History",
+    "fromDate": "From Date",
+    "toDate": "To Date",
+    "apply": "Apply",
+    "reset": "Reset"
   },
   "requests": {
     "title": "My Requests",
@@ -354,7 +407,34 @@
     "increaseQty": "Increase quantity",
     "subtitle": "Monitor your item request statuses here.",
     "noData": "No requests yet",
-    "noDataDesc": "You have not created any requests yet."
+    "noDataDesc": "You have not created any requests yet.",
+    "myRequests": "My Requests",
+    "takeItem": "Take Item",
+    "newItemRequest": "New Item Request",
+    "processing": "Processing",
+    "history": "History",
+    "newRequest": "New Request",
+    "closeForm": "Close Form",
+    "submitRequest": "Submit Request",
+    "itemName": "Item Name",
+    "description": "Description",
+    "unit": "Unit",
+    "category": "Category",
+    "requestReason": "Request Reason",
+    "date": "Date",
+    "quantity": "Quantity",
+    "receiver": "Receiver",
+    "department": "Department",
+    "status": "Status",
+    "reason": "Reason",
+    "requestNewItemTitle": "Request New Item",
+    "requestNewItemDesc": "Request items that are not yet in inventory. Use the \"Take Item\" tab for existing items.",
+    "descExample": "Example: Blue Board Marker",
+    "descAddExample": "Additional description (optional)",
+    "unitExample": "Example: pcs, pack, rim (optional)",
+    "catExample": "Example: ATK, Electronics (optional)",
+    "reasonExample": "Explain the request reason (optional)",
+    "emptyNewRequest": "Request items that are not yet available in inventory using the New Request button."
   },
   "stockOpname": {
     "title": "Stock Opname",
@@ -367,6 +447,150 @@
     "systemStock": "System Stock",
     "discrepancy": "Discrepancy",
     "notes": "Notes / Remarks",
-    "submit": "Save Adjustment"
+    "submit": "Save Adjustment",
+    "desc": "Adjust physical stock against system stock.",
+    "startNewSession": "Start New Session",
+    "sessionNotePlaceholder": "Session Note / Name (Optional)",
+    "startOpname": "+ Start Opname",
+    "continue": "Continue",
+    "viewResult": "View Result",
+    "delete": "Delete",
+    "id": "ID",
+    "date": "Date",
+    "note": "Note",
+    "status": "Status",
+    "action": "Action",
+    "sessionTitle": "Opname Session #{{id}}",
+    "difference": "Difference",
+    "noteOptional": "Note (Optional)",
+    "notePlaceholder": "Difference reason...",
+    "finalize": "Finalize & Update Stock",
+    "deleteSession": "Delete Session",
+    "draftExistsError": "Complete or cancel the currently running DRAFT session first",
+    "createError": "Failed to create opname session",
+    "loadError": "Failed to load opname session"
+  },
+  "calendar": {
+    "title": "Request Calendar",
+    "desc": "Request overview based on operational date, status, and daily details.",
+    "today": "Today",
+    "totalRequests": "Total Requests",
+    "filterStatus": "Filter Status",
+    "filterDesc": "Select a status to focus badges and calendar details.",
+    "all": "All",
+    "dailyDetail": "Daily Detail",
+    "requestItem": "request",
+    "thisMonthStatus": "This month status",
+    "totalRequest": "Total Request",
+    "pendingReview": "Pending + Review",
+    "statusThisMonth": "Status this month",
+    "request": "request",
+    "qty": "Qty",
+    "reason": "Reason"
+  },
+  "audit": {
+    "title": "Audit Trail",
+    "desc": "Detailed record of all data modification activities.",
+    "searchPlaceholder": "Search table, user, or record ID...",
+    "action": "Action",
+    "all": "All",
+    "time": "Time",
+    "tableId": "Record ID",
+    "user": "User",
+    "changes": "Changes",
+    "empty": "No changed data",
+    "emptyDesc": "Try changing date filters, action, or search keyword.",
+    "showingLogs": "Showing {{from}} - {{to}} of {{total}} logs"
+  },
+  "common": {
+    "fetchError": "Failed to load data from server",
+    "confirm": "Yes, continue",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "reset": "Reset",
+    "delete": "Delete",
+    "continue": "Continue",
+    "search": "Search",
+    "action": "Action",
+    "all": "All",
+    "from": "From",
+    "to": "To",
+    "date": "Date",
+    "status": "Status",
+    "unit": "Unit",
+    "quantity": "Quantity",
+    "noChangedData": "No changed data",
+    "tryAgain": "Try Again",
+    "back": "Back",
+    "deleteSession": "Delete Session",
+    "creating": "Creating..."
+  },
+  "status": {
+    "pending": "Pending",
+    "review": "Review",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "draft": "Draft",
+    "finalized": "Finalized"
+  },
+  "items": {
+    "sortAsc": "Smallest Quantity",
+    "sortDesc": "Largest Quantity",
+    "apply": "Apply",
+    "takeItem": "Take Item",
+    "outOfStock": "Out of Stock",
+    "searchPlaceholder": "Search item or item code...",
+    "showing": "Showing {{from}} - {{to}} of {{total}} items",
+    "userNote": "Click \"Take\" to submit a request. An admin will approve your request."
+  },
+  "information": {
+    "latestInfo": "Latest Info",
+    "activeAnnouncements": "Active Announcements",
+    "noActiveAnnouncements": "No active announcements."
+  },
+  "toast": {
+    "approval": {
+      "rejectFailed": "Failed to reject request",
+      "rejectSuccess": "Request rejected",
+      "approveFailed": "Failed to approve request"
+    },
+    "audit": {
+      "exportExcelFailed": "Failed to export audit data to Excel",
+      "exportPdfFailed": "Failed to export audit data to PDF"
+    },
+    "auth": {
+      "noConnection": "Not connected. Check network or ensure server is active.",
+      "loginDisabled": "Not connected. Login is disabled until connection is restored.",
+      "credentialsRequired": "Username and password are required",
+      "passwordMinLength": "Password must be at least 4 characters",
+      "loginFailed": "Login failed, please check your credentials"
+    },
+    "inbound": {
+      "masterDataLoadFailed": "Failed to load master item data"
+    },
+    "settings": {
+      "allFieldsRequired": "All fields are required",
+      "passwordMin6": "New password must be at least 6 characters",
+      "passwordMismatch": "Password confirmation does not match",
+      "passwordSuccess": "Password updated successfully",
+      "passwordFailed": "Failed to update password",
+      "profileFieldsRequired": "Name and Username are required",
+      "profileFailed": "Failed to save profile",
+      "deletePasswordRequired": "Password is required to confirm deletion",
+      "deleteFailed": "Failed to delete account. Password might be incorrect.",
+      "deleteSuperadminFailed": "Cannot delete the last superadmin"
+    },
+    "requests": {
+      "nameRequired": "Item name is required",
+      "newRequestSuccess": "New item request sent successfully"
+    },
+    "stockOpname": {
+      "updateFailed": "Failed to update item: ",
+      "finalizeSuccess": "Successfully finalized",
+      "finalizeFailed": "Failed to finalize"
+    },
+    "common": {
+      "errorOccurred": "An error occurred"
+    }
   }
 }

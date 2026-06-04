@@ -39,7 +39,7 @@ const HistoryMasuk = () => {
         setFetchError(null);
       })
       .catch(() => {
-        setFetchError('Gagal memuat data dari server');
+        setFetchError(t('common.fetchError'));
       })
       .finally(() => {
         setLoading(false);
@@ -54,7 +54,7 @@ const HistoryMasuk = () => {
     const nextFrom = parseDate(draftFrom);
     const nextTo = parseDate(draftTo);
     if (nextFrom && nextTo && nextFrom > nextTo) {
-      setError('Rentang tanggal tidak valid (dari harus lebih awal)');
+      setError(t('history.invalidDateRange'));
       return;
     }
     setError(null);
@@ -120,7 +120,7 @@ const HistoryMasuk = () => {
         <div className="history-filters">
           {error && <p className="danger-text" role="alert">{error}</p>}
           <div className="filter-group">
-            <label className="filter-label">Dari Tanggal</label>
+            <label className="filter-label">{t('history.fromDate')}</label>
             <div className="date-input">
               <span className="date-icon" aria-hidden>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -140,7 +140,7 @@ const HistoryMasuk = () => {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">Hingga Tanggal</label>
+            <label className="filter-label">{t('history.toDate')}</label>
             <div className="date-input">
               <span className="date-icon" aria-hidden>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -191,7 +191,7 @@ const HistoryMasuk = () => {
               <EmptyTableRow
                 colSpan={7}
                 title={t('inventory.noData')}
-                description="Coba ubah filter tanggal atau reset filter untuk melihat semua riwayat barang masuk."
+                description={t('history.emptyDescIn')}
               />
             ) : (
               data.map((row, idx) => (
@@ -234,7 +234,7 @@ const HistoryMasuk = () => {
 
         <div className="items-footer">
           <span className="items-meta">
-            Menampilkan halaman {page} dari {totalPages}
+            {t('common.showingPage', { page, total: totalPages })}
           </span>
           <Pagination current={page} total={totalPages} onChange={setPage} />
         </div>

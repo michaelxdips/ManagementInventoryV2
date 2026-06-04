@@ -3,7 +3,11 @@ import { fetchActiveAnnouncements, AnnouncementRow } from '../api/announcements.
 import { formatDateV2 } from '../utils/dateUtils';
 import { SkeletonCard } from '../components/ui/Skeleton';
 
+import { useTranslation } from '../hooks/useTranslation';
+
 const Information = () => {
+  const { t } = useTranslation();
+
   const [announcements, setAnnouncements] = useState<AnnouncementRow[]>([]);
   const [announcementsLoading, setAnnouncementsLoading] = useState(true);
 
@@ -35,8 +39,8 @@ const Information = () => {
       <section className="information-announcements">
         <div className="information-announcements__header">
           <div>
-            <span className="announcements-eyebrow">Info Terbaru</span>
-            <h2 className="history-title">Pengumuman Aktif</h2>
+            <span className="announcements-eyebrow">{t('information.latestInfo')}</span>
+            <h2 className="history-title">{t('information.activeAnnouncements')}</h2>
           </div>
         </div>
         {announcementsLoading ? (
@@ -46,7 +50,7 @@ const Information = () => {
             <SkeletonCard />
           </div>
         ) : announcements.length === 0 ? (
-          <div className="information-empty-note">Belum ada pengumuman aktif saat ini.</div>
+          <div className="information-empty-note">{t('information.noActiveAnnouncements')}</div>
         ) : (
           <div className="information-announcement-grid">
             {announcements.map((item) => (

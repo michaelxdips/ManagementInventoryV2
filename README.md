@@ -553,3 +553,19 @@ Project ini dibuat untuk keperluan PKL (Praktik Kerja Lapangan) - 2026
   <b>Developed for PKL Project - 2026</b><br/>
   <i>Stephen Michael dan Zaky Musyaffa</i>
 </div>
+
+
+## Demo Accounts
+
+DEMO ONLY — do not use these credentials in production.
+
+- superadmin / password_demo
+- admin_gudang / password_demo
+- admin_general_support / password_demo
+- sales_operation / password_demo
+- network_area / password_demo
+- service_assurance / password_demo
+- shared_service_general_support / password_demo
+- finance_payment_collection / password_demo
+- customer_care_plasa / password_demo
+- pqma / password_demo

@@ -90,8 +90,9 @@ export const updateItem = async (req, res) => {
             const [countRows] = await connection.query(`
                 SELECT COUNT(*) as count 
                 FROM requests 
-                WHERE LOWER(item) = LOWER(?) AND (status = 'PENDING' OR status = 'APPROVAL_REVIEW')
-            `, [existing.nama_barang]);
+                WHERE (atk_item_id = ? OR (atk_item_id IS NULL AND LOWER(item) = LOWER(?)))
+                AND status IN ('PENDING', 'APPROVAL_REVIEW')
+            `, [id, existing.nama_barang]);
 
             const pendingCount = countRows[0];
 

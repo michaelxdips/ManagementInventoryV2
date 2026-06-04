@@ -4,8 +4,10 @@ import useAuth from '../../hooks/useAuth';
 import { useToast } from '../../components/ui/Toast';
 import NetworkSignalBar from '../../components/ui/NetworkSignalBar';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const Login = () => {
+  const { t } = useTranslation();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [remember, setRemember] = useState(false);
@@ -18,28 +20,28 @@ const Login = () => {
 
 	useEffect(() => {
 		if (isConnectionUnavailable) {
-			showToast('Tidak terhubung. Periksa jaringan atau pastikan server aktif.', 'warning');
+			showToast(t('toast.auth.noConnection'));
 		}
 	}, [isConnectionUnavailable, showToast]);
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		if (isConnectionUnavailable) {
-			showToast('Tidak terhubung. Login dinonaktifkan sampai koneksi kembali.', 'warning');
+			showToast(t('toast.auth.loginDisabled'));
 			return;
 		}
 		if (!username.trim() || !password.trim()) {
-			showToast('Username dan password wajib diisi');
+			showToast(t('toast.auth.credentialsRequired'));
 			return;
 		}
 		if (password.length < 4) {
-			showToast('Password minimal 4 karakter');
+			showToast(t('toast.auth.passwordMinLength'));
 			return;
 		}
 		setSubmitting(true);
 		login({ username, password, remember })
 			.then(() => navigate('/dashboard'))
-			.catch(() => showToast('Login gagal, periksa kembali kredensial'))
+			.catch(() => showToast(t('toast.auth.loginFailed')))
 			.finally(() => setSubmitting(false));
 	};
 
