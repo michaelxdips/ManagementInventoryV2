@@ -92,14 +92,14 @@ const MobileNavbar = () => {
             {/* Mobile Drawer Menu */}
             <div className={`mobile-drawer-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)}>
                 <div className="mobile-drawer" onClick={(e) => e.stopPropagation()}>
-                        <div className="mobile-drawer-header">
-                            <div className="brand">
-                                <div className="brand-icon" aria-hidden />
-                                <div className="brand-text">
-                                    <span className="brand-title">Inventory ATK</span>
-                                </div>
+                        <div className="mobile-drawer-header mobile-drawer-brand">
+                            <div className="mobile-drawer-brand-main">
+                                <div className="brand-icon mobile-drawer-brand-logo" aria-hidden />
+                                <span className="mobile-drawer-brand-title">Inventory ATK</span>
                             </div>
-                            <NetworkSignalBar variant="compact" />
+                            <div className="mobile-drawer-brand-status">
+                                <NetworkSignalBar variant="compact" />
+                            </div>
                         </div>
 
                         <nav className="mobile-drawer-nav">

@@ -2,17 +2,32 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { createUnit } from '../api/units.api';
+import { useTranslation } from '../hooks/useTranslation';
 
-const UserPlusIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
-    <circle cx="9.5" cy="7" r="3.5" />
-    <path d="M19 8v6M22 11h-6" />
+const XIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
+const EyeIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+
+const EyeOffIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+    <line x1="1" y1="1" x2="23" y2="23" />
   </svg>
 );
 
 const ManageUnitsCreate = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [formValues, setFormValues] = useState({
     unitName: '',
     username: '',
@@ -22,10 +37,9 @@ const ManageUnitsCreate = () => {
   const [formError, setFormError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleChange = (field: keyof typeof formValues, value: string) => {
-    setFormValues((prev) => ({ ...prev, [field]: value }));
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,72 +75,105 @@ const ManageUnitsCreate = () => {
   };
 
   return (
-    <div className="history-page">
-      <div className="requests-header section-spacer-md">
-        <h2 className="history-title">Manage User</h2>
-        <Button type="button" variant="ghost" onClick={() => navigate('/manage-units')}>
-          Kembali ke list
-        </Button>
-      </div>
-
-      <div className="history-card">
-        <div className="history-title title-inline">
-          <UserPlusIcon /> <span>Form Tambah User</span>
-        </div>
-
-        <form className="form-grid" onSubmit={handleSubmit}>
-          <label className="form-field field-full">
-            <span className="form-label">Unit Name</span>
-            <input
-              className="input-control"
-              placeholder="Enter unit name"
-              value={formValues.unitName}
-              onChange={(e) => handleChange('unitName', e.target.value)}
-            />
-          </label>
-
-          <label className="form-field field-full">
-            <span className="form-label">Username</span>
-            <input
-              className="input-control"
-              placeholder="Enter username"
-              value={formValues.username}
-              onChange={(e) => handleChange('username', e.target.value)}
-            />
-          </label>
-
-          <label className="form-field field-full">
-            <span className="form-label">Password</span>
-            <input
-              className="input-control"
-              type="password"
-              placeholder="Enter password"
-              value={formValues.password}
-              onChange={(e) => handleChange('password', e.target.value)}
-            />
-          </label>
-
-          <label className="form-field field-full">
-            <span className="form-label">Confirm Password</span>
-            <input
-              className="input-control"
-              type="password"
-              placeholder="Confirm password"
-              value={formValues.confirmPassword}
-              onChange={(e) => handleChange('confirmPassword', e.target.value)}
-            />
-          </label>
-
-          <div className="form-actions form-actions-wide">
-            <div className="items-meta" aria-live="polite">
-              {formError && <span className="danger-text" role="alert">{formError}</span>}
-              {success && <span role="status">{success}</span>}
+    <div className="history-page" style={{ position: 'relative', minHeight: '100vh' }}>
+      <div className="modal-backdrop" onClick={() => navigate('/manage-units')}>
+        <div className="unit-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="unit-modal__header">
+            <div>
+              <h2 className="unit-modal__title">{t('units.addUnit')}</h2>
+              <p className="unit-modal__description">{t('units.addUnitDesc')}</p>
             </div>
-            <Button type="submit" variant="secondary" className="button-wide" disabled={saving}>
-              Create Account
-            </Button>
+            <button type="button" aria-label="Close modal" className="unit-modal__close" onClick={() => navigate('/manage-units')}>
+              <XIcon />
+            </button>
           </div>
-        </form>
+
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="unit-modal__body">
+              <div className="unit-modal__field">
+                <label className="form-label">{t('settings.name')}</label>
+                <input
+                  className="unit-modal__input"
+                  placeholder="Enter unit name"
+                  value={formValues.unitName}
+                  onChange={(e) => setFormValues(prev => ({ ...prev, unitName: e.target.value }))}
+                  disabled={saving}
+                />
+              </div>
+              
+              <div className="unit-modal__field">
+                <label className="form-label">{t('settings.username')}</label>
+                <input
+                  className="unit-modal__input"
+                  placeholder="Enter username for login"
+                  value={formValues.username}
+                  onChange={(e) => setFormValues(prev => ({ ...prev, username: e.target.value }))}
+                  disabled={saving}
+                />
+              </div>
+
+              <div className="unit-modal__field">
+                <label className="form-label">{t('units.newPassword')}</label>
+                <div className="unit-modal__password-wrap">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    className="unit-modal__input"
+                    placeholder="Enter new password"
+                    value={formValues.password}
+                    onChange={(e) => setFormValues(prev => ({ ...prev, password: e.target.value }))}
+                    disabled={saving}
+                  />
+                  <button
+                    type="button"
+                    className="unit-modal__password-toggle"
+                    aria-label="Toggle password visibility"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="unit-modal__field">
+                <label className="form-label">{t('units.confirmPassword')}</label>
+                <div className="unit-modal__password-wrap">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="unit-modal__input"
+                    placeholder="Confirm new password"
+                    value={formValues.confirmPassword}
+                    onChange={(e) => setFormValues(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                    disabled={saving}
+                  />
+                  <button
+                    type="button"
+                    className="unit-modal__password-toggle"
+                    aria-label="Toggle password visibility"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  </button>
+                </div>
+              </div>
+
+              {(formError || success) && (
+                <div className="items-meta" aria-live="polite" style={{ marginTop: '-8px' }}>
+                  {formError && <span className="danger-text" role="alert">{formError}</span>}
+                  {success && <span role="status" style={{ color: 'var(--accent)' }}>{success}</span>}
+                </div>
+              )}
+            </div>
+
+            <div className="unit-modal__footer">
+              <Button type="button" variant="secondary" onClick={() => navigate('/manage-units')} disabled={saving}>
+                {t('units.cancel')}
+              </Button>
+              <Button type="submit" variant="primary" disabled={saving}>
+                {saving ? t('settings.saving') : t('units.addUnit')}
+              </Button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

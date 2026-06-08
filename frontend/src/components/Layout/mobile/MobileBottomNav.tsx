@@ -70,7 +70,7 @@ const MobileBottomNav = () => {
                     <div className="mobile-bottom-more-wrap" ref={moreRef}>
                         <button
                             type="button"
-                            className={`mobile-bottom-item mobile-bottom-more-btn ${overflowHasActive || moreOpen ? 'is-active' : ''}`}
+                            className={`mobile-bottom-item mobile-bottom-more-btn ${overflowHasActive ? 'is-active' : ''} ${moreOpen ? 'is-open' : ''}`}
                             aria-expanded={moreOpen ? 'true' : 'false'}
                             aria-haspopup="true"
                             onClick={() => setMoreOpen((o) => !o)}

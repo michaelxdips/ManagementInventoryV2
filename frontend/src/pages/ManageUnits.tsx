@@ -53,6 +53,13 @@ const EyeOffIcon = () => (
   </svg>
 );
 
+const XIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
 const ManageUnits = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -71,6 +78,7 @@ const ManageUnits = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const refreshFlag = (location.state as { refresh?: boolean } | null)?.refresh;
   const { t } = useTranslation();
@@ -340,17 +348,27 @@ const ManageUnits = () => {
       {/* Confirmation Modal */}
       {confirmTarget && (
         <div className="modal-backdrop" onClick={() => setConfirmTarget(null)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <p className="modal-kicker">{t('units.modalKicker')}</p>
-            <h3 className="modal-title">{t('units.modalTitle', { name: confirmTarget.name })}</h3>
-            <p className="modal-text">
-              {t('units.modalDesc1')}<strong>{confirmTarget.username}</strong>{t('units.modalDesc2')}
-            </p>
-            <div className="modal-actions">
-              <Button type="button" variant="secondary" size="sm" onClick={() => setConfirmTarget(null)}>
+          <div className="unit-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="unit-modal__header">
+              <div>
+                <h2 className="unit-modal__title">Delete Unit</h2>
+                <p className="unit-modal__description">{t('units.deleteUnitDesc')}</p>
+              </div>
+              <button type="button" aria-label="Close modal" className="unit-modal__close" onClick={() => setConfirmTarget(null)}>
+                <XIcon />
+              </button>
+            </div>
+            <div className="unit-modal__body">
+              <div className="unit-modal__confirm-card">
+                <strong>{confirmTarget.name}</strong><br />
+                <span style={{ fontSize: '13px', color: 'var(--muted)' }}>Username: {confirmTarget.username}</span>
+              </div>
+            </div>
+            <div className="unit-modal__footer">
+              <Button type="button" variant="secondary" onClick={() => setConfirmTarget(null)}>
                 {t('units.cancel')}
               </Button>
-              <Button type="button" variant="danger" size="sm" onClick={handleDelete} disabled={deletingId !== null}>
+              <Button type="button" variant="danger" onClick={handleDelete} disabled={deletingId !== null}>
                 <TrashIcon /> {deletingId !== null ? t('units.actionDeleting') : t('units.actionDelete')}
               </Button>
             </div>
@@ -361,34 +379,44 @@ const ManageUnits = () => {
       {/* Edit Modal */}
       {editTarget && (
         <div className="modal-backdrop" onClick={() => setEditTarget(null)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
-            <h3 className="modal-title">{t('units.editUnit')}</h3>
-            <form onSubmit={handleEditSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
-              <div className="form-group">
-                <label className="form-label">{t('settings.name')}</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  disabled={saving}
-                />
+          <div className="unit-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="unit-modal__header">
+              <div>
+                <h2 className="unit-modal__title">{t('units.editUnit')}</h2>
+                <p className="unit-modal__description">{t('units.editUnitDesc')}</p>
               </div>
-              <div className="form-group">
-                <label className="form-label">{t('settings.username')}</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={editUsername}
-                  onChange={(e) => setEditUsername(e.target.value)}
-                  disabled={saving}
-                />
+              <button type="button" aria-label="Close modal" className="unit-modal__close" onClick={() => setEditTarget(null)}>
+                <XIcon />
+              </button>
+            </div>
+            <form onSubmit={handleEditSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="unit-modal__body">
+                <div className="unit-modal__field">
+                  <label className="form-label">{t('settings.name')}</label>
+                  <input
+                    type="text"
+                    className="unit-modal__input"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    disabled={saving}
+                  />
+                </div>
+                <div className="unit-modal__field">
+                  <label className="form-label">{t('settings.username')}</label>
+                  <input
+                    type="text"
+                    className="unit-modal__input"
+                    value={editUsername}
+                    onChange={(e) => setEditUsername(e.target.value)}
+                    disabled={saving}
+                  />
+                </div>
               </div>
-              <div className="modal-actions" style={{ marginTop: '8px' }}>
-                <Button type="button" variant="secondary" size="sm" onClick={() => setEditTarget(null)} disabled={saving}>
+              <div className="unit-modal__footer">
+                <Button type="button" variant="secondary" onClick={() => setEditTarget(null)} disabled={saving}>
                   {t('units.cancel')}
                 </Button>
-                <Button type="submit" variant="primary" size="sm" disabled={saving}>
+                <Button type="submit" variant="primary" disabled={saving}>
                   {saving ? t('settings.saving') : t('units.saveChanges')}
                 </Button>
               </div>
@@ -400,48 +428,64 @@ const ManageUnits = () => {
       {/* Reset Password Modal */}
       {resetTarget && (
         <div className="modal-backdrop" onClick={() => setResetTarget(null)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
-            <h3 className="modal-title">{t('units.resetPasswordTitle')}</h3>
-            <p className="modal-text" style={{ marginBottom: '16px', color: 'var(--color-warning-dark)' }}>
-              {t('units.resetPasswordWarning')}
-            </p>
-            <form onSubmit={handleResetSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div className="form-group">
-                <label className="form-label">{t('units.newPassword')}</label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    className="form-input"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    disabled={saving}
-                    style={{ paddingRight: '40px' }}
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle"
-                    onClick={() => setShowPassword(!showPassword)}
-                    style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-tertiary)' }}
-                  >
-                    {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-                  </button>
+          <div className="unit-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="unit-modal__header">
+              <div>
+                <h2 className="unit-modal__title">{t('units.resetPasswordTitle')}</h2>
+                <p className="unit-modal__description">{t('units.resetUnitPasswordDesc')}</p>
+              </div>
+              <button type="button" aria-label="Close modal" className="unit-modal__close" onClick={() => setResetTarget(null)}>
+                <XIcon />
+              </button>
+            </div>
+            <form onSubmit={handleResetSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="unit-modal__body">
+                <div className="unit-modal__field">
+                  <label className="form-label">{t('units.newPassword')}</label>
+                  <div className="unit-modal__password-wrap">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className="unit-modal__input"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      disabled={saving}
+                    />
+                    <button
+                      type="button"
+                      className="unit-modal__password-toggle"
+                      aria-label="Toggle password visibility"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                    </button>
+                  </div>
+                </div>
+                <div className="unit-modal__field">
+                  <label className="form-label">{t('units.confirmPassword')}</label>
+                  <div className="unit-modal__password-wrap">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      className="unit-modal__input"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      disabled={saving}
+                    />
+                    <button
+                      type="button"
+                      className="unit-modal__password-toggle"
+                      aria-label="Toggle password visibility"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="form-group">
-                <label className="form-label">{t('units.confirmPassword')}</label>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  className="form-input"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  disabled={saving}
-                />
-              </div>
-              <div className="modal-actions" style={{ marginTop: '8px' }}>
-                <Button type="button" variant="secondary" size="sm" onClick={() => setResetTarget(null)} disabled={saving}>
+              <div className="unit-modal__footer">
+                <Button type="button" variant="secondary" onClick={() => setResetTarget(null)} disabled={saving}>
                   {t('units.cancel')}
                 </Button>
-                <Button type="submit" variant="primary" size="sm" disabled={saving}>
+                <Button type="submit" variant="primary" disabled={saving}>
                   {saving ? t('settings.saving') : t('units.actionResetPassword')}
                 </Button>
               </div>
