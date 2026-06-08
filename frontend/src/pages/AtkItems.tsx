@@ -7,7 +7,7 @@ import Modal from '../components/ui/Modal';
 import { MobileCard, MobileCardList } from '../components/ui/MobileCard';
 import { fetchItems, Item, updateItem, deleteItem } from '../api/items.api';
 import { createRequest } from '../api/requests.api';
-import { Download, QrCode, FileText, Upload } from 'lucide-react';
+import { Download, QrCode, FileText, Upload, Edit2, Trash2, Package } from 'lucide-react';
 import { exportToExcel } from '../utils/exportExcel';
 import { exportToPdf } from '../utils/exportPdf';
 import useAuth from '../hooks/useAuth';
@@ -541,11 +541,11 @@ const AtkItems = () => {
 												)}
 												{isSuperadmin ? (
 													<>
-													<Button type="button" variant="ghost" size="sm" onClick={() => handleEditClick(item)} aria-label={t('inventory.actions.edit')}>
-														✏ {t('inventory.actions.edit')}
+													<Button type="button" variant="ghost" size="sm" onClick={() => handleEditClick(item)} aria-label={t('inventory.actions.edit')} title={t('inventory.actions.edit')}>
+														<Edit2 size={16} />
 													</Button>
-													<Button type="button" variant="ghost" size="sm" onClick={() => handleDeleteClick(item)} aria-label={t('inventory.actions.delete')} style={{ color: 'var(--danger)' }}>
-														🗑
+													<Button type="button" variant="ghost" size="sm" onClick={() => handleDeleteClick(item)} aria-label={t('inventory.actions.delete')} title={t('inventory.actions.delete')} style={{ color: 'var(--danger)' }}>
+														<Trash2 size={16} />
 													</Button>
 													</>
 												) : isAdminOrSuperadmin ? null : (
@@ -555,8 +555,9 @@ const AtkItems = () => {
 														size="sm"
 														onClick={() => handleRequestClick(item)}
 														disabled={item.quantity <= 0}
+														style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
 													>
-														{item.quantity > 0 ? `📦 ${t('inventory.actions.take')}` : t('inventory.actions.outOfStock')}
+														{item.quantity > 0 ? <><Package size={16} /> {t('inventory.actions.take')}</> : t('inventory.actions.outOfStock')}
 													</Button>
 												)}
 											</div>
@@ -596,23 +597,26 @@ const AtkItems = () => {
 							]}
 							actions={
 								isSuperadmin ? (
-									<>
+									<div className="mobile-card-actions" style={{ display: 'flex', width: '100%' }}>
 										<Button type="button" variant="ghost" onClick={() => handleEditClick(item)}>
-											✏ {t('inventory.actions.edit')}
+											<Edit2 size={16} /> <span className="sr-only sm-not-sr-only">{t('inventory.actions.edit')}</span>
 										</Button>
 										<Button type="button" variant="ghost" onClick={() => handleDeleteClick(item)} style={{ color: 'var(--danger)' }}>
-											🗑 {t('inventory.actions.delete')}
+											<Trash2 size={16} /> <span className="sr-only sm-not-sr-only">{t('inventory.actions.delete')}</span>
 										</Button>
-									</>
+									</div>
 								) : isAdminOrSuperadmin ? null : (
-									<Button
-										type="button"
-										variant={item.quantity > 0 ? 'secondary' : 'ghost'}
-										onClick={() => handleRequestClick(item)}
-										disabled={item.quantity <= 0}
-									>
-										{item.quantity > 0 ? `📦 ${t('inventory.actions.take')}` : t('inventory.actions.outOfStock')}
-									</Button>
+									<div className="mobile-card-actions" style={{ display: 'flex', width: '100%' }}>
+										<Button
+											type="button"
+											variant={item.quantity > 0 ? 'secondary' : 'ghost'}
+											onClick={() => handleRequestClick(item)}
+											disabled={item.quantity <= 0}
+											style={{ display: 'flex', alignItems: 'center', gap: '6px', width: '100%', justifyContent: 'center' }}
+										>
+											{item.quantity > 0 ? <><Package size={16} /> {t('inventory.actions.take')}</> : t('inventory.actions.outOfStock')}
+										</Button>
+									</div>
 								)
 							}
 						/>

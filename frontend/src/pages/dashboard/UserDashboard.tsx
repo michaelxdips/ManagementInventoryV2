@@ -162,16 +162,18 @@ const UserDashboard: React.FC<Props> = ({ metrics, greeting, userName, onRefresh
                   #{idx + 1}
                 </div>
 
-                {/* Icon */}
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-                  <Package size={20} color="var(--muted)" />
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  {/* Icon */}
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
+                    <Package size={20} color="var(--muted)" />
+                  </div>
+                  
+                  {/* Info */}
+                  <h4 style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 600, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }} title={item.nama_barang}>{item.nama_barang}</h4>
+                  <p style={{ margin: '0 0 16px', fontSize: '12px', color: 'var(--muted)' }}>
+                    {item.freq === 1 ? t('dashboard.requestedCountSingular') : t('dashboard.requestedCount', { count: item.freq })}
+                  </p>
                 </div>
-                
-                {/* Info */}
-                <h4 style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 600, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }} title={item.nama_barang}>{item.nama_barang}</h4>
-                <p style={{ margin: '0 0 16px', fontSize: '12px', color: 'var(--muted)' }}>
-                  {item.freq === 1 ? t('dashboard.requestedCountSingular') : t('dashboard.requestedCount', { count: item.freq })}
-                </p>
                 
                 {/* Action */}
                 <div style={{ marginTop: 'auto' }}>

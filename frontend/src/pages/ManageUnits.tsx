@@ -304,14 +304,14 @@ const ManageUnits = () => {
                 { label: t('units.colUsername'), value: row.username },
               ]}
               actions={
-                <div style={{ display: 'flex', gap: '8px', width: '100%', justifyContent: 'flex-end' }}>
+                <div className="mobile-card-actions" style={{ display: 'flex', width: '100%' }}>
                   <Button
                     type="button"
                     variant="secondary"
                     size="sm"
                     onClick={() => openEditModal(row)}
                   >
-                    <EditIcon /> {t('units.actionEdit')}
+                    <EditIcon /> <span className="sr-only sm-not-sr-only">{t('units.actionEdit')}</span>
                   </Button>
                   <Button
                     type="button"
@@ -319,7 +319,7 @@ const ManageUnits = () => {
                     size="sm"
                     onClick={() => openResetModal(row)}
                   >
-                    <KeyIcon /> Reset
+                    <KeyIcon /> <span className="sr-only sm-not-sr-only">Reset</span>
                   </Button>
                   <Button
                     type="button"
@@ -328,7 +328,7 @@ const ManageUnits = () => {
                     onClick={() => setConfirmTarget(row)}
                     disabled={deletingId === row.id}
                   >
-                    <TrashIcon /> {t('units.actionDelete')}
+                    <TrashIcon /> <span className="sr-only sm-not-sr-only">{t('units.actionDelete')}</span>
                   </Button>
                 </div>
               }
@@ -361,7 +361,7 @@ const ManageUnits = () => {
       {/* Edit Modal */}
       {editTarget && (
         <div className="modal-backdrop" onClick={() => setEditTarget(null)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px', width: '100%' }}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
             <h3 className="modal-title">{t('units.editUnit')}</h3>
             <form onSubmit={handleEditSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
               <div className="form-group">
@@ -400,7 +400,7 @@ const ManageUnits = () => {
       {/* Reset Password Modal */}
       {resetTarget && (
         <div className="modal-backdrop" onClick={() => setResetTarget(null)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px', width: '100%' }}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
             <h3 className="modal-title">{t('units.resetPasswordTitle')}</h3>
             <p className="modal-text" style={{ marginBottom: '16px', color: 'var(--color-warning-dark)' }}>
               {t('units.resetPasswordWarning')}

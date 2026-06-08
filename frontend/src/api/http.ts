@@ -65,7 +65,28 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const res = await fetch(url, { ...options, headers });
+  if (typeof navigator !== 'undefined' && !navigator.onLine) {
+    const isMutation = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(options.method?.toUpperCase() || 'GET');
+    if (isMutation) {
+      throw {
+        status: 0,
+        message: 'Aksi dibatalkan. Anda sedang offline dan tidak dapat melakukan perubahan data.',
+        details: 'OFFLINE_MUTATION'
+      } as HttpError;
+    }
+  }
+
+  let res: Response;
+  try {
+    res = await fetch(url, { ...options, headers });
+  } catch {
+    throw {
+      status: 0,
+      message: 'Gagal terhubung ke server. Periksa koneksi internet Anda.',
+      details: 'NETWORK_ERROR'
+    } as HttpError;
+  }
+
   if (!res.ok) {
     if (res.status === 401 && typeof window !== 'undefined') {
       localStorage.removeItem('auth_token');
