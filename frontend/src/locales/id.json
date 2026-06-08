@@ -100,6 +100,8 @@
     "review": "Review",
     "frequentRequests": "Sering Anda Minta (Distribusi)",
     "requestedCount": "Diminta {{count}} kali",
+    "requestedCountSingular": "Diminta 1 kali",
+    "emptyFrequentItemsDesc": "Barang yang sering diminta akan muncul setelah Anda mengajukan permintaan.",
     "requestAgain": "Minta Lagi",
     "historyAndTracking": "Riwayat & Tracking Request",
     "viewRequest": "Lihat request",

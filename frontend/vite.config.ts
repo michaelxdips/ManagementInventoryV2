@@ -88,9 +88,9 @@ export default defineConfig({
                 maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
               }
             }
-          },
+          }
         ],
-        navigateFallback: '/offline.html',
+        navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api/]
       }
     })

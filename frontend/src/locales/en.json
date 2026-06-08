@@ -100,6 +100,8 @@
     "review": "Review",
     "frequentRequests": "Frequently Requested (Distribution)",
     "requestedCount": "Requested {{count}} times",
+    "requestedCountSingular": "Requested 1 time",
+    "emptyFrequentItemsDesc": "Frequently requested items will appear after you submit requests.",
     "requestAgain": "Request Again",
     "historyAndTracking": "Request History & Tracking",
     "viewRequest": "View request",

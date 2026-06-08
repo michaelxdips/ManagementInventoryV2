@@ -138,24 +138,57 @@ const UserDashboard: React.FC<Props> = ({ metrics, greeting, userName, onRefresh
 
       {/* Frequent Items Section */}
       <article className="dash-card" style={{ padding: '24px' }}>
-          <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <FastForward size={18} color="var(--accent)" /> 
-            {t('dashboard.frequentRequests')}
-          </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px' }}>
+          <div style={{ marginBottom: '20px' }}>
+            <h3 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <FastForward size={18} color="var(--accent)" /> 
+              {t('dashboard.frequentRequests')}
+            </h3>
+            <p style={{ margin: 0, fontSize: '13px', color: 'var(--muted)' }}>{t('dashboard.frequentSubtitle')}</p>
+          </div>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
             {metrics.frequentItems && metrics.frequentItems.length > 0 ? metrics.frequentItems.map((item, idx) => (
-              <div key={idx} style={{ padding: '16px', background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', transition: 'transform 0.2s, box-shadow 0.2s', cursor: 'pointer' }}
-                   onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)'; }}
-                   onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
-                   onClick={() => navigate(`/requests/create?item=${encodeURIComponent(item.nama_barang)}`)}>
-                <Package size={24} color="var(--muted)" style={{ marginBottom: '12px' }} />
-                <h4 style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 600 }}>{item.nama_barang}</h4>
-                <p style={{ margin: '0 0 12px', fontSize: '12px', color: 'var(--muted)' }}>{t('dashboard.requestedCount', { count: item.freq })}</p>
-                <Button type="button" variant="secondary" style={{ width: '100%', fontSize: '12px', padding: '6px 0' }}>{t('dashboard.requestAgain')}</Button>
+              <div key={idx} style={{ padding: '16px', background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '12px', display: 'flex', flexDirection: 'column', position: 'relative', transition: 'all 0.2s ease', cursor: 'pointer' }}
+                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
+                   onClick={() => navigate(`/requests/create?item=${encodeURIComponent(item.nama_barang)}`)}
+                   role="button"
+                   tabIndex={0}
+                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/requests/create?item=${encodeURIComponent(item.nama_barang)}`); } }}
+                   aria-label={`Request ${item.nama_barang} again`}>
+                
+                {/* Rank Indicator */}
+                <div style={{ position: 'absolute', top: '12px', right: '12px', fontSize: '12px', fontWeight: 700, color: idx < 3 ? 'var(--accent)' : 'var(--muted)', background: idx < 3 ? 'var(--accent-glow)' : 'var(--surface-alt)', padding: '2px 8px', borderRadius: '12px' }}>
+                  #{idx + 1}
+                </div>
+
+                {/* Icon */}
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
+                  <Package size={20} color="var(--muted)" />
+                </div>
+                
+                {/* Info */}
+                <h4 style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 600, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }} title={item.nama_barang}>{item.nama_barang}</h4>
+                <p style={{ margin: '0 0 16px', fontSize: '12px', color: 'var(--muted)' }}>
+                  {item.freq === 1 ? t('dashboard.requestedCountSingular') : t('dashboard.requestedCount', { count: item.freq })}
+                </p>
+                
+                {/* Action */}
+                <div style={{ marginTop: 'auto' }}>
+                  <Button type="button" variant="secondary" style={{ width: '100%', fontSize: '13px', padding: '6px 0', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px' }} tabIndex={-1}>
+                    <Plus size={14} />
+                    {t('dashboard.requestAgain')}
+                  </Button>
+                </div>
               </div>
             )) : (
-              <div style={{ gridColumn: '1 / -1', padding: '32px', textAlign: 'center', color: 'var(--muted)', background: 'var(--panel)', border: '1px dashed var(--border)', borderRadius: '12px' }}>
-                {t('dashboard.noRequestHistory')}
+              <div style={{ gridColumn: '1 / -1', padding: '48px 24px', textAlign: 'center', color: 'var(--muted)', background: 'var(--panel)', border: '1px dashed var(--border)', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Package size={32} color="var(--muted)" style={{ opacity: 0.5, marginBottom: '16px' }} />
+                <h4 style={{ margin: '0 0 8px', fontSize: '15px', fontWeight: 500, color: 'var(--text)' }}>{t('dashboard.noFrequentItems')}</h4>
+                <p style={{ margin: 0, fontSize: '13px', maxWidth: '300px', lineHeight: 1.5 }}>{t('dashboard.emptyFrequentItemsDesc')}</p>
+                <Button type="button" variant="primary" onClick={(e) => { e.stopPropagation(); navigate('/requests/create'); }} style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Plus size={16} /> {t('dashboard.newRequest')}
+                </Button>
               </div>
             )}
           </div>
