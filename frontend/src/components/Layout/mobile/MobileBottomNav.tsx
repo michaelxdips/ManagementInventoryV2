@@ -78,7 +78,7 @@ const MobileBottomNav = () => {
                             <span className="mobile-bottom-icon">
                                 <Icon name="more" />
                             </span>
-                            <span className="mobile-bottom-label">Lainnya</span>
+                            <span className="mobile-bottom-label">{t('common.more')}</span>
                         </button>
 
                         {moreOpen && (

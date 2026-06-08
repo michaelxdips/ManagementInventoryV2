@@ -525,7 +525,8 @@
     "tryAgain": "Coba Lagi",
     "back": "Kembali",
     "deleteSession": "Hapus Sesi",
-    "creating": "Membuat..."
+    "creating": "Membuat...",
+    "more": "Lainnya"
   },
   "status": {
     "pending": "Menunggu",

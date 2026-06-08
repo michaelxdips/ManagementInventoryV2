@@ -525,7 +525,8 @@
     "tryAgain": "Try Again",
     "back": "Back",
     "deleteSession": "Delete Session",
-    "creating": "Creating..."
+    "creating": "Creating...",
+    "more": "More"
   },
   "status": {
     "pending": "Pending",
