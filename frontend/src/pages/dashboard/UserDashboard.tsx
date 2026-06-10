@@ -105,39 +105,33 @@ const UserDashboard: React.FC<Props> = ({ metrics, greeting, userName, onRefresh
       {/* Metric Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
         
-        <article className="dash-card" style={{ display: 'flex', flexDirection: 'column', padding: '24px' }}>
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{ padding: '12px', background: 'var(--accent-glow)', borderRadius: '12px', color: 'var(--accent)', width: 'fit-content' }}>
-              <FileText size={24} />
-            </div>
+        <article className="dash-card">
+          <div className="dash-icon-tile dash-icon-tile--accent">
+            <FileText size={24} />
           </div>
-          <h3 style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--muted)', fontWeight: 500 }}>{t('dashboard.totalRequests')}</h3>
-          <p style={{ margin: 0, fontSize: '32px', fontWeight: 700 }}>{metrics.myTotalRequests ?? 0}</p>
+          <h3 className="dash-stat-title">{t('dashboard.totalRequests')}</h3>
+          <p className="dash-stat-value">{metrics.myTotalRequests ?? 0}</p>
         </article>
 
-        <article className="dash-card" style={{ display: 'flex', flexDirection: 'column', padding: '24px' }}>
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{ padding: '12px', background: 'var(--warning-glow)', borderRadius: '12px', color: 'var(--warning)', width: 'fit-content' }}>
-              <Clock size={24} />
-            </div>
+        <article className="dash-card">
+          <div className="dash-icon-tile dash-icon-tile--warning">
+            <Clock size={24} />
           </div>
-          <h3 style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--muted)', fontWeight: 500 }}>{t('dashboard.pendingValidation')}</h3>
-          <p style={{ margin: 0, fontSize: '32px', fontWeight: 700 }}>{metrics.myPendingRequests ?? 0}</p>
+          <h3 className="dash-stat-title">{t('dashboard.pendingValidation')}</h3>
+          <p className="dash-stat-value">{metrics.myPendingRequests ?? 0}</p>
         </article>
 
-        <article className="dash-card" style={{ display: 'flex', flexDirection: 'column', padding: '24px' }}>
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{ padding: '12px', background: 'var(--success-glow)', borderRadius: '12px', color: 'var(--success)', width: 'fit-content' }}>
-              <CheckCircle size={24} />
-            </div>
+        <article className="dash-card">
+          <div className="dash-icon-tile dash-icon-tile--success">
+            <CheckCircle size={24} />
           </div>
-          <h3 style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--muted)', fontWeight: 500 }}>{t('dashboard.approved')}</h3>
-          <p style={{ margin: 0, fontSize: '32px', fontWeight: 700 }}>{metrics.myApprovedRequests ?? 0}</p>
+          <h3 className="dash-stat-title">{t('dashboard.approved')}</h3>
+          <p className="dash-stat-value">{metrics.myApprovedRequests ?? 0}</p>
         </article>
       </div>
 
       {/* Frequent Items Section */}
-      <article className="dash-card" style={{ padding: '24px' }}>
+      <article className="dash-card">
           <div style={{ marginBottom: '20px' }}>
             <h3 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
               <FastForward size={18} color="var(--accent)" /> 
@@ -197,7 +191,7 @@ const UserDashboard: React.FC<Props> = ({ metrics, greeting, userName, onRefresh
         </article>
 
         {/* Request Tracking */}
-        <article className="dash-card" style={{ padding: '24px' }}>
+        <article className="dash-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
             <div>
               <h3 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 600 }}>{t('dashboard.historyAndTracking')}</h3>

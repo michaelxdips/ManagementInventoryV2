@@ -485,6 +485,7 @@
     "filterDesc": "Select a status to focus badges and calendar details.",
     "all": "All",
     "dailyDetail": "Daily Detail",
+    "empty": "No requests on this date",
     "requestItem": "request",
     "thisMonthStatus": "This month status",
     "totalRequest": "Total Request",
@@ -530,7 +531,8 @@
     "back": "Back",
     "deleteSession": "Delete Session",
     "creating": "Creating...",
-    "more": "More"
+    "more": "More",
+    "showingPage": "Showing page {{page}} of {{total}}"
   },
   "status": {
     "pending": "Pending",

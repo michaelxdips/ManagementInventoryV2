@@ -216,10 +216,10 @@ const NewItemRequestApproval = () => {
                     />
                 </div>
 
-                <Table>
+                <Table className="request-table">
                     <THead>
                         <TR>
-                            <TH className="action-bar action-bar--wrap">{t('newItemApproval.colNo')}</TH>
+                            <TH className="th-width-60 text-center">{t('newItemApproval.colNo')}</TH>
                             <TH>{t('newItemApproval.colName')}</TH>
                             <TH>{t('newItemApproval.colDesc')}</TH>
                             <TH>{t('newItemApproval.colUnit')}</TH>
@@ -241,7 +241,7 @@ const NewItemRequestApproval = () => {
                         ) : (
                             filteredData.map((row, idx) => (
                                 <TR key={row.id}>
-                                    <TD>{idx + 1}</TD>
+                                    <TD className="text-center">{idx + 1}</TD>
                                     <TD>{row.item_name}</TD>
                                     <TD>{row.description || '-'}</TD>
                                     <TD>{row.satuan || '-'}</TD>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useOpname, OpnameSession } from '../hooks/useOpname';
 import { Table, THead, TBody, TR, TH, TD } from '../components/ui/Table';
 import { MobileCard, MobileCardList } from '../components/ui/MobileCard';
@@ -11,6 +11,270 @@ import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { getWIBInputDate } from '../utils/dateUtils';
 import { SkeletonTableRows } from '../components/ui/Skeleton';
 import { useTranslation } from '../hooks/useTranslation';
+
+interface StockOpnameRowProps {
+    item: NonNullable<OpnameSession['items']>[0];
+    disabled: boolean;
+    t: any;
+    onCommitLineChange: (itemId: number, changes: { physical_qty: number; notes: string }) => void;
+    registerFlush?: (flushFn: () => void) => () => void;
+}
+
+const StockOpnameRow = React.memo(({ item, disabled, t, onCommitLineChange, registerFlush }: StockOpnameRowProps) => {
+    const [localQtyStr, setLocalQtyStr] = useState(item.physical_qty.toString());
+    const [localNotes, setLocalNotes] = useState(item.notes || '');
+
+    const stateRef = useRef({ qty: item.physical_qty.toString(), notes: item.notes || '' });
+    const lastPropRef = useRef({ qty: item.physical_qty, notes: item.notes || '' });
+    const flushTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const dirtyRef = useRef(false);
+    const [isFocused, setIsFocused] = useState(false);
+
+    useEffect(() => {
+        const qtyChanged = item.physical_qty !== lastPropRef.current.qty;
+        const notesChanged = (item.notes || '') !== lastPropRef.current.notes;
+
+        if (qtyChanged || notesChanged) {
+            if (!isFocused) {
+                setLocalQtyStr(item.physical_qty.toString());
+                setLocalNotes(item.notes || '');
+                stateRef.current = { qty: item.physical_qty.toString(), notes: item.notes || '' };
+                lastPropRef.current = { qty: item.physical_qty, notes: item.notes || '' };
+            }
+        }
+    }, [item.physical_qty, item.notes, isFocused]);
+
+    const commitChanges = useCallback(() => {
+        if (flushTimeout.current) {
+            clearTimeout(flushTimeout.current);
+            flushTimeout.current = null;
+        }
+
+        const currentQtyStr = stateRef.current.qty;
+        const currentNotes = stateRef.current.notes;
+
+        const parsedQty = parseInt(currentQtyStr);
+        const qtyToSave = isNaN(parsedQty) ? 0 : parsedQty;
+
+        if (qtyToSave !== item.physical_qty || currentNotes !== (item.notes || '')) {
+            if (!dirtyRef.current) return;
+            dirtyRef.current = false;
+            onCommitLineChange(item.item_id, { physical_qty: qtyToSave, notes: currentNotes });
+        }
+    }, [item.physical_qty, item.notes, item.item_id, onCommitLineChange]);
+
+    const handleQtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        setLocalQtyStr(val);
+        stateRef.current.qty = val;
+        dirtyRef.current = true;
+        
+        if (flushTimeout.current) clearTimeout(flushTimeout.current);
+        flushTimeout.current = setTimeout(commitChanges, 500);
+    };
+
+    const handleNotesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        setLocalNotes(val);
+        stateRef.current.notes = val;
+        dirtyRef.current = true;
+
+        if (flushTimeout.current) clearTimeout(flushTimeout.current);
+        flushTimeout.current = setTimeout(commitChanges, 500);
+    };
+
+    const handleBlur = () => {
+        setIsFocused(false);
+        commitChanges();
+    };
+
+    const handleFocus = () => setIsFocused(true);
+
+    useEffect(() => {
+        return () => {
+            commitChanges();
+        };
+    }, [commitChanges]);
+
+    useEffect(() => {
+        if (registerFlush) {
+            return registerFlush(commitChanges);
+        }
+    }, [registerFlush, commitChanges]);
+
+    const parsedLocalQty = parseInt(localQtyStr);
+    const safeQty = isNaN(parsedLocalQty) ? 0 : parsedLocalQty;
+    const diff = safeQty - item.system_qty;
+
+    return (
+        <TR className={diff !== 0 ? 'row-warning' : ''}>
+            <TD>{item.kode_barang || '-'}</TD>
+            <TD>{item.nama_barang}</TD>
+            <TD>{item.system_qty}</TD>
+            <TD>
+                <Input 
+                    type="number" 
+                    value={localQtyStr}
+                    disabled={disabled}
+                    onChange={handleQtyChange}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                    className="table-input-control"
+                />
+            </TD>
+            <TD>
+                <span className={diff < 0 ? 'text-danger text-strong' : diff > 0 ? 'text-success text-strong' : ''}>
+                    {diff > 0 ? `+${diff}` : diff}
+                </span>
+            </TD>
+            <TD>
+                <Input 
+                    type="text" 
+                    value={localNotes}
+                    disabled={disabled}
+                    onChange={handleNotesChange}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                    className="table-input-control"
+                    placeholder={t('stockOpname.notePlaceholder')}
+                />
+            </TD>
+        </TR>
+    );
+});
+StockOpnameRow.displayName = 'StockOpnameRow';
+
+const StockOpnameMobileCard = React.memo(({ item, disabled, t, onCommitLineChange, registerFlush }: StockOpnameRowProps) => {
+    const [localQtyStr, setLocalQtyStr] = useState(item.physical_qty.toString());
+    const [localNotes, setLocalNotes] = useState(item.notes || '');
+
+    const stateRef = useRef({ qty: item.physical_qty.toString(), notes: item.notes || '' });
+    const lastPropRef = useRef({ qty: item.physical_qty, notes: item.notes || '' });
+    const flushTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const dirtyRef = useRef(false);
+    const [isFocused, setIsFocused] = useState(false);
+
+    useEffect(() => {
+        const qtyChanged = item.physical_qty !== lastPropRef.current.qty;
+        const notesChanged = (item.notes || '') !== lastPropRef.current.notes;
+
+        if (qtyChanged || notesChanged) {
+            if (!isFocused) {
+                setLocalQtyStr(item.physical_qty.toString());
+                setLocalNotes(item.notes || '');
+                stateRef.current = { qty: item.physical_qty.toString(), notes: item.notes || '' };
+                lastPropRef.current = { qty: item.physical_qty, notes: item.notes || '' };
+            }
+        }
+    }, [item.physical_qty, item.notes, isFocused]);
+
+    const commitChanges = useCallback(() => {
+        if (flushTimeout.current) {
+            clearTimeout(flushTimeout.current);
+            flushTimeout.current = null;
+        }
+
+        const currentQtyStr = stateRef.current.qty;
+        const currentNotes = stateRef.current.notes;
+
+        const parsedQty = parseInt(currentQtyStr);
+        const qtyToSave = isNaN(parsedQty) ? 0 : parsedQty;
+
+        if (qtyToSave !== item.physical_qty || currentNotes !== (item.notes || '')) {
+            if (!dirtyRef.current) return;
+            dirtyRef.current = false;
+            onCommitLineChange(item.item_id, { physical_qty: qtyToSave, notes: currentNotes });
+        }
+    }, [item.physical_qty, item.notes, item.item_id, onCommitLineChange]);
+
+    const handleQtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        setLocalQtyStr(val);
+        stateRef.current.qty = val;
+        dirtyRef.current = true;
+        
+        if (flushTimeout.current) clearTimeout(flushTimeout.current);
+        flushTimeout.current = setTimeout(commitChanges, 500);
+    };
+
+    const handleNotesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        setLocalNotes(val);
+        stateRef.current.notes = val;
+        dirtyRef.current = true;
+
+        if (flushTimeout.current) clearTimeout(flushTimeout.current);
+        flushTimeout.current = setTimeout(commitChanges, 500);
+    };
+
+    const handleBlur = () => {
+        setIsFocused(false);
+        commitChanges();
+    };
+
+    const handleFocus = () => setIsFocused(true);
+
+    useEffect(() => {
+        return () => {
+            commitChanges();
+        };
+    }, [commitChanges]);
+
+    useEffect(() => {
+        if (registerFlush) {
+            return registerFlush(commitChanges);
+        }
+    }, [registerFlush, commitChanges]);
+
+    const parsedLocalQty = parseInt(localQtyStr);
+    const safeQty = isNaN(parsedLocalQty) ? 0 : parsedLocalQty;
+    const diff = safeQty - item.system_qty;
+
+    return (
+        <MobileCard
+            className={diff !== 0 ? 'card-warning' : undefined}
+            header={<span className="mobile-card-header-title">{item.nama_barang}</span>}
+            fields={[
+                { label: t('inventory.columns.itemCode'), value: item.kode_barang || '-' },
+                { label: t('stockOpname.systemStock'), value: item.system_qty },
+                {
+                    label: t('stockOpname.difference'),
+                    value: (
+                        <span className={diff < 0 ? 'text-danger text-strong' : diff > 0 ? 'text-success text-strong' : ''}>
+                            {diff > 0 ? `+${diff}` : diff}
+                        </span>
+                    ),
+                },
+            ]}
+            actions={
+                <div className="form-stack-compact">
+                    <label className="form-label form-label--compact">{t('stockOpname.physicalStock')}</label>
+                    <Input
+                        type="number"
+                        value={localQtyStr}
+                        disabled={disabled}
+                        onChange={handleQtyChange}
+                        onFocus={handleFocus}
+                        onBlur={handleBlur}
+                        className="table-input-control"
+                    />
+                    <label className="form-label form-label--compact">{t('stockOpname.note')}</label>
+                    <Input
+                        type="text"
+                        value={localNotes}
+                        disabled={disabled}
+                        onChange={handleNotesChange}
+                        onFocus={handleFocus}
+                        onBlur={handleBlur}
+                        className="table-input-control"
+                        placeholder={t('stockOpname.notePlaceholder')}
+                    />
+                </div>
+            }
+        />
+    );
+});
+StockOpnameMobileCard.displayName = 'StockOpnameMobileCard';
 
 const StockOpname = () => {
     const { sessions, loading, error, createSession, deleteSession, getSession, updateItem, finalizeSession } = useOpname();
@@ -48,24 +312,68 @@ const StockOpname = () => {
         }
     };
 
-    const handleItemChange = async (itemId: number, physicalQty: number, notes: string) => {
-        if (!activeSession) return;
-        try {
-            await updateItem(activeSession.id, itemId, physicalQty, notes);
-            // Optimistically update local state
-            setActiveSession({
-                ...activeSession,
-                items: activeSession.items?.map(i => i.item_id === itemId ? { ...i, physical_qty: physicalQty, difference: physicalQty - i.system_qty, notes } : i)
-            });
-        } catch (err: any) {
-            showToast(t('toast.stockOpname.updateFailed') + (err.message || t('toast.common.errorOccurred')), 'error');
-        }
+    const activeSessionIdRef = useRef<number | null>(null);
+    const latestSessionRef = useRef<OpnameSession | null>(null);
+    const pendingPromisesRef = useRef<Set<Promise<void>>>(new Set());
+    const flushRegistryRef = useRef<Set<() => void>>(new Set());
+
+    const registerFlush = useCallback((flushFn: () => void) => {
+        flushRegistryRef.current.add(flushFn);
+        return () => {
+            flushRegistryRef.current.delete(flushFn);
+        };
+    }, []);
+
+    const forceFlushAll = () => {
+        flushRegistryRef.current.forEach(flush => flush());
     };
+
+    useEffect(() => {
+        activeSessionIdRef.current = activeSession ? activeSession.id : null;
+        latestSessionRef.current = activeSession;
+    }, [activeSession]);
+
+    const handleItemChange = useCallback(async (itemId: number, changes: { physical_qty: number; notes: string }) => {
+        const sessionId = activeSessionIdRef.current;
+        if (!sessionId) return;
+        
+        if (latestSessionRef.current) {
+            latestSessionRef.current = {
+                ...latestSessionRef.current,
+                items: latestSessionRef.current.items?.map(i => i.item_id === itemId ? { ...i, physical_qty: changes.physical_qty, difference: changes.physical_qty - i.system_qty, notes: changes.notes } : i)
+            };
+        }
+
+        const promise = (async () => {
+            try {
+                await updateItem(sessionId, itemId, changes.physical_qty, changes.notes);
+                setActiveSession(prev => {
+                    if (!prev) return prev;
+                    return {
+                        ...prev,
+                        items: prev.items?.map(i => i.item_id === itemId ? { ...i, physical_qty: changes.physical_qty, difference: changes.physical_qty - i.system_qty, notes: changes.notes } : i)
+                    };
+                });
+            } catch (err: any) {
+                showToast(t('toast.stockOpname.updateFailed') + (err.message || t('toast.common.errorOccurred')), 'error');
+            }
+        })();
+
+        pendingPromisesRef.current.add(promise);
+        promise.finally(() => {
+            pendingPromisesRef.current.delete(promise);
+        });
+
+        await promise;
+    }, [updateItem, t, showToast]);
 
     const handleFinalize = async () => {
         if (!activeSession) return;
         try {
             setActionLoading(true);
+            forceFlushAll();
+            await Promise.allSettled(Array.from(pendingPromisesRef.current));
+            
             await finalizeSession(activeSession.id);
             showToast(t('toast.stockOpname.finalizeSuccess'));
             setShowFinalizeConfirm(false);
@@ -77,6 +385,45 @@ const StockOpname = () => {
         }
     };
 
+    const handlePdf = async () => {
+        if (!activeSession) return;
+        
+        setActionLoading(true);
+        forceFlushAll();
+        await Promise.allSettled(Array.from(pendingPromisesRef.current));
+        setActionLoading(false);
+        
+        const sessionData = latestSessionRef.current || activeSession;
+        
+        exportToPdf({
+            filename: `Stock_Opname_${sessionData.id}_${getWIBInputDate()}`,
+            title: `Laporan Stock Opname #${sessionData.id}`,
+            subtitle: `Status: ${sessionData.status} | Tanggal: ${new Date(sessionData.opname_date).toLocaleString('id-ID')}`,
+            columns: [
+                { header: 'Kode', dataKey: 'kode_barang' },
+                { header: 'Nama Barang', dataKey: 'nama_barang' },
+                { header: 'Stok Sistem', dataKey: 'system_qty' },
+                { header: 'Stok Fisik', dataKey: 'physical_qty' },
+                { header: 'Selisih', dataKey: 'difference' },
+                { header: 'Catatan', dataKey: 'notes' },
+            ],
+            data: (sessionData.items || []).map(i => ({
+                ...i,
+                kode_barang: i.kode_barang || '-',
+                notes: i.notes || '-',
+            }))
+        });
+    };
+
+    const handleBack = async () => {
+        if (!activeSession) return;
+        setActionLoading(true);
+        forceFlushAll();
+        await Promise.allSettled(Array.from(pendingPromisesRef.current));
+        setActiveSession(null);
+        setActionLoading(false);
+    };
+
     if (activeSession) {
         return (
             <div className="page-container">
@@ -86,25 +433,8 @@ const StockOpname = () => {
                         <p className="page-description">{t('stockOpname.status')}: <span className="text-strong">{activeSession.status}</span> | {t('stockOpname.date')}: {new Date(activeSession.opname_date).toLocaleString(language === 'id' ? 'id-ID' : 'en-US')}</p>
                     </div>
                     <div className="action-bar action-bar--wrap">
-                        <Button variant="secondary" onClick={() => setActiveSession(null)}>{t('common.back')}</Button>
-                        <Button variant="secondary" onClick={() => exportToPdf({
-                            filename: `Stock_Opname_${activeSession.id}_${getWIBInputDate()}`,
-                            title: `Laporan Stock Opname #${activeSession.id}`,
-                            subtitle: `Status: ${activeSession.status} | Tanggal: ${new Date(activeSession.opname_date).toLocaleString('id-ID')}`,
-                            columns: [
-                                { header: 'Kode', dataKey: 'kode_barang' },
-                                { header: 'Nama Barang', dataKey: 'nama_barang' },
-                                { header: 'Stok Sistem', dataKey: 'system_qty' },
-                                { header: 'Stok Fisik', dataKey: 'physical_qty' },
-                                { header: 'Selisih', dataKey: 'difference' },
-                                { header: 'Catatan', dataKey: 'notes' },
-                            ],
-                            data: (activeSession.items || []).map(i => ({
-                                ...i,
-                                kode_barang: i.kode_barang || '-',
-                                notes: i.notes || '-',
-                            }))
-                        })} className="action-button-inline">
+                        <Button variant="secondary" onClick={handleBack} disabled={actionLoading}>{t('common.back')}</Button>
+                        <Button variant="secondary" onClick={handlePdf} disabled={actionLoading} className="action-button-inline">
                             <FileText size={16} /> PDF
                         </Button>
                         {activeSession.status === 'DRAFT' && (
@@ -129,78 +459,27 @@ const StockOpname = () => {
                         </THead>
                         <TBody>
                             {activeSession.items?.map(item => (
-                                <TR key={item.id} className={item.difference !== 0 ? 'row-warning' : ''}>
-                                    <TD>{item.kode_barang || '-'}</TD>
-                                    <TD>{item.nama_barang}</TD>
-                                    <TD>{item.system_qty}</TD>
-                                    <TD>
-                                        <Input 
-                                            type="number" 
-                                            value={item.physical_qty}
-                                            disabled={activeSession.status === 'FINALIZED'}
-                                            onChange={(e) => handleItemChange(item.item_id, parseInt(e.target.value) || 0, item.notes)}
-                                            className="input-control input-control--compact"
-                                        />
-                                    </TD>
-                                    <TD>
-                                        <span className={item.difference < 0 ? 'text-danger text-strong' : item.difference > 0 ? 'text-success text-strong' : ''}>
-                                            {item.difference > 0 ? `+${item.difference}` : item.difference}
-                                        </span>
-                                    </TD>
-                                    <TD>
-                                        <Input 
-                                            type="text" 
-                                            value={item.notes || ''}
-                                            disabled={activeSession.status === 'FINALIZED'}
-                                            onChange={(e) => handleItemChange(item.item_id, item.physical_qty, e.target.value)}
-                                            className="input-control input-control--compact"
-                                            placeholder={t('stockOpname.notePlaceholder')}
-                                        />
-                                    </TD>
-                                </TR>
+                                <StockOpnameRow
+                                    key={item.id ?? item.item_id ?? item.kode_barang}
+                                    item={item}
+                                    disabled={activeSession.status === 'FINALIZED'}
+                                    t={t}
+                                    onCommitLineChange={handleItemChange}
+                                    registerFlush={registerFlush}
+                                />
                             ))}
                         </TBody>
                     </Table>
 
                     <MobileCardList isEmpty={(activeSession.items?.length ?? 0) === 0} isLoading={false} emptyMessage="Tidak ada barang dalam sesi.">
                         {(activeSession.items || []).map((item) => (
-                            <MobileCard
-                                key={item.id}
-                                className={item.difference !== 0 ? 'card-warning' : undefined}
-                                header={<span className="mobile-card-header-title">{item.nama_barang}</span>}
-                                fields={[
-                                    { label: t('inventory.columns.itemCode'), value: item.kode_barang || '-' },
-                                    { label: t('stockOpname.systemStock'), value: item.system_qty },
-                                    {
-                                        label: t('stockOpname.difference'),
-                                        value: (
-                                            <span className={item.difference < 0 ? 'text-danger text-strong' : item.difference > 0 ? 'text-success text-strong' : ''}>
-                                                {item.difference > 0 ? `+${item.difference}` : item.difference}
-                                            </span>
-                                        ),
-                                    },
-                                ]}
-                                actions={
-                                    <div className="form-stack-compact">
-                                        <label className="form-label form-label--compact">{t('stockOpname.physicalStock')}</label>
-                                        <Input
-                                            type="number"
-                                            value={item.physical_qty}
-                                            disabled={activeSession.status === 'FINALIZED'}
-                                            onChange={(e) => handleItemChange(item.item_id, parseInt(e.target.value) || 0, item.notes)}
-                                            className="input-control input-control--compact"
-                                        />
-                                        <label className="form-label form-label--compact">{t('stockOpname.note')}</label>
-                                        <Input
-                                            type="text"
-                                            value={item.notes || ''}
-                                            disabled={activeSession.status === 'FINALIZED'}
-                                            onChange={(e) => handleItemChange(item.item_id, item.physical_qty, e.target.value)}
-                                            className="input-control input-control--compact"
-                                            placeholder={t('stockOpname.notePlaceholder')}
-                                        />
-                                    </div>
-                                }
+                            <StockOpnameMobileCard
+                                key={item.id ?? item.item_id ?? item.kode_barang}
+                                item={item}
+                                disabled={activeSession.status === 'FINALIZED'}
+                                t={t}
+                                onCommitLineChange={handleItemChange}
+                                registerFlush={registerFlush}
                             />
                         ))}
                     </MobileCardList>
