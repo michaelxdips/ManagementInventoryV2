@@ -48,45 +48,45 @@ const AdminDashboard: React.FC<Props> = ({ metrics, greeting, userName, onRefres
           onClick={() => navigate('/items')}
           title="Buka daftar inventaris"
           aria-label="Buka daftar inventaris"
-          style={{ display: 'flex', flexDirection: 'column', padding: '24px', cursor: 'pointer' }}
+          style={{ cursor: 'pointer' }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-            <div style={{ padding: '12px', background: 'var(--accent-glow)', borderRadius: '12px', color: 'var(--accent)' }}>
+            <div className="dash-icon-tile dash-icon-tile--accent" style={{ marginBottom: 0 }}>
               <Package size={24} />
             </div>
           </div>
-          <h3 style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--muted)', fontWeight: 500 }}>{t('dashboard.totalItems')}</h3>
-          <p style={{ margin: 0, fontSize: '32px', fontWeight: 700 }}>{metrics.totalItems ?? 0}</p>
+          <h3 className="dash-stat-title">{t('dashboard.totalItems')}</h3>
+          <p className="dash-stat-value">{metrics.totalItems ?? 0}</p>
         </article>
 
         <article
           className="dash-card dashboard-drilldown-card"
           onClick={() => navigate('/items?stock=low')}
-          style={{ display: 'flex', flexDirection: 'column', padding: '24px', border: (metrics.lowStockCount ?? 0) > 0 ? '1px solid #d73a49' : undefined, cursor: 'pointer' }}
+          style={{ borderColor: (metrics.lowStockCount ?? 0) > 0 ? 'var(--danger)' : undefined, cursor: 'pointer' }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-            <div style={{ padding: '12px', background: 'var(--danger-glow)', borderRadius: '12px', color: 'var(--danger)' }}>
+            <div className="dash-icon-tile dash-icon-tile--danger" style={{ marginBottom: 0 }}>
               <AlertTriangle size={24} />
             </div>
-            {(metrics.lowStockCount ?? 0) > 0 && <span style={{ background: 'var(--danger)', color: '#fff', padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 600 }}>{t('dashboard.actionRequired')}</span>}
+            {(metrics.lowStockCount ?? 0) > 0 && <span className="dashboard-status-pill dashboard-status-pill--danger">{t('dashboard.actionRequired')}</span>}
           </div>
-          <h3 style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--muted)', fontWeight: 500 }}>{t('dashboard.lowStock')}</h3>
-          <p style={{ margin: 0, fontSize: '32px', fontWeight: 700, color: (metrics.lowStockCount ?? 0) > 0 ? 'var(--danger)' : 'inherit' }}>{metrics.lowStockCount ?? 0}</p>
+          <h3 className="dash-stat-title">{t('dashboard.lowStock')}</h3>
+          <p className="dash-stat-value" style={{ color: (metrics.lowStockCount ?? 0) > 0 ? 'var(--danger)' : 'inherit' }}>{metrics.lowStockCount ?? 0}</p>
         </article>
 
         <article
           className="dash-card dashboard-drilldown-card"
           onClick={() => navigate('/approval?status=pending')}
-          style={{ display: 'flex', flexDirection: 'column', padding: '24px', border: (metrics.pendingRequests ?? 0) > 0 ? '1px solid #dbab09' : undefined, cursor: 'pointer' }}
+          style={{ borderColor: (metrics.pendingRequests ?? 0) > 0 ? 'var(--warning)' : undefined, cursor: 'pointer' }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-            <div style={{ padding: '12px', background: 'var(--warning-glow)', borderRadius: '12px', color: 'var(--warning)' }}>
+            <div className="dash-icon-tile dash-icon-tile--warning" style={{ marginBottom: 0 }}>
               <Clock size={24} />
             </div>
-            {(metrics.pendingRequests ?? 0) > 0 && <span style={{ background: 'var(--warning)', color: '#fff', padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 600 }}>{t('dashboard.waiting')}</span>}
+            {(metrics.pendingRequests ?? 0) > 0 && <span className="dashboard-status-pill dashboard-status-pill--pending">{t('dashboard.waiting')}</span>}
           </div>
-          <h3 style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--muted)', fontWeight: 500 }}>{t('dashboard.pendingRequest')}</h3>
-          <p style={{ margin: 0, fontSize: '32px', fontWeight: 700 }}>{metrics.pendingRequests ?? 0}</p>
+          <h3 className="dash-stat-title">{t('dashboard.pendingRequest')}</h3>
+          <p className="dash-stat-value">{metrics.pendingRequests ?? 0}</p>
         </article>
       </div>
 
@@ -108,7 +108,7 @@ const AdminDashboard: React.FC<Props> = ({ metrics, greeting, userName, onRefres
 
       <div className="dashboard-primary-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '24px', alignItems: 'stretch' }}>
         {/* Chart Section */}
-        <article className="dash-card dashboard-primary-card" style={{ padding: '22px', minHeight: '360px', display: 'flex', flexDirection: 'column' }}>
+        <article className="dash-card dashboard-primary-card" style={{ minHeight: '360px' }}>
           <h3 style={{ margin: '0 0 18px', fontSize: '18px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
             <TrendingUp size={20} color="var(--muted)" />
             {t('dashboard.stats6Months')}
@@ -196,7 +196,7 @@ const AdminDashboard: React.FC<Props> = ({ metrics, greeting, userName, onRefres
         </article>
 
         {/* Priority Insights */}
-        <article className="dash-card dashboard-primary-card" style={{ padding: '22px', minHeight: '360px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <article className="dash-card dashboard-primary-card" style={{ minHeight: '360px', overflow: 'hidden' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '16px' }}>
             <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Activity size={20} color="var(--muted)" />
@@ -330,7 +330,7 @@ const AdminDashboard: React.FC<Props> = ({ metrics, greeting, userName, onRefres
         </article>
 
         {/* Audit Logs */}
-        <article className="dash-card dashboard-primary-card" style={{ padding: '22px', minHeight: '360px', display: 'flex', flexDirection: 'column' }}>
+        <article className="dash-card dashboard-primary-card" style={{ minHeight: '360px' }}>
           <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
             <h3
               onClick={() => navigate('/audit-logs')}

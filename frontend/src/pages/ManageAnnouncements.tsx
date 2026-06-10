@@ -222,7 +222,7 @@ const ManageAnnouncements = () => {
           </div>
         </div>
 
-        <Table>
+        <Table className="manage-announcements-table">
           <THead>
             <TR>
               <TH>{t('announcements.colContent')}</TH>
@@ -261,7 +261,7 @@ const ManageAnnouncements = () => {
                       <Button type="button" variant="secondary" onClick={() => startEdit(r)}>
                         {t('announcements.actionEdit')}
                       </Button>
-                      <Button type="button" variant="secondary" disabled={deletingId === r.id} onClick={() => setDeleteTarget(r)}>
+                      <Button type="button" variant="secondary" disabled={deletingId === r.id} onClick={() => setDeleteTarget(r)} className="announcement-action-danger">
                         {deletingId === r.id ? t('announcements.actionDeleting') : t('announcements.actionDelete')}
                       </Button>
                     </div>
@@ -296,7 +296,7 @@ const ManageAnnouncements = () => {
                   <Button type="button" variant="secondary" onClick={() => startEdit(r)}>
                     {t('announcements.actionEdit')}
                   </Button>
-                  <Button type="button" variant="secondary" disabled={deletingId === r.id} onClick={() => setDeleteTarget(r)}>
+                  <Button type="button" variant="secondary" disabled={deletingId === r.id} onClick={() => setDeleteTarget(r)} className="announcement-action-danger">
                     {t('announcements.actionDelete')}
                   </Button>
                 </div>

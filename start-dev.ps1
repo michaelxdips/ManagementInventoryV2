@@ -20,6 +20,44 @@ foreach ($port in $frontendPorts) {
     }
 }
 
+# ── Auto-detect best local IPv4 (skip APIPA 169.254.x.x, loopback, prefer smaller subnet) ──
+$localIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {
+    $_.IPAddress -ne "127.0.0.1" -and
+    -not $_.IPAddress.StartsWith("169.254") -and
+    $_.PrefixOrigin -ne "WellKnown"
+} | Sort-Object PrefixLength -Descending | Select-Object -First 1).IPAddress
+
+if (-not $localIP) {
+    Write-Host "[WARN] Tidak ada jaringan aktif terdeteksi. Menggunakan localhost." -ForegroundColor Red
+    $localIP = "localhost"
+}
+
+# ── Auto-update frontend/.env ──
+$frontendEnvPath = "$PSScriptRoot\frontend\.env"
+$frontendEnvContent = "VITE_API_BASE_URL=http://${localIP}:3000/api`nVITE_LOCAL_IP=$localIP"
+Set-Content -Path $frontendEnvPath -Value $frontendEnvContent -Encoding UTF8
+Write-Host "  [OK] frontend/.env diupdate: API -> http://${localIP}:3000/api" -ForegroundColor DarkGray
+
+# ── Auto-update backend CORS_ORIGINS ──
+$backendEnvPath = "$PSScriptRoot\backend\.env"
+$backendEnvRaw = Get-Content $backendEnvPath -Raw
+$newCors = "CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173,http://${localIP}:5173"
+$backendEnvRaw = $backendEnvRaw -replace "CORS_ORIGINS=.*", $newCors
+Set-Content -Path $backendEnvPath -Value $backendEnvRaw.TrimEnd() -Encoding UTF8
+Write-Host "  [OK] backend/.env CORS diupdate: $newCors" -ForegroundColor DarkGray
+
+Write-Host ""
+Write-Host "==========================================" -ForegroundColor Cyan
+Write-Host "  Inventory System - Network Access Info  " -ForegroundColor Cyan
+Write-Host "==========================================" -ForegroundColor Cyan
+Write-Host "  Local:    http://localhost:5173" -ForegroundColor White
+if ($localIP -ne "localhost") {
+    Write-Host "  Hotspot:  http://${localIP}:5173  <-- buka di HP" -ForegroundColor Green
+    Write-Host "  Pastikan HP terhubung ke hotspot yang sama!" -ForegroundColor Yellow
+}
+Write-Host "==========================================" -ForegroundColor Cyan
+Write-Host ""
+
 Write-Host "Starting Inventory System..." -ForegroundColor Cyan
 $wt = Get-Command wt.exe -ErrorAction SilentlyContinue
 
@@ -33,4 +71,4 @@ else {
     Start-Process -FilePath "cmd.exe" -ArgumentList "/k title Frontend Server && cd `"$PSScriptRoot\frontend`" && npm run dev"
 }
 
-Write-Host "Server booting!." -ForegroundColor Green
+Write-Host "Server booting! Tunggu ~5 detik lalu buka URL di atas." -ForegroundColor Green

@@ -46,7 +46,7 @@ const DesktopNavbar = ({ sidebarCollapsed, onToggleSidebar }: DesktopNavbarProps
                 </button>
                 <span className="crumb-text">{activeTitle}</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div className="topbar-actions">
                 <NetworkSignalBar variant="compact" />
                 <NotificationBell 
                     notifications={notifications} 

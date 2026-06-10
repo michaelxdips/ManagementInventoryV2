@@ -485,6 +485,7 @@
     "filterDesc": "Pilih status untuk memfokuskan badge dan detail pada kalender.",
     "all": "Semua",
     "dailyDetail": "Detail Harian",
+    "empty": "Tidak ada permintaan pada tanggal ini",
     "requestItem": "permintaan",
     "thisMonthStatus": "Status bulan ini",
     "totalRequest": "Total Request",
@@ -530,7 +531,8 @@
     "back": "Kembali",
     "deleteSession": "Hapus Sesi",
     "creating": "Membuat...",
-    "more": "Lainnya"
+    "more": "Lainnya",
+    "showingPage": "Menampilkan halaman {{page}} dari {{total}}"
   },
   "status": {
     "pending": "Menunggu",

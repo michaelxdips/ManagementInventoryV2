@@ -250,7 +250,13 @@ const HistoryKeluar = () => {
 
         <div className="items-footer">
           <span className="items-meta">
-            {t('common.showingPage', { page, total: totalPages })} ({totalItems} barang)
+            {totalItems > 0
+              ? t('items.showing', {
+                  from: (page - 1) * perPage + 1,
+                  to: Math.min(page * perPage, totalItems),
+                  total: totalItems
+                })
+              : t('common.noChangedData')}
           </span>
           <Pagination current={page} total={totalPages} onChange={setPage} />
         </div>
